@@ -8,14 +8,14 @@ CREATE TABLE ProductStatus(
 	id int NOT NULL PRIMARY KEY IDENTITY(1,1),
 	status_name nvarchar(40) NOT NULL,
 	status_desc nvarchar(200),
-	is_active bit NOT NULL DEFAULT True,
+	is_active bit NOT NULL DEFAULT 1,
 );
 
 CREATE TABLE ProductTag(
 	id int NOT NULL PRIMARY KEY IDENTITY(1,1),
 	status_name nvarchar(40) NOT NULL,
 	status_desc nvarchar(200),
-	is_active bit NOT NULL DEFAULT True,
+	is_active bit NOT NULL DEFAULT 1,
 );
 
 CREATE TABLE Brand(

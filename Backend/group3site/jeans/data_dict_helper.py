@@ -173,7 +173,10 @@ def generate_create_sql(app_name, field_type_dict):
             null = ""
             default = ""
             if current_field.default != models.fields.NOT_PROVIDED:
-                default = " DEFAULT {}".format(current_field.default)
+                if field_type == "bit":
+                    default = " DEFAULT {}".format(int(current_field.default))
+                else:
+                    default = " DEFAULT {}".format(current_field.default)
             if not current_field.null:
                 null = " NOT NULL"
             unique = ""
