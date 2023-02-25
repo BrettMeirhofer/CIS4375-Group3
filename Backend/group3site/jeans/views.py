@@ -1,11 +1,24 @@
 from . import data_dict_helper as ddh
 from django.http import HttpResponse
 import os
+from django.template import loader
+from . import data_dict_helper
 
 
 def index(request):
-    out = """Hello, world. You're at the jeans index. Brett Meirhofer,Perminder Singh,Laura Moreno"""
-    return HttpResponse(out)
+    out = """Hello, world. You're at the jeans index. """
+    team = ["Brett Meirhofer", "Perminder Singh", "Laura Moreno"]
+    solid_tables = data_dict_helper.get_solid_models("jeans")
+    tables = []
+    for table in solid_tables:
+        tables.append(table._meta.verbose_name_plural)
+
+    template = loader.get_template('jeans/index.html')
+    context = {
+        'tables': tables,
+        'team': team,
+    }
+    return HttpResponse(template.render(context, request))
 
 
 class FieldTypeMap:
@@ -56,7 +69,11 @@ def generate_sql_all(request):
     return HttpResponse("Success")
 
 
+def view_products(request):
+    solid_tables = data_dict_helper.get_solid_models("jeans")
+    output = ', \n'.join([q._meta.verbose_name_plural for q in solid_tables])
+    return HttpResponse(output)
 
-# TODO Alter script for adding foreign keys
+
 # TODO Insert script for inserting test data
 # TODO master script that combines Create -> Insert -> Alter scripts

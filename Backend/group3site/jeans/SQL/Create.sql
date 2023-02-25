@@ -25,6 +25,13 @@ CREATE TABLE Brand(
 	brand_site nvarchar(200) NOT NULL,
 );
 
+CREATE TABLE Customer(
+	id int NOT NULL PRIMARY KEY IDENTITY(1,1),
+	first_name nvarchar(200) NOT NULL,
+	last_name nvarchar(200) NOT NULL,
+	email nvarchar(254) NOT NULL,
+);
+
 CREATE TABLE Product(
 	id int NOT NULL PRIMARY KEY IDENTITY(1,1),
 	product_name nvarchar(80) NOT NULL,

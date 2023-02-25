@@ -188,3 +188,16 @@ class ProductPromo(DescriptiveModel):
         db_table = "ProductPromo"
         verbose_name_plural = "Product Promo"
         managed = IsManaged
+
+
+class Customer(DescriptiveModel):
+    description = 'Name and email for a customer who will recieve promo emails'
+    first_name = models.CharField(max_length=200)
+    last_name = models.CharField(max_length=200)
+    email = models.EmailField()
+    load_order = 1
+
+    class Meta:
+        db_table = "Customer"
+        verbose_name_plural = "Customer"
+        managed = IsManaged

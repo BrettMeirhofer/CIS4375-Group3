@@ -45,5 +45,6 @@ urlpatterns = [
     path('drop', views.generate_drop, name='drop'),
     path('delete', views.generate_delete, name='delete'),
     path('sql', views.generate_sql_all, name='sqlall'),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('products', views.view_products, name='product'),
 ]

@@ -16,3 +16,5 @@ DROP TABLE "ProductTag"
 
 DROP TABLE "Brand"
 
+DROP TABLE "Customer"
+

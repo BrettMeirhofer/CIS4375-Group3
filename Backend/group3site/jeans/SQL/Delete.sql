@@ -16,3 +16,5 @@ DELETE FROM "ProductTag"
 
 DELETE FROM "Brand"
 
+DELETE FROM "Customer"
+
