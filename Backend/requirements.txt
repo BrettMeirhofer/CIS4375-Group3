@@ -11,6 +11,7 @@ JPype1==1.4.1
 MarkupSafe==2.1.2
 packaging==23.0
 pipreqs==0.4.11
+pyodbc==4.0.35
 pytz==2022.7.1
 requests==2.28.2
 sqlparse==0.4.3

@@ -5,7 +5,7 @@ from django.utils import timezone
 import os
 from django.db import connection
 
-IsManaged = True
+IsManaged = False
 
 def past_validator(value):
     if value > timezone.now().date():

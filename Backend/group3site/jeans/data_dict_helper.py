@@ -189,3 +189,29 @@ def generate_create_sql(app_name, field_type_dict):
     drop_file.close()
 
 
+def generate_alter_sql(app_name):
+    solid_tables = get_solid_models(app_name)
+    solid_tables.sort(key=lambda x: x.load_order, reverse=False)
+    module_dir = os.path.dirname(__file__)
+    path = os.path.join(module_dir, "SQL", "Alter.sql")
+    drop_file = open(path, "w")
+    for table in solid_tables:
+        fk_fields = []
+        for current_field in table._meta.get_fields(include_parents=False):
+            if not isinstance(current_field, models.ForeignKey):
+                continue
+            fk_fields.append(current_field)
+
+        if len(fk_fields) == 0:
+            continue
+
+        drop_file.write("ALTER TABLE " + table._meta.db_table + " ADD\n")
+
+        for index, current_field in enumerate(fk_fields):
+            end = ","
+            if index == len(fk_fields) - 1:
+                end = ";"
+            drop_file.write("\t{}_id int FOREIGN KEY REFERENCES {}(id){}\n".format(current_field.name, current_field.related_model._meta.db_table, end))
+
+        drop_file.write("\n")
+    drop_file.close()

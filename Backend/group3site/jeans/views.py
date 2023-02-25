@@ -43,11 +43,19 @@ def generate_create(request):
     return HttpResponse("Success")
 
 
+def generate_alter(request):
+    ddh.generate_alter_sql("jeans")
+    return HttpResponse("Success")
+
+
 def generate_sql_all(request):
     ddh.generate_ordered_sql("jeans", True, "DROP TABLE", "Drop.sql")
     ddh.generate_create_sql("jeans", FieldTypeMap.field_type_dict)
     ddh.generate_ordered_sql("jeans", True, "DELETE FROM", "Delete.sql")
+    ddh.generate_alter_sql("jeans")
     return HttpResponse("Success")
+
+
 
 # TODO Alter script for adding foreign keys
 # TODO Insert script for inserting test data
