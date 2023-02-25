@@ -4,7 +4,7 @@ import os
 
 
 def index(request):
-    out = """Hello, world. You're at the jeans index. Brett Meirhofer,Perminder Singh"""
+    out = """Hello, world. You're at the jeans index. Brett Meirhofer,Perminder Singh,Laura Moreno"""
     return HttpResponse(out)
 
 
