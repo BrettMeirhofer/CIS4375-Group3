@@ -11,7 +11,8 @@ def index(request):
 class FieldTypeMap:
     field_type_dict = {"CharField": "nvarchar", "DateField": "date", "BooleanField": "bit", "BigAutoField": "bigint",
                        "EmailField": "nvarchar", "TextField": "nvarchar", "ForeignKey": "int", "IntegerField": "int",
-                       "DecimalField": "numeric", "AutoField": "int", "PhoneNumberField": "nvarchar"}
+                       "DecimalField": "numeric", "AutoField": "int", "PhoneNumberField": "nvarchar",
+                       "URLField": "nvarchar"}
 
 
 def dict3(request):
@@ -27,11 +28,27 @@ def dict3(request):
 
 
 def generate_drop(request):
-    ddh.generate_ordered_sql("Bakery", True, "DROP TABLE", "Drop.sql")
+    ddh.generate_ordered_sql("jeans", True, "DROP TABLE", "Drop.sql")
     return HttpResponse("Success")
 
 
 # Generates a correctly ordered delete script
 def generate_delete(request):
-    ddh.generate_ordered_sql("Bakery", True, "DELETE FROM", "Delete.sql")
+    ddh.generate_ordered_sql("jeans", True, "DELETE FROM", "Delete.sql")
     return HttpResponse("Success")
+
+
+def generate_create(request):
+    ddh.generate_create_sql("jeans", FieldTypeMap.field_type_dict)
+    return HttpResponse("Success")
+
+
+def generate_sql_all(request):
+    ddh.generate_ordered_sql("jeans", True, "DROP TABLE", "Drop.sql")
+    ddh.generate_create_sql("jeans", FieldTypeMap.field_type_dict)
+    ddh.generate_ordered_sql("jeans", True, "DELETE FROM", "Delete.sql")
+    return HttpResponse("Success")
+
+# TODO Alter script for adding foreign keys
+# TODO Insert script for inserting test data
+# TODO master script that combines Create -> Insert -> Alter scripts

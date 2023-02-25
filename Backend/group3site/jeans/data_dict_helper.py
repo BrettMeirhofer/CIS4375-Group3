@@ -3,7 +3,7 @@ import xlsxwriter
 from django.apps import apps
 import os
 
-
+#employee_id int FOREIGN KEY REFERENCES Employee(id),
 # Extracts the field props for a single field
 # Could potentially pass a prop name/prop dictionary to define the order
 def extract_field_props(current_field, model, field_type_dict):
@@ -70,7 +70,8 @@ def extract_all_field_props(model, field_type_dict):
     output_list = []
     visible_fields = [field for field in model_fields if
                       not isinstance(field, models.fields.reverse_related.ManyToOneRel)
-                      and not isinstance(field, models.fields.reverse_related.ManyToManyRel)]
+                      and not isinstance(field, models.fields.reverse_related.ManyToManyRel)
+                      and not isinstance(field, models.fields.related.ManyToManyField)]
     for current_field in visible_fields:
         output_row = extract_field_props(current_field, model, field_type_dict)
         output_list.append(output_row)
@@ -143,4 +144,45 @@ def generate_ordered_sql(app_name, order, statement, file_name):
     for table in solid_tables:
         drop_file.write(statement + " " + "\"" + table._meta.db_table + "\"" + "\n" + "\n")
     drop_file.close()
+
+
+def generate_create_sql(app_name, field_type_dict):
+    solid_tables = get_solid_models(app_name)
+    solid_tables.sort(key=lambda x: x.load_order, reverse=False)
+    module_dir = os.path.dirname(__file__)
+    path = os.path.join(module_dir, "SQL", "Create.sql")
+    drop_file = open(path, "w")
+    for table in solid_tables:
+        drop_file.write("CREATE TABLE " + table._meta.db_table + "(\n")
+        drop_file.write("\tid int NOT NULL PRIMARY KEY IDENTITY(1,1),\n")
+
+        model_fields = table._meta.get_fields(include_parents=False)
+        visible_fields = [field for field in model_fields if
+                          not isinstance(field, models.fields.reverse_related.ManyToOneRel)
+                          and not isinstance(field, models.fields.reverse_related.ManyToManyRel)
+                          and not isinstance(field, models.fields.related.ManyToManyField)
+                          and not isinstance(field, models.ForeignKey)
+                          and not isinstance(field, models.fields.AutoField)]
+
+        for current_field in visible_fields:
+            field_name = current_field.name
+            field_type = field_type_dict[type(current_field).__name__]
+            field_type_text = " " + field_type
+            if field_type == "nvarchar":
+                field_type_text = " nvarchar({})".format(current_field.max_length)
+            null = ""
+            default = ""
+            if current_field.default != models.fields.NOT_PROVIDED:
+                default = " DEFAULT {}".format(current_field.default)
+            if not current_field.null:
+                null = " NOT NULL"
+            unique = ""
+            if current_field.unique:
+                unique = " UNIQUE"
+            drop_file.write("\t{}{}{}{}{},\n".format(field_name, field_type_text, null, default, unique))
+
+        drop_file.write(");\n")
+        drop_file.write("\n")
+    drop_file.close()
+
 

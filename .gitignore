@@ -129,3 +129,4 @@ dmypy.json
 # Pyre type checker
 .pyre/
 Backend/group3site/group3site/settings.py
+Backend/group3site/jeans/migrations/

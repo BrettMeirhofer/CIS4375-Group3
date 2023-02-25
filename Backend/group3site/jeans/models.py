@@ -5,6 +5,7 @@ from django.utils import timezone
 import os
 from django.db import connection
 
+IsManaged = True
 
 def past_validator(value):
     if value > timezone.now().date():
@@ -35,8 +36,7 @@ class DescriptiveModel(models.Model):
 
     class Meta:
         abstract = True
-        managed = False
-
+        managed = IsManaged
 
 # Used as an abstract parent for status codes
 class StatusCode(DescriptiveModel):
@@ -51,7 +51,7 @@ class StatusCode(DescriptiveModel):
 
     class Meta:
         abstract = True
-        managed = False
+        managed = IsManaged
 
 
 # Used as an abstract parent for labels
@@ -67,7 +67,20 @@ class LabelCode(DescriptiveModel):
 
     class Meta:
         abstract = True
-        managed = False
+        managed = IsManaged
+
+
+class Image(DescriptiveModel):
+    image_url = models.URLField()
+    image_caption = models.CharField(max_length=200, blank=True, null=True)
+    description = "A link to an image"
+    pk_desc = "Standard Auto-Increment PK"
+    load_order = 1
+
+    class Meta:
+        db_table = "Image"
+        verbose_name_plural = "Image"
+        managed = IsManaged
 
 
 class ProductStatus(StatusCode):
@@ -77,7 +90,7 @@ class ProductStatus(StatusCode):
     class Meta:
         db_table = "ProductStatus"
         verbose_name_plural = "Product Status"
-        managed = False
+        managed = IsManaged
 
 
 class ProductTag(StatusCode):
@@ -87,7 +100,7 @@ class ProductTag(StatusCode):
     class Meta:
         db_table = "ProductTag"
         verbose_name_plural = "Product Tag"
-        managed = False
+        managed = IsManaged
 
 
 class Brand(DescriptiveModel):
@@ -100,7 +113,7 @@ class Brand(DescriptiveModel):
     class Meta:
         db_table = "Brand"
         verbose_name_plural = "Brand"
-        managed = False
+        managed = IsManaged
 
     def __str__(self):
         return self.brand_name
@@ -113,18 +126,35 @@ class Product(DescriptiveModel):
     product_price = models.DecimalField(max_digits=19, decimal_places=4, default=0)
     product_brand = models.ForeignKey(Brand, on_delete=models.RESTRICT)
     product_tags = models.ManyToManyField(ProductTag, through="ProductProductTag")
+    product_images = models.ManyToManyField(Image, through="ProductImage")
     load_order = 2
 
     class Meta:
         db_table = "Product"
         verbose_name_plural = "Product"
-        managed = False
+        managed = IsManaged
 
     def __str__(self):
         return self.product_name
 
 
-class ProductProductTag(StatusCode):
+class Promo(DescriptiveModel):
+    description = 'Describes a promotion for a group of products'
+    promo_name = models.CharField(max_length=80)
+    promo_code = models.CharField(max_length=10, unique=True)
+    promo_products = models.ManyToManyField(Product, through="ProductPromo")
+    load_order = 2
+
+    class Meta:
+        db_table = "Promo"
+        verbose_name_plural = "Promo"
+        managed = IsManaged
+
+    def __str__(self):
+        return self.promo_name
+
+
+class ProductProductTag(DescriptiveModel):
     description = 'Used to associate a ProductTag with a Product'
     product = models.ForeignKey(Product, on_delete=models.RESTRICT)
     product_tag = models.ForeignKey(ProductTag, on_delete=models.RESTRICT)
@@ -133,4 +163,28 @@ class ProductProductTag(StatusCode):
     class Meta:
         db_table = "ProductProductTag"
         verbose_name_plural = "Product Product Tag"
-        managed = False
+        managed = IsManaged
+
+
+class ProductImage(DescriptiveModel):
+    description = 'Used to associate an Image with a Product'
+    product = models.ForeignKey(Product, on_delete=models.RESTRICT)
+    product_image = models.ForeignKey(Image, on_delete=models.RESTRICT)
+    load_order = 3
+
+    class Meta:
+        db_table = "ProductImage"
+        verbose_name_plural = "Product Image"
+        managed = IsManaged
+
+
+class ProductPromo(DescriptiveModel):
+    description = 'Used to associate a Product with a Promo'
+    product = models.ForeignKey(Product, on_delete=models.RESTRICT)
+    promo = models.ForeignKey(Promo, on_delete=models.RESTRICT)
+    load_order = 3
+
+    class Meta:
+        db_table = "ProductPromo"
+        verbose_name_plural = "Product Promo"
+        managed = IsManaged
