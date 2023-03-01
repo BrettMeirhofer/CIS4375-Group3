@@ -1,6 +1,7 @@
 {% extends "jeans/jeanssite.html" %}
 {% load i18n %}
 {% load static %}
+{% load my_extras %}
 
 {% block extrabody %}{{ block.super }}
 <!DOCTYPE html>
@@ -18,15 +19,33 @@
                     <th>{{header}}</th>
                 {% endfor %}
             </tr>
-            {% for product in newrows %}
+            {% for row in page_obj %}
                 <tr>
-                    {% for field in product %}
-                    <td>{{field}}</td>
+                    {% for field in fields %}
+                    <td>{{ row|get_attr:field }}</td>
                     {% endfor %}
                 </tr>
             {% endfor %}
         </table>
     </div>
+
+<div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
 </body>
 </html>
 {% endblock %}

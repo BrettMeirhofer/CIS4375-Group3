@@ -4,6 +4,7 @@ import os
 from django.template import loader
 from . import data_dict_helper
 from django.http import HttpResponseRedirect
+from django.core.paginator import Paginator
 from . import models
 from . import forms
 from django.apps import apps
@@ -92,19 +93,22 @@ def view_products_list(request, table):
             current_table = model
 
 
-    if current_table:
-        rows = current_table.objects.all().values(*current_table.list_fields)
-
-    else:
+    if not current_table:
         return HttpResponse("Failed")
 
-    newrows = [[key for key in rows[0].keys()], *[list(idx.values()) for idx in rows]]
-    print(newrows)
+
+    paginator = Paginator(current_table.objects.all(), 10)  # Show 25 contacts per page.
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    #newrows = [[key for key in rows[0].keys()], *[list(idx.values()) for idx in rows]]
+    #print(newrows)
     template = loader.get_template('jeans/listview.html')
     context = {
-        'newrows': newrows,
+        'page_obj': page_obj,
         'headers': current_table.list_headers,
-        'title': current_table._meta.db_table
+        'title': current_table._meta.db_table,
+        'fields': current_table.list_fields
     }
     return HttpResponse(template.render(context, request))
 
