@@ -128,6 +128,8 @@ class Product(DescriptiveModel):
     product_tags = models.ManyToManyField(ProductTag, through="ProductProductTag")
     product_images = models.ManyToManyField(Image, through="ProductImage")
     load_order = 2
+    list_fields = ["product_name", "product_desc"]
+    list_headers = ["Product Name", "Product Desc"]
 
     class Meta:
         db_table = "Product"
@@ -144,6 +146,8 @@ class Promo(DescriptiveModel):
     promo_code = models.CharField(max_length=10, unique=True)
     promo_products = models.ManyToManyField(Product, through="ProductPromo")
     load_order = 2
+    list_fields = ["promo_name", "promo_code"]
+    list_headers = ["Promo Name", "Promo Code"]
 
     class Meta:
         db_table = "Promo"

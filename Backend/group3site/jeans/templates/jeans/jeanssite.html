@@ -1,0 +1,26 @@
+{% load i18n %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block extrahead %}
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'Sensors/css/base_site.css' %}">
+    {% endblock %}
+</head>
+<body class="background">
+    <div class="navcontainer">
+        <ul class="navbar">
+            <li class="navli"><a class="navlink" href="{% url 'index'%}">Home</a></li>
+            <li class="navli"><a class="navlink" href="{% url 'listall' table='promo' %}">Promos</a></li>
+            <li class="navli"><a class="navlink" href="{% url 'listall' table='product'  %}">Products</a></li>
+            <li class="navli"><a class="navlink" href="{% url 'index'%}">Reports</a></li>
+        </ul>
+    </div>
+    <div class="container">
+        {% block extrabody %}
+        {% endblock %}
+    </div>
+</body>
+</html>

@@ -3,6 +3,10 @@ from django.http import HttpResponse
 import os
 from django.template import loader
 from . import data_dict_helper
+from django.http import HttpResponseRedirect
+from . import models
+from . import forms
+from django.apps import apps
 
 
 def index(request):
@@ -13,10 +17,13 @@ def index(request):
     for table in solid_tables:
         tables.append(table._meta.verbose_name_plural)
 
+    form = forms.ProductForm()
     template = loader.get_template('jeans/index.html')
     context = {
         'tables': tables,
         'team': team,
+        'form': form,
+        'form2': forms.PromoForm(),
     }
     return HttpResponse(template.render(context, request))
 
@@ -74,6 +81,61 @@ def view_products(request):
     output = ', \n'.join([q._meta.verbose_name_plural for q in solid_tables])
     return HttpResponse(output)
 
+
+def view_products_list(request, table):
+
+    app = apps.get_app_config("jeans")
+    app_models = app.models.values()
+    current_table = None
+    for model in app_models:
+        if model._meta.db_table.lower() == table.lower():
+            current_table = model
+
+
+    if current_table:
+        rows = current_table.objects.all().values(*current_table.list_fields)
+
+    else:
+        return HttpResponse("Failed")
+
+    newrows = [[key for key in rows[0].keys()], *[list(idx.values()) for idx in rows]]
+    print(newrows)
+    template = loader.get_template('jeans/listview.html')
+    context = {
+        'newrows': newrows,
+        'headers': current_table.list_headers,
+        'title': current_table._meta.db_table
+    }
+    return HttpResponse(template.render(context, request))
+
+
+def add_product(request):
+    # if this is a POST request we need to process the form data
+    if request.method == 'POST':
+        # create a form instance and populate it with data from the request:
+        form = forms.ProductForm(request.POST)
+        # check whether it's valid:
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/listall/product/')
+
+    return HttpResponseRedirect('/listall/product/')
+
+
+def add_row(request, table):
+    if request.method == 'POST':
+        current_form = None
+        for form in forms.form_listing:
+            if form._meta.model._meta.db_table.lower() == table.lower():
+                current_form = form
+
+        form = current_form(request.POST)
+        # check whether it's valid:
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/listall/' + table + "/")
+
+    return HttpResponseRedirect('/listall/' + table + "/")
 
 # TODO Insert script for inserting test data
 # TODO master script that combines Create -> Insert -> Alter scripts

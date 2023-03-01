@@ -1,3 +1,8 @@
+{% extends "jeans/jeanssite.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block extrabody %}{{ block.super }}
 <h1>Team</h1>
 <ul>
     {% for member in team %}
@@ -10,3 +15,16 @@
         <li>{{ table }}</li>
     {% endfor %}
 </ul>
+
+<form action="/add_row/product/" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Submit">
+</form>
+
+<form action="/add_row/promo/" method="post">
+    {% csrf_token %}
+    {{ form2 }}
+    <input type="submit" value="Submit">
+</form>
+{% endblock %}

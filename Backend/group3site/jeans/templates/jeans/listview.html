@@ -1,0 +1,32 @@
+{% extends "jeans/jeanssite.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block extrabody %}{{ block.super }}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>View {{title}}</title>
+</head>
+<body>
+    <div class="center">
+        <h1>{{title}}</h1>
+        <table class="center">
+            <tr>
+                {% for header in headers %}
+                    <th>{{header}}</th>
+                {% endfor %}
+            </tr>
+            {% for product in newrows %}
+                <tr>
+                    {% for field in product %}
+                    <td>{{field}}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+</body>
+</html>
+{% endblock %}
