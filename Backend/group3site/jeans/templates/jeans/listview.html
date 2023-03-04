@@ -4,17 +4,11 @@
 {% load my_extras %}
 
 {% block extrabody %}{{ block.super }}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>View {{title}}</title>
-</head>
-<body>
-    <div class="center">
         <h1>{{title}}</h1>
+        <a href="{% url 'create_row' table=title %}">Add New {{Title}}</a>
         <table class="center">
             <tr>
+                <th>ID</th>
                 {% for header in headers %}
                     <th>{{header}}</th>
                 {% endfor %}
@@ -22,14 +16,14 @@
             </tr>
             {% for row in page_obj %}
                 <tr>
+                    <td><a href="{% url 'edit_row' table=row|model_name id=row.id %}">{{row.id}}</a></td>
                     {% for field in fields %}
                     <td>{{ row|get_attr:field }}</td>
                     {% endfor %}
-                    <td><a id={{row.id}} href="{% url 'delete_row' table=row|model_name id=row.id %}">Delete</a></td>
+                    <td><a href="{% url 'delete_row' table=row|model_name id=row.id %}">Delete</a></td>
                 </tr>
             {% endfor %}
         </table>
-    </div>
 
 <div class="pagination">
     <span class="step-links">

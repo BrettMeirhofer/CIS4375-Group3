@@ -118,6 +118,7 @@ def delete_single(request, table, id):
     current_table.objects.filter(id=id).delete()
     return HttpResponseRedirect('/listall/' + table + "/")
 
+
 def add_row(request, table):
     if request.method == 'POST':
         current_form = None
@@ -132,6 +133,58 @@ def add_row(request, table):
             return HttpResponseRedirect('/listall/' + table + "/")
 
     return HttpResponseRedirect('/listall/' + table + "/")
+
+
+def create_single(request, table):
+    app = apps.get_app_config("jeans")
+    app_models = app.models.values()
+    current_table = None
+    for model in app_models:
+        if model._meta.db_table.lower() == table.lower():
+            current_table = model
+
+    current_form = None
+    for target_form in forms.form_listing:
+        if target_form._meta.model == current_table:
+            current_form = target_form
+
+    form = current_form()
+    template = loader.get_template('jeans/editview.html')
+    context = {
+        'form': form,
+        'action': "/add_row/{}/".format(table)
+    }
+    return HttpResponse(template.render(context, request))
+
+
+def edit_single(request, table, id):
+    app = apps.get_app_config("jeans")
+    app_models = app.models.values()
+    current_table = None
+    for model in app_models:
+        if model._meta.db_table.lower() == table.lower():
+            current_table = model
+
+    current_form = None
+    for target_form in forms.form_listing:
+        if target_form._meta.model == current_table:
+            current_form = target_form
+
+    current_row = current_table.objects.get(id=id)
+
+    if request.method == 'POST':
+        form = current_form(request.POST, instance=current_row)
+        if form.is_valid():
+            form.save()
+        return HttpResponseRedirect('/listall/' + table + "/")
+
+    form = current_form(None, instance=current_row)
+    template = loader.get_template('jeans/editview.html')
+    context = {
+        'form': form,
+        'action': "/edit_row/{}/{}/".format(table, id)
+    }
+    return HttpResponse(template.render(context, request))
 
 # TODO Insert script for inserting test data
 # TODO master script that combines Create -> Insert -> Alter scripts

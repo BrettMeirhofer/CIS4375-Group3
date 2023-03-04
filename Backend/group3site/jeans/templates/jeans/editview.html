@@ -1,0 +1,13 @@
+{% extends "jeans/jeanssite.html" %}
+{% load i18n %}
+{% load static %}
+{% load my_extras %}
+
+{% block extrabody %}{{ block.super }}
+<h1>{{title}}</h1>
+<form action={{ action }} method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Submit">
+</form>
+{% endblock %}
