@@ -9,3 +9,7 @@ def get_attr(value, arg):
         return getattr(value, arg)
     except:
         return
+
+@register.filter
+def model_name(value):
+    return value._meta.db_table

@@ -48,5 +48,5 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('listall/<table>/', views.view_products_list, name='listall'),
     path('add_row/<table>/', views.add_row, name='add_row'),
-    path('addproduct/', views.add_product, name='addproduct'),
+    path('delete_row/<table>/<int:id>/', views.delete_single, name='delete_row'),
 ]

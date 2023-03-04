@@ -18,12 +18,14 @@
                 {% for header in headers %}
                     <th>{{header}}</th>
                 {% endfor %}
+                <th>Delete</th>
             </tr>
             {% for row in page_obj %}
                 <tr>
                     {% for field in fields %}
                     <td>{{ row|get_attr:field }}</td>
                     {% endfor %}
+                    <td><a id={{row.id}} href="{% url 'delete_row' table=row|model_name id=row.id %}">Delete</a></td>
                 </tr>
             {% endfor %}
         </table>

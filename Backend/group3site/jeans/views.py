@@ -84,7 +84,6 @@ def view_products(request):
 
 
 def view_products_list(request, table):
-
     app = apps.get_app_config("jeans")
     app_models = app.models.values()
     current_table = None
@@ -92,17 +91,12 @@ def view_products_list(request, table):
         if model._meta.db_table.lower() == table.lower():
             current_table = model
 
-
     if not current_table:
         return HttpResponse("Failed")
-
 
     paginator = Paginator(current_table.objects.all(), 10)  # Show 25 contacts per page.
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-
-    #newrows = [[key for key in rows[0].keys()], *[list(idx.values()) for idx in rows]]
-    #print(newrows)
     template = loader.get_template('jeans/listview.html')
     context = {
         'page_obj': page_obj,
@@ -113,18 +107,16 @@ def view_products_list(request, table):
     return HttpResponse(template.render(context, request))
 
 
-def add_product(request):
-    # if this is a POST request we need to process the form data
-    if request.method == 'POST':
-        # create a form instance and populate it with data from the request:
-        form = forms.ProductForm(request.POST)
-        # check whether it's valid:
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect('/listall/product/')
+def delete_single(request, table, id):
+    app = apps.get_app_config("jeans")
+    app_models = app.models.values()
+    current_table = None
+    for model in app_models:
+        if model._meta.db_table.lower() == table.lower():
+            current_table = model
 
-    return HttpResponseRedirect('/listall/product/')
-
+    current_table.objects.filter(id=id).delete()
+    return HttpResponseRedirect('/listall/' + table + "/")
 
 def add_row(request, table):
     if request.method == 'POST':
