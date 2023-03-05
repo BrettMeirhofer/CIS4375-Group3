@@ -12,6 +12,8 @@ DELETE FROM "Image"
 
 DELETE FROM "ProductStatus"
 
+DELETE FROM "PromoStatus"
+
 DELETE FROM "ProductTag"
 
 DELETE FROM "Brand"

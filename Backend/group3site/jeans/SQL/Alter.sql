@@ -1,5 +1,9 @@
 ALTER TABLE Product ADD
-	product_brand_id int FOREIGN KEY REFERENCES Brand(id);
+	product_brand_id int FOREIGN KEY REFERENCES Brand(id),
+	product_status_id int FOREIGN KEY REFERENCES ProductStatus(id);
+
+ALTER TABLE Promo ADD
+	promo_status_id int FOREIGN KEY REFERENCES PromoStatus(id);
 
 ALTER TABLE ProductProductTag ADD
 	product_id int FOREIGN KEY REFERENCES Product(id),

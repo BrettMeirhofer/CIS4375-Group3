@@ -86,10 +86,24 @@ class Image(DescriptiveModel):
 class ProductStatus(StatusCode):
     description = 'Refers to the current state of the product'
     load_order = 1
+    list_fields = ["status_name", "status_desc"]
+    list_headers = ["Name", "Description"]
 
     class Meta:
         db_table = "ProductStatus"
         verbose_name_plural = "Product Status"
+        managed = IsManaged
+
+
+class PromoStatus(StatusCode):
+    description = 'Refers to the current state of the promo'
+    load_order = 1
+    list_fields = ["status_name", "status_desc"]
+    list_headers = ["Name", "Description"]
+
+    class Meta:
+        db_table = "PromoStatus"
+        verbose_name_plural = "Promo Status"
         managed = IsManaged
 
 
@@ -125,11 +139,13 @@ class Product(DescriptiveModel):
     product_desc = models.CharField(max_length=200, blank=True, null=True)
     product_price = models.DecimalField(max_digits=19, decimal_places=4, default=0)
     product_brand = models.ForeignKey(Brand, on_delete=models.RESTRICT)
+    product_status = models.ForeignKey(ProductStatus, on_delete=models.RESTRICT)
     product_tags = models.ManyToManyField(ProductTag, through="ProductProductTag")
     product_images = models.ManyToManyField(Image, through="ProductImage")
+    created_date = models.DateField(name="created_date")
     load_order = 2
-    list_fields = ["product_name", "product_desc"]
-    list_headers = ["Product Name", "Product Desc"]
+    list_fields = ["product_name", "product_desc", "created_date", "product_status"]
+    list_headers = ["Product Name", "Product Desc", "Created", "Status"]
 
     class Meta:
         db_table = "Product"
@@ -144,10 +160,12 @@ class Promo(DescriptiveModel):
     description = 'Describes a promotion for a group of products'
     promo_name = models.CharField(max_length=80)
     promo_code = models.CharField(max_length=10, unique=True)
+    promo_status = models.ForeignKey(PromoStatus, on_delete=models.RESTRICT)
     promo_products = models.ManyToManyField(Product, through="ProductPromo")
+    created_date = models.DateField()
     load_order = 2
-    list_fields = ["promo_name", "promo_code"]
-    list_headers = ["Promo Name", "Promo Code"]
+    list_fields = ["promo_name", "promo_code", "promo_status"]
+    list_headers = ["Promo Name", "Promo Code", "Status"]
 
     class Meta:
         db_table = "Promo"
@@ -162,6 +180,7 @@ class ProductProductTag(DescriptiveModel):
     description = 'Used to associate a ProductTag with a Product'
     product = models.ForeignKey(Product, on_delete=models.RESTRICT)
     product_tag = models.ForeignKey(ProductTag, on_delete=models.RESTRICT)
+    created_date = models.DateField()
     load_order = 3
 
     class Meta:
@@ -199,6 +218,7 @@ class Customer(DescriptiveModel):
     first_name = models.CharField(max_length=200)
     last_name = models.CharField(max_length=200)
     email = models.EmailField()
+    created_date = models.DateField()
     load_order = 1
 
     class Meta:
