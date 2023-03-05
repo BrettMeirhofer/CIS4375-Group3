@@ -130,3 +130,8 @@ dmypy.json
 .pyre/
 Backend/group3site/group3site/settings.py
 Backend/group3site/jeans/migrations/
+Backend/group3site/jeans/SQL/.vs/VSWorkspaceState.json
+Backend/group3site/jeans/SQL/.vs/slnx.sqlite
+Backend/group3site/jeans/SQL/.vs/SQL/v15/.ssms_suo
+Backend/group3site/jeans/SQL/.vs/slnx.sqlite
+*.sqlite
