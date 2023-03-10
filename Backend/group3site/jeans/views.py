@@ -12,7 +12,7 @@ from django.apps import apps
 
 def index(request):
     out = """Hello, world. You're at the jeans index. """
-    team = ["Brett Meirhofer", "Perminder Singh", "Laura Moreno, Daniel Thomas"]
+    team = ["Brett Meirhofer", "Perminder Singh", "Laura Moreno, Daniel Thomas", "Alex Bermudez"]
     solid_tables = data_dict_helper.get_solid_models("jeans")
     tables = []
     for table in solid_tables:
