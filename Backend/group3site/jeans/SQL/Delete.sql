@@ -10,6 +10,8 @@ DELETE FROM "Promo"
 
 DELETE FROM "Image"
 
+DELETE FROM "CustomerStatus"
+
 DELETE FROM "ProductStatus"
 
 DELETE FROM "PromoStatus"

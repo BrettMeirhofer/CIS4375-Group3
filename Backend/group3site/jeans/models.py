@@ -44,6 +44,8 @@ class StatusCode(DescriptiveModel):
     status_name = models.CharField(max_length=40)
     status_desc = models.CharField(max_length=200, blank=True, null=True)
     is_active = models.BooleanField(default=True)
+    list_fields = ["status_name", "status_desc"]
+    list_headers = ["Name", "Description"]
     category = "Other"
 
     def __str__(self):
@@ -83,11 +85,19 @@ class Image(DescriptiveModel):
         managed = IsManaged
 
 
+class CustomerStatus(StatusCode):
+    description = 'Refers to the current state of the customer'
+    load_order = 1
+
+    class Meta:
+        db_table = "CustomerStatus"
+        verbose_name_plural = "Customer Status"
+        managed = IsManaged
+
+
 class ProductStatus(StatusCode):
     description = 'Refers to the current state of the product'
     load_order = 1
-    list_fields = ["status_name", "status_desc"]
-    list_headers = ["Name", "Description"]
 
     class Meta:
         db_table = "ProductStatus"
@@ -98,8 +108,6 @@ class ProductStatus(StatusCode):
 class PromoStatus(StatusCode):
     description = 'Refers to the current state of the promo'
     load_order = 1
-    list_fields = ["status_name", "status_desc"]
-    list_headers = ["Name", "Description"]
 
     class Meta:
         db_table = "PromoStatus"
@@ -219,6 +227,7 @@ class Customer(DescriptiveModel):
     last_name = models.CharField(max_length=200)
     email = models.EmailField()
     created_date = models.DateField()
+    customer_status = models.ForeignKey(CustomerStatus, on_delete=models.RESTRICT)
     load_order = 1
 
     class Meta:

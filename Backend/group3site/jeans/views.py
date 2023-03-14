@@ -37,8 +37,8 @@ class FieldTypeMap:
 
 
 def dict3(request):
-    title_row = ["Load Order", "Table Name", "Row Name", "Default", "Max Length", "Type", "PK", "FK",
-                 "Required", "Allow NULL", "C Delete", "C Update", "Domain", "Row Desc", "Table Desc"]
+    title_row = ["Load Order", "Table Name", "Attribute Name", "Default", "Max Length", "Type", "PK", "FK",
+                 "Required", "Allow NULL", "C Delete", "C Update", "Domain", "Attribute Desc", "Table Desc"]
     module_dir = os.path.dirname(__file__)
     file_path = os.path.join(module_dir, "GeneratedFiles", "DataDict.xlsx")
     ddh.generate_data_dict_excel(file_path, title_row, FieldTypeMap.field_type_dict)
@@ -65,7 +65,6 @@ def generate_create(request):
 
 
 def generate_alter(request):
-    ddh.generate_alter_sql("jeans")
     return HttpResponse("Success")
 
 
@@ -73,7 +72,7 @@ def generate_sql_all(request):
     ddh.generate_ordered_sql("jeans", True, "DROP TABLE", "Drop.sql")
     ddh.generate_create_sql("jeans", FieldTypeMap.field_type_dict)
     ddh.generate_ordered_sql("jeans", True, "DELETE FROM", "Delete.sql")
-    ddh.generate_alter_sql("jeans")
+    ddh.generate_insert_sql("jeans")
     return HttpResponse("Success")
 
 
@@ -185,6 +184,12 @@ def edit_single(request, table, id):
         'action': "/edit_row/{}/{}/".format(table, id)
     }
     return HttpResponse(template.render(context, request))
+
+
+def generate_insert(request):
+    ddh.generate_insert_sql("jeans", FieldTypeMap.field_type_dict)
+    return HttpResponse("Success")
+
 
 # TODO Insert script for inserting test data
 # TODO master script that combines Create -> Insert -> Alter scripts

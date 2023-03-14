@@ -26,15 +26,15 @@ def extract_field_props(current_field, model, field_type_dict):
         else:
             domain += "UNIQUE"
 
-    c_delete = False
-    c_update = False
-    fk = False
+    c_delete = "No"
+    c_update = "No"
+    fk = "No"
     null = current_field.null
     if field_type == "ForeignKey":
-        fk = True
+        fk = "Yes"
         field_name += "_id"
         if null:
-            c_update = True
+            c_update = "Yes"
 
     try:
         if field_type == "TextField":
@@ -55,8 +55,11 @@ def extract_field_props(current_field, model, field_type_dict):
 
     pk = current_field.primary_key
 
-    blank = True if current_field.primary_key else not current_field.blank
-    return [field_name, help_text, default, max_length, field_type, pk, fk, blank, null, c_delete,
+    required = "No"
+    if current_field.primary_key or not current_field.blank:
+        required = "Yes"
+
+    return [field_name, help_text, default, max_length, field_type, pk, fk, required, null, c_delete,
             c_update, domain]
 
 
@@ -161,7 +164,6 @@ def generate_create_sql(app_name, field_type_dict):
                           not isinstance(field, models.fields.reverse_related.ManyToOneRel)
                           and not isinstance(field, models.fields.reverse_related.ManyToManyRel)
                           and not isinstance(field, models.fields.related.ManyToManyField)
-                          and not isinstance(field, models.ForeignKey)
                           and not isinstance(field, models.fields.AutoField)]
 
         for current_field in visible_fields:
@@ -182,36 +184,35 @@ def generate_create_sql(app_name, field_type_dict):
             unique = ""
             if current_field.unique:
                 unique = " UNIQUE"
-            drop_file.write("\t{}{}{}{}{},\n".format(field_name, field_type_text, null, default, unique))
+
+            if isinstance(current_field, models.ForeignKey):
+                drop_file.write("\t{}_id int FOREIGN KEY REFERENCES {}(id),\n".format(current_field.name,current_field.related_model._meta.db_table))
+            else:
+                drop_file.write("\t{}{}{}{}{},\n".format(field_name, field_type_text, null, default, unique))
 
         drop_file.write(");\n")
         drop_file.write("\n")
     drop_file.close()
 
 
-def generate_alter_sql(app_name):
+def generate_insert_sql(app_name):
     solid_tables = get_solid_models(app_name)
     solid_tables.sort(key=lambda x: x.load_order, reverse=False)
     module_dir = os.path.dirname(__file__)
-    path = os.path.join(module_dir, "SQL", "Alter.sql")
+    path = os.path.join(module_dir, "SQL", "Insert.sql")
+
     drop_file = open(path, "w")
     for table in solid_tables:
-        fk_fields = []
-        for current_field in table._meta.get_fields(include_parents=False):
-            if not isinstance(current_field, models.ForeignKey):
-                continue
-            fk_fields.append(current_field)
-
-        if len(fk_fields) == 0:
-            continue
-
-        drop_file.write("ALTER TABLE " + table._meta.db_table + " ADD\n")
-
-        for index, current_field in enumerate(fk_fields):
-            end = ","
-            if index == len(fk_fields) - 1:
-                end = ";"
-            drop_file.write("\t{}_id int FOREIGN KEY REFERENCES {}(id){}\n".format(current_field.name, current_field.related_model._meta.db_table, end))
-
+        inpath = os.path.join(module_dir, "Data", "{}.tsv".format(table._meta.db_table))
+        drop_file.write("BULK INSERT " + table._meta.db_table + "\n")
+        drop_file.write("FROM " + '"' + inpath + '"\n')
+        drop_file.write("WITH\n")
+        drop_file.write("\t(\n")
+        drop_file.write("\tCHECK_CONSTRAINTS,\n")
+        drop_file.write("\t" + R"FIELDTERMINATOR = '\t'," + "\n")
+        drop_file.write("\t" + R"ROWTERMINATOR = '\n'," + "\n")
+        drop_file.write("\tKEEPIDENTITY\n")
+        drop_file.write("\t)\n")
+        drop_file.write("GO\n")
         drop_file.write("\n")
     drop_file.close()

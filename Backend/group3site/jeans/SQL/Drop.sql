@@ -10,6 +10,8 @@ DROP TABLE "Promo"
 
 DROP TABLE "Image"
 
+DROP TABLE "CustomerStatus"
+
 DROP TABLE "ProductStatus"
 
 DROP TABLE "PromoStatus"
