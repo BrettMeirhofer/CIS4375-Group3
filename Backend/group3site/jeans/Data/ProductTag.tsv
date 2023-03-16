@@ -1,5 +1,4 @@
-id,status_name,status_desc,is_active
-1,Post-surgical,"The post-surgical compression garments for breast reduction, liposuction, and postpartum.",TRUE
-2,Shapewear,"The shapewear for body sculpting and body shaping, butt lifting, and maternity.",TRUE
-3,Trainer vest,The Trainer vest for lumbar support to use in the gym including the waist cinchers to optimize the silhouette.,TRUE
-4,Undergarments,"The undergarments as bras that hold and tight the back fat for full coverage, shaper panties for belly control, butt lifter, and compression panties.",TRUE
+1	Post-surgical	"The post-surgical compression garments for breast reduction, liposuction, and postpartum."	1
+2	Shapewear	"The shapewear for body sculpting and body shaping, butt lifting, and maternity."	1
+3	Trainer vest	The Trainer vest for lumbar support to use in the gym including the waist cinchers to optimize the silhouette.	1
+4	Undergarments	"The undergarments as bras that hold and tight the back fat for full coverage, shaper panties for belly control, butt lifter, and compression panties."	1
