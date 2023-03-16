@@ -179,14 +179,14 @@ def generate_create_sql(app_name, field_type_dict):
                     default = " DEFAULT {}".format(int(current_field.default))
                 else:
                     default = " DEFAULT {}".format(current_field.default)
-            if not current_field.null:
-                null = " NOT NULL"
+            if current_field.null:
+                null = " NULL"
             unique = ""
             if current_field.unique:
                 unique = " UNIQUE"
 
             if isinstance(current_field, models.ForeignKey):
-                drop_file.write("\t{}_id int FOREIGN KEY REFERENCES {}(id),\n".format(current_field.name,current_field.related_model._meta.db_table))
+                drop_file.write("\t{}_id int FOREIGN KEY REFERENCES {}(id){},\n".format(current_field.name,current_field.related_model._meta.db_table, null))
             else:
                 drop_file.write("\t{}{}{}{}{},\n".format(field_name, field_type_text, null, default, unique))
 

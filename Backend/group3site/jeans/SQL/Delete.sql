@@ -8,6 +8,8 @@ DELETE FROM "Product"
 
 DELETE FROM "Promo"
 
+DELETE FROM "Customer"
+
 DELETE FROM "Image"
 
 DELETE FROM "CustomerStatus"
@@ -19,6 +21,4 @@ DELETE FROM "PromoStatus"
 DELETE FROM "ProductTag"
 
 DELETE FROM "Brand"
-
-DELETE FROM "Customer"
 

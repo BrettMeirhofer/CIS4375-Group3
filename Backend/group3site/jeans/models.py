@@ -146,8 +146,8 @@ class Product(DescriptiveModel):
     product_name = models.CharField(max_length=80)
     product_desc = models.CharField(max_length=200, blank=True, null=True)
     product_price = models.DecimalField(max_digits=19, decimal_places=4, default=0)
-    product_brand = models.ForeignKey(Brand, on_delete=models.RESTRICT)
-    product_status = models.ForeignKey(ProductStatus, on_delete=models.RESTRICT)
+    product_brand = models.ForeignKey(Brand, on_delete=models.RESTRICT, blank=True, null=True)
+    product_status = models.ForeignKey(ProductStatus, on_delete=models.RESTRICT, blank=True, null=True)
     product_tags = models.ManyToManyField(ProductTag, through="ProductProductTag")
     product_images = models.ManyToManyField(Image, through="ProductImage")
     created_date = models.DateField(name="created_date")
@@ -228,7 +228,7 @@ class Customer(DescriptiveModel):
     email = models.EmailField()
     created_date = models.DateField()
     customer_status = models.ForeignKey(CustomerStatus, on_delete=models.RESTRICT)
-    load_order = 1
+    load_order = 2
 
     class Meta:
         db_table = "Customer"
