@@ -1,3 +1,5 @@
+DROP TABLE "CustomerPromo"
+
 DROP TABLE "ProductProductTag"
 
 DROP TABLE "ProductImage"
@@ -9,8 +11,6 @@ DROP TABLE "Product"
 DROP TABLE "Promo"
 
 DROP TABLE "Customer"
-
-DROP TABLE "Image"
 
 DROP TABLE "CustomerStatus"
 

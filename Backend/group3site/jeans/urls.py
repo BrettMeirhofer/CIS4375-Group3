@@ -47,8 +47,9 @@ urlpatterns = [
     path('sql', views.generate_sql_all, name='sqlall'),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('listall/<table>/', views.view_products_list, name='listall'),
-    path('add_row/<table>/', views.add_row, name='add_row'),
     path('delete_row/<table>/<int:id>/', views.delete_single, name='delete_row'),
     path('create_row/<table>/', views.create_single, name='create_row'),
     path('edit_row/<table>/<int:id>/', views.edit_single, name='edit_row'),
+    path('testcreate/', views.ProductCreate.as_view(), name='create_product'),
+    path('testupdate/<int:pk>/',views. ProductUpdate.as_view(), name='update_product')
 ]

@@ -29,7 +29,11 @@ def extract_field_props(current_field, model, field_type_dict):
     c_delete = "No"
     c_update = "No"
     fk = "No"
-    null = current_field.null
+    null = "No"
+    if current_field.null:
+        null = "Yes"
+
+
     if field_type == "ForeignKey":
         fk = "Yes"
         field_name += "_id"
@@ -53,7 +57,9 @@ def extract_field_props(current_field, model, field_type_dict):
         #Not a datefield
         pass
 
-    pk = current_field.primary_key
+    pk = "No"
+    if current_field.primary_key:
+        pk = "Yes"
 
     required = "No"
     if current_field.primary_key or not current_field.blank:

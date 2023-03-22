@@ -1,14 +1,3 @@
-BULK INSERT Image
-FROM "F:\School\CIS4375-Group3\Backend\group3site\jeans\Data\Image.tsv"
-WITH
-	(
-	CHECK_CONSTRAINTS,
-	FIELDTERMINATOR = '\t',
-	ROWTERMINATOR = '\n',
-	KEEPIDENTITY
-	)
-GO
-
 BULK INSERT CustomerStatus
 FROM "F:\School\CIS4375-Group3\Backend\group3site\jeans\Data\CustomerStatus.tsv"
 WITH
@@ -121,6 +110,17 @@ GO
 
 BULK INSERT ProductPromo
 FROM "F:\School\CIS4375-Group3\Backend\group3site\jeans\Data\ProductPromo.tsv"
+WITH
+	(
+	CHECK_CONSTRAINTS,
+	FIELDTERMINATOR = '\t',
+	ROWTERMINATOR = '\n',
+	KEEPIDENTITY
+	)
+GO
+
+BULK INSERT CustomerPromo
+FROM "F:\School\CIS4375-Group3\Backend\group3site\jeans\Data\CustomerPromo.tsv"
 WITH
 	(
 	CHECK_CONSTRAINTS,
