@@ -6,9 +6,27 @@
 {% load my_extras %}
 
 {% block extrabody %}{{ block.super }}
-<form enctype="multipart/form-data" class="container" method="post" id="product_form" action={{ action }}>
+<h1>{{title}}</h1>
+<form enctype="multipart/form-data" method="post" id="product_form" action={{ action }}>
     {% csrf_token %}
-    {{ form }}
+    <div class="card">
+        {% for field in form %}
+            <div class="form-group card-body">
+                <label>{{field.label}}</label>
+                {% if field.field.required %}
+                    <span style="color: red;" class="required">*</span>
+                {% endif %}
+
+                {{field}}
+                {% if field.help_text %}
+                    <small style="color: grey">{{ field.help_text }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+                    <p style="color: red">{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
     <br>
 
     {% for current_formset in formsets %}
