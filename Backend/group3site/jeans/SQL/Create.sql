@@ -1,9 +1,3 @@
-CREATE TABLE Image(
-	id int NOT NULL PRIMARY KEY IDENTITY(1,1),
-	image_url nvarchar(200),
-	image_caption nvarchar(200) NULL,
-);
-
 CREATE TABLE CustomerStatus(
 	id int NOT NULL PRIMARY KEY IDENTITY(1,1),
 	status_name nvarchar(40),
@@ -76,12 +70,22 @@ CREATE TABLE ProductProductTag(
 CREATE TABLE ProductImage(
 	id int NOT NULL PRIMARY KEY IDENTITY(1,1),
 	product_id int FOREIGN KEY REFERENCES Product(id),
-	product_image_id int FOREIGN KEY REFERENCES Image(id),
+	image_url nvarchar(200),
+	image_caption nvarchar(200) NULL,
 );
 
 CREATE TABLE ProductPromo(
 	id int NOT NULL PRIMARY KEY IDENTITY(1,1),
 	product_id int FOREIGN KEY REFERENCES Product(id),
 	promo_id int FOREIGN KEY REFERENCES Promo(id),
+	current_price numeric DEFAULT 0,
+	promo_price numeric DEFAULT 0,
+);
+
+CREATE TABLE CustomerPromo(
+	id int NOT NULL PRIMARY KEY IDENTITY(1,1),
+	customer_id int FOREIGN KEY REFERENCES Customer(id),
+	promo_id int FOREIGN KEY REFERENCES Promo(id),
+	created_date date,
 );
 

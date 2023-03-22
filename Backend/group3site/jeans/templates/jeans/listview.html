@@ -5,14 +5,14 @@
 
 {% block extrabody %}{{ block.super }}
         <h1>{{title}}</h1>
-        <a href="{% url 'create_row' table=title %}">Add New {{Title}}</a>
+        <a class = "button-1" href="{% url 'create_row' table=title %}">Create</a>
         <table class="center">
             <tr>
                 <th>ID</th>
                 {% for header in headers %}
                     <th>{{header}}</th>
                 {% endfor %}
-                <th>Delete</th>
+                <th style="width: 100px"></th>
             </tr>
             {% for row in page_obj %}
                 <tr>
@@ -20,7 +20,7 @@
                     {% for field in fields %}
                     <td>{{ row|get_attr:field }}</td>
                     {% endfor %}
-                    <td><a href="{% url 'delete_row' table=row|model_name id=row.id %}">Delete</a></td>
+                    <td><a class = "button-1" href="{% url 'delete_row' table=row|model_name id=row.id %}">Delete</a></td>
                 </tr>
             {% endfor %}
         </table>
@@ -28,8 +28,8 @@
 <div class="pagination">
     <span class="step-links">
         {% if page_obj.has_previous %}
-            <a href="?page=1">&laquo; first</a>
-            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+            <a class = "button-1" href="?page=1">&laquo; First</a>
+            <a class = "button-1" href="?page={{ page_obj.previous_page_number }}">Previous</a>
         {% endif %}
 
         <span class="current">
@@ -37,11 +37,9 @@
         </span>
 
         {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}">next</a>
-            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+            <a class = "button-1" href="?page={{ page_obj.next_page_number }}">Next</a>
+            <a class = "button-1" href="?page={{ page_obj.paginator.num_pages }}">Last &raquo;</a>
         {% endif %}
     </span>
 </div>
-</body>
-</html>
 {% endblock %}
