@@ -172,8 +172,8 @@ class Promo(DescriptiveModel):
 
 class ProductProductTag(DescriptiveModel):
     description = 'Used to associate a ProductTag with a Product'
-    product = models.ForeignKey(Product, on_delete=models.RESTRICT)
-    product_tag = models.ForeignKey(ProductTag, on_delete=models.RESTRICT)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product_tag = models.ForeignKey(ProductTag, on_delete=models.CASCADE)
     created_date = models.DateField()
     load_order = 3
 
@@ -185,7 +185,7 @@ class ProductProductTag(DescriptiveModel):
 
 class ProductImage(DescriptiveModel):
     description = 'An image with a caption that displays a product'
-    product = models.ForeignKey(Product, on_delete=models.RESTRICT)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
     image_url = models.URLField()
     image_caption = models.CharField(max_length=200, blank=True, null=True)
     load_order = 3

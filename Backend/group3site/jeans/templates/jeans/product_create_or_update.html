@@ -43,6 +43,7 @@
                 {% for fields in formset.empty_form.visible_fields %}
                     <td>{{fields}}</td>
                 {% endfor %}
+                <td></td>
             </tr>
         </script>
         <div class="table-responsive card mt-4">
@@ -52,6 +53,9 @@
                     <th>{{header}}</th>
                     {% endfor %}
                     <th style="width: 100px">Delete?</th>
+                    <th style="width: 20px">
+                        <a href="#" id="add-variant-button" class="btn btn-secondary add-{{current_formset.form.title}} button-1">+</a>
+                    </th>
                 </thead>
                 <tbody id="item-{{current_formset.form.title}}">  <!-- id="item-inlineformsetname" -->
                     <!-- formset non forms errors -->
@@ -72,25 +76,29 @@
                                     {% comment %} {{ field.DELETE }} {% endcomment %}
                                 </td>
                             {% endfor %}
+                            <td></td>
                             {% comment %} for delete {% endcomment %}
                         </tr>
+
                     {% endfor %}
                 </tbody>
             </table>
-            <a href="#" id="add-variant-button" class="btn btn-secondary add-{{current_formset.form.title}} button-1">Add More</a> <!-- id="add-inlineformsetname-button" -->
+             <!-- id="add-inlineformsetname-button" -->
         </div>
 
         {% endwith %}
     {% endfor %}
     <input type="submit" value="Submit">
 </form>
-
+{% if edit %}
+    <a style="background-color:red;" class = "button-1" href="{% url 'delete_row' table=table id=id%}">Delete</a>
+{% endif %}
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 
 <script>
 {% for current_formset in formsets %}
       $(document).ready(function() {
-    // when user clicks add more btn of variants
+    // when user clicks add more btn of formsets
     console.log('.add-{{current_formset.form.title}}')
       $('.add-{{current_formset.form.title}}').click(function(ev) {
           ev.preventDefault();

@@ -99,19 +99,13 @@ def view_products_list(request, table):
     if not current_table:
         return HttpResponse("Failed")
 
+    print(current_table.list_headers)
     paginator = Paginator(current_table.objects.all(), 10)  # Show 25 contacts per page.
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     template = loader.get_template('jeans/listview.html')
-    context = {
-        'page_obj': page_obj,
-        'title': current_table._meta.db_table,
-    }
-    if hasattr(current_table, "list_headers") and hasattr(current_table, "list_fields"):
-        context["fields"] = current_table.list_fields
-        context["headers"]: current_table.list_headers
+    context = {'page_obj': page_obj, 'title': current_table._meta.db_table, "fields": current_table.list_fields, "headers": current_table.list_headers}
     return HttpResponse(template.render(context, request))
-
 
 def delete_single(request, table, id):
     app = apps.get_app_config("jeans")
@@ -209,6 +203,9 @@ def edit_single(request, table, id):
         'form': form,
         'action': "/edit_row/{}/{}/".format(table, id),
         'formsets': formsets,
+        'edit': True,
+        'table': table,
+        'id': id
     }
     return HttpResponse(template.render(context, request))
 
