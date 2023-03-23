@@ -141,7 +141,7 @@ def create_single(request, table):
     form = current_form(request.POST or None)
 
     formsets = []
-    if hasattr(forms, "formsets"):
+    if hasattr(form, "formsets"):
         for formset in form.formsets:
             formsets.append(formset(request.POST or None, request.FILES or None, prefix='variants'))
 
@@ -195,7 +195,7 @@ def edit_single(request, table, id):
     form = current_form(request.POST or None, instance=current_row)
 
     formsets = []
-    if hasattr(forms, "formsets"):
+    if hasattr(form, "formsets"):
         for formset in form.formsets:
             formsets.append(formset(request.POST or None, request.FILES or None, prefix='variants', instance=current_row))
 
