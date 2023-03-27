@@ -1,0 +1,109 @@
+<!-- product_create_or_update.html -->
+
+{% extends "jeans/jeanssite.html" %}
+{% load i18n %}
+{% load static %}
+{% load my_extras %}
+
+{% block extrabody %}{{ block.super }}
+<h1>{{title}}</h1>
+<form enctype="multipart/form-data" method="post" id="product_form" action={{ action }}>
+    {% csrf_token %}
+    <div class="card">
+        {% for field in form %}
+            <div class="form-group card-body">
+                <label>{{field.label}}</label>
+                {% if field.field.required %}
+                    <span style="color: red;" class="required">*</span>
+                {% endif %}
+
+                {{field}}
+                {% if field.help_text %}
+                    <small style="color: grey">{{ field.help_text }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+                    <p style="color: red">{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
+    <br>
+
+    {% for current_formset in formsets %}
+    <h3>{{ current_formset.form.title }}</h3>
+     {% with current_formset as formset %}
+        {{ formset.management_form }}
+        <script type="text/html" id="{{current_formset.form.title}}-template">  // id="inlineformsetname-template"
+            // id='inlineformsetname-__prefix__'
+            <tr id="{{current_formset.form.title}}-__prefix__" class= hide_all>
+                {% for fields in formset.empty_form.hidden_fields %}
+                    {{ fields }}
+                {% endfor %}
+
+                {% for fields in formset.empty_form.visible_fields %}
+                    <td>{{fields}}</td>
+                {% endfor %}
+            </tr>
+        </script>
+        <div class="table-responsive card mt-4">
+            <table class="table card-header">
+                <thead class="text-secondary">
+                    {% for header in formset.form.field_titles %}
+                    <th>{{header}}</th>
+                    {% endfor %}
+                    <th style="width: 100px">Delete?</th>
+                </thead>
+                <tbody id="item-{{current_formset.form.title}}">  <!-- id="item-inlineformsetname" -->
+                    <!-- formset non forms errors -->
+                    {% for error in formset.non_form_errors %}
+                        <span style="color: red">{{ error }}</span>
+                    {% endfor %}
+                    {% for formss in formset %}
+                        {{ formss.management_form }}
+                        <tr id="{{current_formset.form.title}}-{{ forloop.counter0 }}" class= hide_all>  <!-- id="inlineformsetname-counter" -->
+                            {{ formss.id }}
+                            {% for field in formss.visible_fields %}
+                                <td>
+                                    {{field}}
+                                    {% for error in field.errors %}
+                                        <span style="color: red">{{ error }}</span>
+                                    {% endfor %}
+
+                                    {% comment %} {{ field.DELETE }} {% endcomment %}
+                                </td>
+                            {% endfor %}
+                            {% comment %} for delete {% endcomment %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <a href="#" id="add-variant-button" class="btn btn-secondary add-{{current_formset.form.title}} button-1">Add More</a> <!-- id="add-inlineformsetname-button" -->
+        </div>
+
+        {% endwith %}
+    {% endfor %}
+    <input type="submit" value="Submit">
+</form>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+
+<script>
+{% for current_formset in formsets %}
+      $(document).ready(function() {
+    // when user clicks add more btn of variants
+    console.log('.add-{{current_formset.form.title}}')
+      $('.add-{{current_formset.form.title}}').click(function(ev) {
+          ev.preventDefault();
+          var count = $('#item-{{current_formset.form.title}}').children().length;
+          console.log(count)
+          var tmplMarkup = $('#{{current_formset.form.title}}-template').html();
+          var compiledTmpl = tmplMarkup.replace(/__prefix__/g, count);
+          $('#item-{{current_formset.form.title}}').append(compiledTmpl);
+
+          // update form count
+          $('#id_{{current_formset.form.title}}-TOTAL_FORMS').attr('value', count+1);
+      });
+  });
+{% endfor %}
+</script>
+{% endblock %}

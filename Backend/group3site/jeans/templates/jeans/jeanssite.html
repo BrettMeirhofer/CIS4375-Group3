@@ -3,6 +3,197 @@
 
 <!DOCTYPE html>
 <html lang="en">
+<style>
+h2 {
+    display: inline;
+}
+
+.navbar {
+    list-style-type: none;
+    margin: 0px 320px;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+}
+
+@media only screen and (min-width: 1200px) {
+  .navbar {
+    margin: 0px 320px;
+  }
+
+  .container {
+    width: 70%;
+    min-height: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 200px;
+    margin-top: 0px;
+    padding: 50px;
+  }
+}
+
+.navcontainer {
+    background-color: #333;
+}
+
+.navlink {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+.bignav {
+font-size: 20px;
+}
+
+.navli {
+    float: left;
+}
+
+.active {
+  background-color: #04AA6D;
+}
+
+.navlink:hover:not(.active) {
+  background-color: #111;
+}
+
+.gallerydiv {
+    display: inline-block;
+}
+
+.gallerydate {
+    text-align: center;
+}
+
+.container {
+    background: #D3D3D3;
+    padding-bottom: 50px;
+    padding-top: 50px;
+}
+
+.background {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+}
+
+.center {
+    margin: auto;
+    text-align: center;
+}
+
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    margin:auto;
+    width: 800px;
+}
+
+td {
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    text-align: left;
+    padding: 8px;
+    background-color: #333;
+    color: white;
+    cursor: pointer;
+}
+
+tr:nth-child(odd) {
+    background-color: white;
+}
+
+body {
+    margin: 0%;
+}
+
+.canvas_graph{
+    margin: auto;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -60px;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
+hr {
+    height: 1px;
+    background-color: Gray;
+    margin: 20px 30%;
+    border-style: none;
+}
+
+input[type=text] {
+  display: block;
+  padding: 12px 20px;
+  margin: 8px 0;
+  box-sizing: border-box;
+}
+
+.button-1, input[type=submit]{
+  background-color: #333;
+  border-radius: 8px;
+  border-style: none;
+  box-sizing: border-box;
+  color: #FFFFFF;
+  cursor: pointer;
+  display: inline-block;
+  font-family: "Haas Grot Text R Web", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  height: 40px;
+  line-height: 20px;
+  list-style: none;
+  margin: 0;
+  outline: none;
+  padding: 10px 16px;
+  position: relative;
+  text-align: center;
+  text-decoration: none;
+  transition: color 100ms;
+  vertical-align: baseline;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.button-1:hover,
+.button-1:focus {
+  background-color: #525252;
+}
+</style>
 <head>
     {% block extrahead %}
     <meta charset="UTF-8">
@@ -10,17 +201,19 @@
 </head>
 <body class="background">
     <div class="navcontainer">
+        <ul class="navbar navbar-expand-lg navbar-light bg-light">
+            <li class="navli"><a class="navlink bignav" href="{% url 'index'%}">Home</a></li>
+            <li class="navli"><a class="navlink bignav" href="{% url 'listall' table='promo' %}">Promos</a></li>
+            <li class="navli"><a class="navlink bignav" href="{% url 'listall' table='product'  %}">Products</a></li>
+            <li class="navli"><a class="navlink bignav" href="{% url 'index'%}">Reports</a></li>
+        </ul>
         <ul class="navbar">
-            <li class="navli"><a class="navlink" href="{% url 'index'%}">Home</a></li>
-            <li class="navli"><a class="navlink" href="{% url 'listall' table='promo' %}">Promos</a></li>
-            <li class="navli"><a class="navlink" href="{% url 'listall' table='product'  %}">Products</a></li>
-            <li class="navli"><a class="navlink" href="{% url 'listall' table='customer'  %}">Customer</a></li>
-            <li class="navli"><a class="navlink" href="{% url 'index'%}">Reports</a></li>
-            <li class="navli"><a class="navlink" href="{% url 'listall' table='producttag' %}">ProductTag</a></li>
-            <li class="navli"><a class="navlink" href="{% url 'listall' table='productstatus'  %}">ProductStatus</a></li>
-            <li class="navli"><a class="navlink" href="{% url 'listall' table='image'  %}">Image</a></li>
-            <li class="navli"><a class="navlink" href="{% url 'listall' table='brand'  %}">Brand</a></li>
-            <li class="navli"><a class="navlink" href="{% url 'listall' table='promostatus'  %}">Promo Status</a></li>
+            <li class="navli"><a class="navlink"  href="{% url 'listall' table='customer'  %}">Customer</a></li>
+            <li class="navli"><a class="navlink"  href="{% url 'listall' table='producttag' %}">ProductTag</a></li>
+            <li class="navli"><a class="navlink"  href="{% url 'listall' table='productstatus'  %}">ProductStatus</a></li>
+            <li class="navli"><a class="navlink"  href="{% url 'listall' table='brand'  %}">Brand</a></li>
+            <li class="navli"><a class="navlink"  href="{% url 'listall' table='promostatus'  %}">Promo Status</a></li>
+            <li class="navli"><a class="navlink"  href="{% url 'listall' table='customerpromo'  %}">Customer Promo</a></li>
         </ul>
     </div>
     <div class="container">
