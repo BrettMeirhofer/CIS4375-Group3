@@ -270,3 +270,18 @@ class ProductUpdate(ProductPromoInline, UpdateView):
         return {
             'variants': forms.ProductPromoFormSet(self.request.POST or None, self.request.FILES or None, instance=self.object, prefix='variants'),
         }
+
+
+
+
+
+def top_products_month(request):
+    return get_graph_data("QueryProductSoldMonthly.sql")
+
+
+def top_emps_month(request):
+    return get_graph_data("QueryEmpPerfMonthly.sql")
+
+
+def top_cust_month(request):
+    return get_graph_data("QueryCustPerfMonthly.sql")
