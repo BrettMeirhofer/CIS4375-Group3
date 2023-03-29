@@ -8,5 +8,21 @@
     {% for member in team %}
         <li>{{ member }}</li>
     {% endfor %}
-    </ul>
+</ul>
 {% endblock %}
+<body class="background">
+    <div class="navcontainer">
+        <ul class="navbar">
+            //Buttons with links to respective pages within the website.
+            <li class="navli"><a class="navlink" href="{% url 'index'%}">Home</a></li>
+            <li class="navli"><a class="navlink" href="{% url 'listall' table='product'  %}">Products</a></li>
+            <li class="navli"><a class="navlink" href="{% url 'index'%}">Reports</a></li>
+            <li class="navli"><a class="navlink" href="{% url 'listall' table='promo' %}">Promos</a></li>
+            <li class="navli"><a class="navlink" href="{% url 'listall' table='customer'  %}">Customers</a></li>
+        </ul>
+    </div>
+    <div class="container">
+        {% block extrabody %}
+        {% endblock %}
+    </div>
+</body>
