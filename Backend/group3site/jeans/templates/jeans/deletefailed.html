@@ -1,0 +1,8 @@
+{% extends "jeans/jeanssite.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block extrabody %}{{ block.super }}
+<h1>Database Error</h1>
+<p>{{error}}</p>
+{% endblock %}

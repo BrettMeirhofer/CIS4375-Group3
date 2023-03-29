@@ -1,3 +1,5 @@
+import django.db.models
+
 from . import data_dict_helper as ddh
 from django.http import HttpResponse
 import os
@@ -118,8 +120,14 @@ def delete_single(request, table, id):
         if model._meta.db_table.lower() == table.lower():
             current_table = model
 
-    current_table.objects.filter(id=id).delete()
-    return HttpResponseRedirect('/listall/' + table + "/")
+    template = loader.get_template('jeans/deletefailed.html')
+    try:
+        current_table.objects.filter(id=id).delete()
+        return HttpResponseRedirect('/listall/' + table + "/")
+    except django.db.IntegrityError as e:
+        context = {'error': e}
+        return HttpResponse(template.render(context, request))
+
 
 
 def create_single(request, table):
