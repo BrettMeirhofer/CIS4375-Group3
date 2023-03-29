@@ -1,6 +1,9 @@
 from django.db import models
 import xlsxwriter
 from django.apps import apps
+from django.db import connection, ProgrammingError, DataError
+from django.http import HttpResponse
+import json
 import os
 
 #employee_id int FOREIGN KEY REFERENCES Employee(id),
@@ -222,3 +225,19 @@ def generate_insert_sql(app_name):
         drop_file.write("GO\n")
         drop_file.write("\n")
     drop_file.close()
+
+
+def get_graph_data(file):
+    module_dir = os.path.dirname(__file__)
+    path = os.path.join(os.path.dirname(module_dir), "group3site", "SQL", "Reports",
+                        file)
+    sql = open(path).read()
+    with connection.cursor() as cursor:
+        cursor.execute(sql)
+        sql_output = cursor.fetchall()
+
+    response_data = {"label": [], "y": []}
+    for row in sql_output:
+        response_data["label"].append(row[0])
+        response_data["y"].append(str(row[1]))
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
