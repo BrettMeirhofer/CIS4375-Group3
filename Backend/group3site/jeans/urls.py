@@ -51,5 +51,6 @@ urlpatterns = [
     path('create_row/<table>/', views.create_single, name='create_row'),
     path('edit_row/<table>/<int:id>/', views.edit_single, name='edit_row'),
     path('testcreate/', views.ProductCreate.as_view(), name='create_product'),
-    path('testupdate/<int:pk>/',views. ProductUpdate.as_view(), name='update_product')
+    path('testupdate/<int:pk>/',views. ProductUpdate.as_view(), name='update_product'),
+    path("select2/", include("django_select2.urls")),
 ]

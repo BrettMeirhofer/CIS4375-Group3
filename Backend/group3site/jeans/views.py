@@ -39,7 +39,7 @@ class FieldTypeMap:
     field_type_dict = {"CharField": "nvarchar", "DateField": "date", "BooleanField": "bit", "BigAutoField": "bigint",
                        "EmailField": "nvarchar", "TextField": "nvarchar", "ForeignKey": "int", "IntegerField": "int",
                        "DecimalField": "numeric", "AutoField": "int", "PhoneNumberField": "nvarchar",
-                       "URLField": "nvarchar", "MoneyField": "numeric"}
+                       "URLField": "nvarchar", "MoneyField": "numeric", "CurrencyField": "nvarchar"}
 
 
 def dict3(request):
@@ -99,13 +99,16 @@ def view_products_list(request, table):
     if not current_table:
         return HttpResponse("Failed")
 
-    print(current_table.list_headers)
+    headers = []
+    for field in current_table.list_fields:
+        headers.append(current_table._meta.get_field(field).verbose_name)
     paginator = Paginator(current_table.objects.all(), 10)  # Show 25 contacts per page.
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     template = loader.get_template('jeans/listview.html')
-    context = {'page_obj': page_obj, 'title': current_table._meta.db_table, "fields": current_table.list_fields, "headers": current_table.list_headers}
+    context = {'page_obj': page_obj, 'title': current_table._meta.db_table, "fields": current_table.list_fields, "headers": headers}
     return HttpResponse(template.render(context, request))
+
 
 def delete_single(request, table, id):
     app = apps.get_app_config("jeans")
@@ -270,18 +273,3 @@ class ProductUpdate(ProductPromoInline, UpdateView):
         return {
             'variants': forms.ProductPromoFormSet(self.request.POST or None, self.request.FILES or None, instance=self.object, prefix='variants'),
         }
-
-
-
-
-
-def top_products_month(request):
-    return get_graph_data("QueryProductSoldMonthly.sql")
-
-
-def top_emps_month(request):
-    return get_graph_data("QueryEmpPerfMonthly.sql")
-
-
-def top_cust_month(request):
-    return get_graph_data("QueryCustPerfMonthly.sql")

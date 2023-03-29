@@ -3,6 +3,7 @@ import xlsxwriter
 from django.apps import apps
 from django.db import connection, ProgrammingError, DataError
 from django.http import HttpResponse
+from djmoney.models.fields import MoneyField
 import json
 import os
 
@@ -84,6 +85,7 @@ def extract_all_field_props(model, field_type_dict):
                       not isinstance(field, models.fields.reverse_related.ManyToOneRel)
                       and not isinstance(field, models.fields.reverse_related.ManyToManyRel)
                       and not isinstance(field, models.fields.related.ManyToManyField)]
+
     for current_field in visible_fields:
         output_row = extract_field_props(current_field, model, field_type_dict)
         output_list.append(output_row)
@@ -184,7 +186,9 @@ def generate_create_sql(app_name, field_type_dict):
             null = ""
             default = ""
             if current_field.default != models.fields.NOT_PROVIDED:
-                if field_type == "bit":
+                if field_type == "nvarchar":
+                    default = " DEFAULT '{}'".format(current_field.default)
+                elif field_type == "bit":
                     default = " DEFAULT {}".format(int(current_field.default))
                 else:
                     default = " DEFAULT {}".format(current_field.default)

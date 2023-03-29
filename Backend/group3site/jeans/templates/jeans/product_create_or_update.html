@@ -4,6 +4,9 @@
 {% load i18n %}
 {% load static %}
 {% load my_extras %}
+{% block extrahead %}{{ block.super }}
+<script src="chosen.jquery.js" type="text/javascript"></script>
+{% endblock %}
 
 {% block extrabody %}{{ block.super }}
 <h1>{{title}}</h1>
@@ -28,7 +31,6 @@
         {% endfor %}
     </div>
     <br>
-
     {% for current_formset in formsets %}
     <h3>{{ current_formset.form.title }}</h3>
      {% with current_formset as formset %}
@@ -93,8 +95,8 @@
 {% if edit %}
     <a style="background-color:red;" class = "button-1" href="{% url 'delete_row' table=table id=id%}">Delete</a>
 {% endif %}
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 <script>
 {% for current_formset in formsets %}
       $(document).ready(function() {
