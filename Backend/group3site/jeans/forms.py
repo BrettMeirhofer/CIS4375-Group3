@@ -5,8 +5,6 @@ from django.forms.models import inlineformset_factory
 from django.contrib import admin
 from django.contrib.admin.widgets import AutocompleteSelect
 from django import forms
-from django_select2 import forms as s2forms
-
 
 
 class ProductPromoForm(ModelForm):
@@ -89,13 +87,6 @@ class ProductStatusForm(ModelForm):
     class Meta:
         model = models.ProductStatus
         fields = ["status_name", "status_desc"]
-
-
-class CustomerSearchWidget(s2forms.ModelSelect2MultipleWidget):
-    search_fields = [
-        "email",
-    ]
-
 
 class CustomerPromoForm(ModelForm):
     field_titles = ["Promo", "Redeem Date"]
