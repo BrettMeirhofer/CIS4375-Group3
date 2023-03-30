@@ -1,12 +1,17 @@
 from django.db import models
 from django import forms
-#from phonenumber_field.modelfields import PhoneNumberField
 from django.utils import timezone
-from djmoney.models.fields import MoneyField
-import os
-from django.db import connection
+
+from decimal import Decimal
+from django.forms.widgets import Input
+
 
 IsManaged = False
+
+
+class MoneyField(models.DecimalField):
+    pass
+
 
 def past_validator(value):
     if value > timezone.now().date():
@@ -17,9 +22,6 @@ def past_validator(value):
 def not_zero_validator(value):
     if value == 0:
         raise forms.ValidationError("The value cannot be zero")
-
-
-
 
 
 class DescriptiveModel(models.Model):
@@ -37,7 +39,7 @@ class DescriptiveModel(models.Model):
 class StatusCode(DescriptiveModel):
     description = "Used to soft delete rows with a reason name and desc"
     status_name = models.CharField(max_length=40, verbose_name="Name")
-    status_desc = models.CharField(max_length=200, blank=True, null=True, verbose_name="Description")
+    status_desc = models.TextField(max_length=200, blank=True, null=True, verbose_name="Description")
     is_active = models.BooleanField(default=True, verbose_name="Active")
     list_fields = ["status_name", "status_desc"]
     category = "Other"
@@ -54,7 +56,7 @@ class StatusCode(DescriptiveModel):
 class LabelCode(DescriptiveModel):
     description = "Allows for multiple named categories"
     type_name = models.CharField(max_length=40, verbose_name="Name")
-    type_desc = models.CharField(max_length=200, blank=True, null=True, verbose_name="Desc")
+    type_desc = models.TextField(max_length=200, blank=True, null=True, verbose_name="Description")
     category = "Other"
     load_order = 1
 
@@ -109,9 +111,10 @@ class ProductTag(StatusCode):
 class Brand(DescriptiveModel):
     description = 'The company that owns the Brand for a product'
     brand_name = models.CharField(max_length=40, verbose_name="Name")
-    brand_desc = models.CharField(max_length=200, blank=True, null=True, verbose_name="Desc")
+    brand_desc = models.TextField(max_length=200, blank=True, null=True, verbose_name="Description")
     brand_site = models.URLField(verbose_name="Website URL")
     load_order = 1
+    list_fields = ["brand_name", "brand_site"]
 
     class Meta:
         db_table = "Brand"
@@ -125,14 +128,19 @@ class Brand(DescriptiveModel):
 class Product(DescriptiveModel):
     description = 'Anything sold by a Store.'
     product_name = models.CharField(max_length=80, verbose_name="Name")
-    product_desc = models.CharField(max_length=200, blank=True, null=True, verbose_name="Description")
-    product_price = MoneyField(max_digits=19, decimal_places=4, verbose_name="Price", default_currency="USD")
+    product_desc = models.TextField(max_length=200, blank=True, null=True, verbose_name="Description")
+    product_price = MoneyField(max_digits=19, decimal_places=4, verbose_name="Price $", default=0.00)
     product_brand = models.ForeignKey(Brand, on_delete=models.RESTRICT, blank=True, null=True, verbose_name="Brand")
     product_status = models.ForeignKey(ProductStatus, on_delete=models.RESTRICT, blank=True, null=True, verbose_name="Status")
     product_tags = models.ManyToManyField(ProductTag, through="ProductProductTag")
     created_date = models.DateField(verbose_name="Date")
     load_order = 2
-    list_fields = ["product_name", "created_date", "product_status", "product_price"]
+    list_fields = ["product_name", "created_date", "product_status", "get_current_price"]
+    list_func_names = {"get_current_price": "Price"}
+
+    def get_current_price(self):
+        test = "${0:.2f}".format(float(self.product_price))
+        return test
 
     class Meta:
         db_table = "Product"
@@ -150,6 +158,7 @@ class Promo(DescriptiveModel):
     promo_status = models.ForeignKey(PromoStatus, on_delete=models.RESTRICT, verbose_name="Status")
     promo_products = models.ManyToManyField(Product, through="ProductPromo")
     created_date = models.DateField(verbose_name="Date")
+    promo_desc = models.TextField(max_length=400, verbose_name="Description", blank=True, null=True)
     load_order = 2
     list_fields = ["promo_name", "promo_code", "promo_status"]
 
@@ -195,8 +204,8 @@ class ProductPromo(DescriptiveModel):
     description = 'Used to associate a Product with a Promo and stores promo price data'
     product = models.ForeignKey(Product, on_delete=models.RESTRICT, verbose_name="Product")
     promo = models.ForeignKey(Promo, on_delete=models.RESTRICT, verbose_name="Promo")
-    current_price = MoneyField(max_digits=19, decimal_places=4,verbose_name="Current Price", default_currency="USD")
-    promo_price = MoneyField(max_digits=19, decimal_places=4,verbose_name="Promo Price", default_currency="USD")
+    current_price = MoneyField(max_digits=19, decimal_places=4, verbose_name="Current Price $", default=0.00)
+    promo_price = MoneyField(max_digits=19, decimal_places=4, verbose_name="Promo Price $", default=0.00)
     load_order = 3
 
     def getfk(self):

@@ -92,6 +92,7 @@ def extract_all_field_props(model, field_type_dict):
     return output_list
 
 
+
 def generate_data_dict_excel(file_path, title_row, field_type_dict):
     workbook = xlsxwriter.Workbook(file_path)
     worksheet = workbook.add_worksheet()
@@ -180,6 +181,8 @@ def generate_create_sql(app_name, field_type_dict):
         for current_field in visible_fields:
             field_name = current_field.name
             field_type = field_type_dict[type(current_field).__name__]
+            if isinstance(current_field, models.fields.DecimalField):
+                field_type = "numeric(19,4)"
             field_type_text = " " + field_type
             if field_type == "nvarchar":
                 field_type_text = " nvarchar({})".format(current_field.max_length)

@@ -10,13 +10,13 @@ from django.core.paginator import Paginator
 from . import models
 from . import forms
 from django.apps import apps
+from django.core.exceptions import FieldDoesNotExist
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.views.generic import ListView
 from django.views.generic.edit import (
     CreateView, UpdateView
 )
-
 
 def index(request):
     out = """Hello, world. You're at the jeans index. """
@@ -103,7 +103,11 @@ def view_products_list(request, table):
 
     headers = []
     for field in current_table.list_fields:
-        headers.append(current_table._meta.get_field(field).verbose_name)
+        try:
+            headers.append(current_table._meta.get_field(field).verbose_name)
+        except FieldDoesNotExist:
+            headers.append(current_table.list_func_names[field])
+
     paginator = Paginator(current_table.objects.all(), 10)  # Show 25 contacts per page.
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)

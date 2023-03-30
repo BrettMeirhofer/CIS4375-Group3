@@ -160,6 +160,19 @@ input[type=text] {
   box-sizing: border-box;
 }
 
+textarea {
+  display: block;
+  padding: 12px 20px;
+  margin: 8px 0;
+}
+
+input[type=text] {
+  display: block;
+  padding: 12px 20px;
+  margin: 8px 0;
+  box-sizing: border-box;
+}
+
 .button-1, input[type=submit]{
   background-color: #333;
   border-radius: 8px;
@@ -191,6 +204,7 @@ input[type=text] {
 .button-1:focus {
   background-color: #525252;
 }
+
 </style>
 <head>
     {% block extrahead %}
@@ -211,6 +225,7 @@ input[type=text] {
             <li class="navli"><a class="navlink"  href="{% url 'listall' table='productstatus'  %}">Product Status</a></li>
             <li class="navli"><a class="navlink"  href="{% url 'listall' table='brand'  %}">Brand</a></li>
             <li class="navli"><a class="navlink"  href="{% url 'listall' table='promostatus'  %}">Promo Status</a></li>
+            <li class="navli"><a class="navlink"  href="{% url 'listall' table='customerstatus'  %}">Customer Status</a></li>
         </ul>
     </div>
     <div class="container">
