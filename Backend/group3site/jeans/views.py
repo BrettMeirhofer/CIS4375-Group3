@@ -17,6 +17,7 @@ from django.views.generic import ListView
 from django.views.generic.edit import (
     CreateView, UpdateView
 )
+import json
 
 def index(request):
     out = """Hello, world. You're at the jeans index. """
@@ -285,3 +286,12 @@ class ProductUpdate(ProductPromoInline, UpdateView):
         return {
             'variants': forms.ProductPromoFormSet(self.request.POST or None, self.request.FILES or None, instance=self.object, prefix='variants'),
         }
+
+
+def graph_view(request):
+    labels = ['Test', 'Test2', 'Test3']
+    data = [16, 64, 42]
+    return HttpResponse(request, 'jeans/graph.html', {
+        'labels': labels,
+        'data': data
+    })
