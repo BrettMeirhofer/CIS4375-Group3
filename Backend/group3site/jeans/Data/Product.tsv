@@ -1,20 +1,113 @@
-1	F04000 Short Black	Stagmi Short Black Shapewear	129	1	1	2023-01-01
-2	F04001 Short Beige	Stagmi Short Beige Shapewear	129	1	1	2023-01-02
-3	F04002 Short PL Black	Stagmi Short PL Black Shapewear	131	1	1	2023-01-03
-4	F04003 Short PL Beige	Stagmi Short PL Beige Shapewear	131	1	1	2023-01-04
-5	F04004 Short Strapless Black	Stagmi Short Strapless Black Shapewear	135	1	1	2023-01-05
-6	F04005 Short Strapless Beige	Stagmi Short Strapless Beige Shapewear	135	1	1	2023-01-06
-7	F04006 Strapless Black	Stagmi Strapless Black Shapewear	140	1	1	2023-01-07
-8	F04007 Strapless Beige	Stagmi Strapless Beige Shapewear	140	1	1	2023-01-08
-9	F04008 Panty Zipper Black	Stagmi Panty Zipper Black Shapewear	125	1	1	2023-01-09
-10	F04009 Panty Zipper Beige	Stagmi Panty Zipper Beige Shapewear	125	1	1	2023-01-10
-11	F04010 Thin Strip Black	Stagmi Thin Strip Black Shapewear	135	1	1	2023-01-11
-12	F04011 Thin Strip Beige	Stagmi Thin Strip Beige Shapewear	135	1	1	2023-01-12
-13	F04012 Zipper Black	Stagmi Zipper Black Shapewear	125	1	1	2023-01-13
-14	F04013 Zipper Beige	Stagmi Zipper Beige Shapewear	125	1	1	2023-01-14
-15	F08197 Girdles Cocoa	Delie Girdles Cocoa Shapewear	127	2	1	2023-01-15
-16	F08198 Girdles Nude	Delie Girdles Nude Shapewear	127	2	1	2023-01-16
-17	F08199 Girdle PL Cocoa	Delie Girdle PL Cocoa Shapewear	130	2	1	2023-01-17
-18	F08200 Girdle PL Nude	Delie Girdle PL Nude Shapewear	130	2	1	2023-01-18
-19	F08201 Compression Cocoa	Delie Compression Cocoa Shapewear	140	2	1	2023-01-19
-20	F08202 Vest Cocoa	Delie Vest Cocoa Shapewear	145	2	1	2023-01-20
+1	Fajas Stagmi Short Black	XS/S/M/L/XL/XXL	129.00	1	1	2023-03-30
+2	Fajas Stagmi Short Beige	XS/S/M/L/XL/XXL	129.00	1	1	2023-03-30
+3	Fajas Stagmi Short PL Black	XS/S/M/L/XL/XXL	131.00	1	1	2023-03-30
+4	Fajas Stagmi Short PL Beige	XS/S/M/L/XL/XXL	131.00	1	1	2023-03-30
+5	Fajas Stagmi Short Strapless Black	XS/S/M/L/XL/XXL	135.00	1	1	2023-03-30
+6	Fajas Stagmi Short Strapless Beige	XS/S/M/L/XL/XXL	135.00	1	1	2023-03-30
+7	Fajas Stagmi Strapless Black	XS/S/M/L/XL/XXL	140.00	1	1	2023-03-30
+8	Fajas Stagmi Strapless Beige	XS/S/M/L/XL/XXL	140.00	1	1	2023-03-30
+9	Fajas Stagmi Panty Zipper Black	XS/S/M/L/XL/XXL	125.00	1	1	2023-03-30
+10	Fajas Stagmi Panty Zipper Beige	XS/S/M/L/XL/XXL	125.00	1	1	2023-03-30
+11	Fajas Stagmi Thin Strip Black	XS/S/M/L/XL/XXL	135.00	1	1	2023-03-30
+12	Fajas Stagmi Thin Strip Beige	XS/S/M/L/XL/XXL	135.00	1	1	2023-03-30
+13	Fajas Stagmi Zipper Black	XS/S/M/L/XL/XXL	125.00	1	1	2023-03-30
+14	Fajas Stagmi Zipper Beige	XS/S/M/L/XL/XXL	125.00	1	1	2023-03-30
+15	Fajas Delie Girdles Cocoa	XS/S/M/L/XL/XXL	127.00	2	1	2023-03-30
+16	Fajas Delie Girdles Nude	XS/S/M/L/XL/XXL	127.00	2	1	2023-03-30
+17	Fajas Delie Girdle PL Cocoa	XS/S/M/L/XL/XXL	130.00	2	1	2023-03-30
+18	Fajas Delie Girdle PL Nude	XS/S/M/L/XL/XXL	130.00	2	1	2023-03-30
+19	Fajas Delie Compression Cocoa	XS/S/M/L/XL/XXL	140.00	2	1	2023-03-30
+20	Fajas Delie Vest Cocoa	XS/S/M/L/XL/XXL	145.00	2	1	2023-03-30
+21	Fajas M&D Short Black	XS/S/M/L/XL/XXL	89.00	3	1	2023-03-30
+22	Fajas M&D Short Beige	XS/S/M/L/XL/XXL	89.00	3	1	2023-03-30
+23	Fajas M&D Sport Girdle Black	XS/S/M/L/XL/XXL	100.00	3	1	2023-03-30
+24	Fajas M&D Sport Girdle Beige	XS/S/M/L/XL/XXL	100.00	3	1	2023-03-30
+25	Fajas M&D Braless Black	XS/S/M/L/XL/XXL	120.00	3	1	2023-03-30
+26	Fajas M&D Braless Beige	XS/S/M/L/XL/XXL	120.00	3	1	2023-03-30
+27	Fajas M&D Strapless Black	XS/S/M/L/XL/XXL	89.00	3	1	2023-03-30
+28	Fajas M&D Strapless Beige	XS/S/M/L/XL/XXL	89.00	3	1	2023-03-30
+29	Fajas M&D Zipper Black	XS/S/M/L/XL/XXL	105.00	3	1	2023-03-30
+30	Fajas M&D Zipper Beige	XS/S/M/L/XL/XXL	105.00	3	1	2023-03-30
+31	Fajas Ann Michell Strapless Nude	XS/S/M/L/XL/XXL	92.00	4	1	2023-03-30
+32	Fajas Ann Michell Strapless Black	XS/S/M/L/XL/XXL	92.00	4	1	2023-03-30
+33	Fajas Ann Michell Waistband Nude	XS/S/M/L/XL/XXL	120.00	4	1	2023-03-30
+34	Fajas Ann Michell Waistband Black	XS/S/M/L/XL/XXL	120.00	4	1	2023-03-30
+35	Fajas Ann Michell Sport vest Nude	XS/S/M/L/XL/XXL	133.00	4	1	2023-03-30
+36	Fajas Ann Michell Sport vest Black	XS/S/M/L/XL/XXL	133.00	4	1	2023-03-30
+37	Fajas Ann Michell Braless Nude	XS/S/M/L/XL/XXL	135.00	4	1	2023-03-30
+38	Fajas Ann Michell Braless Black	XS/S/M/L/XL/XXL	135.00	4	1	2023-03-30
+39	Fajas Ann Michell Zipper Nude	XS/S/M/L/XL/XXL	100.00	4	1	2023-03-30
+40	Fajas Ann Michell Zipper Black	XS/S/M/L/XL/XXL	100.00	4	1	2023-03-30
+41	Fajas Ann Michell Short PL Nude	XS/S/M/L/XL/XXL	89.00	4	1	2023-03-30
+42	Fajas Ann Michell Short PL Black	XS/S/M/L/XL/XXL	89.00	4	1	2023-03-30
+43	Fajas Meli Belt Short Black	XS/S/M/L/XL/XXL	125.00	5	1	2023-03-30
+44	Fajas Meli Belt Short Cocoa	XS/S/M/L/XL/XXL	125.00	5	1	2023-03-30
+45	Fajas Meli Belt Thin Strip Black	XS/S/M/L/XL/XXL	120.00	5	1	2023-03-30
+46	Fajas Meli Belt Thin Strip Cocoa	XS/S/M/L/XL/XXL	120.00	5	1	2023-03-30
+47	Fajas Meli Belt Full shaper Black	XS/S/M/L/XL/XXL	110.00	5	1	2023-03-30
+48	Fajas Meli Belt Full shaper Cocoa	XS/S/M/L/XL/XXL	110.00	5	1	2023-03-30
+49	Fajas Meli Belt Girdle Black	XS/S/M/L/XL/XXL	100.00	5	1	2023-03-30
+50	Fajas Meli Belt Girdle Cocoa	XS/S/M/L/XL/XXL	100.00	5	1	2023-03-30
+51	Fajas Meli Belt Maternity Cocoa	XS/S/M/L/XL/XXL	70.00	5	1	2023-03-30
+52	Fajas Up Lady F6077 Strapless Black	XS/S/M/L/XL/XXL	130.00	20	1	2023-03-30
+53	Fajas Up Lady F6078 Strapless Beige	XS/S/M/L/XL/XXL	130.00	20	1	2023-03-30
+54	Fajas Up Lady F6079 Strapless Cocoa	XS/S/M/L/XL/XXL	130.00	20	1	2023-03-30
+55	Fajas Up Lady F6080 Vest Zipper Black	XS/S/M/L/XL/XXL	125.00	20	1	2023-03-30
+56	Fajas Up Lady F6081 Vest Zipper Beige	XS/S/M/L/XL/XXL	125.00	20	1	2023-03-30
+57	Fajas Up Lady F6082 Vest Zipper Cocoa	XS/S/M/L/XL/XXL	125.00	20	1	2023-03-30
+58	Fajas Up Lady F6083 Short Black	XS/S/M/L/XL/XXL	110.00	20	1	2023-03-30
+59	Fajas Up Lady F6084 Short Beige	XS/S/M/L/XL/XXL	110.00	20	1	2023-03-30
+60	Post surgery Nude Fajas Bcurved	XS/S/M/L/XL/XXL	150.00	19	1	2023-03-30
+61	Post surgery Black Fajas Bcurved	XS/S/M/L/XL/XXL	150.00	19	1	2023-03-30
+62	Post surgery Beige Fajas Bcurved	XS/S/M/L/XL/XXL	150.00	19	1	2023-03-30
+63	Maternity Nude Fajas Bcurved	XS/S/M/L/XL/XXL	90.00	19	1	2023-03-30
+64	Maternity Black Fajas Bcurved	XS/S/M/L/XL/XXL	90.00	19	1	2023-03-30
+65	Maternity Beige Fajas Bcurved	XS/S/M/L/XL/XXL	90.00	19	1	2023-03-30
+66	Waistband Black Fajas Bcurved	XS/S/M/L/XL/XXL	120.00	19	1	2023-03-30
+67	Waistband Beige Fajas Bcurved	XS/S/M/L/XL/XXL	120.00	19	1	2023-03-30
+68	Colombian Jeans P01 Navy	S/M/L/XL/XL	40.00	6	1	2023-03-30
+69	Colombian Jeans P01 Blue	S/M/L/XL/XL	40.00	6	1	2023-03-30
+70	Colombian Jeans P01 Skye	S/M/L/XL/XL	40.00	6	1	2023-03-30
+71	Colombian Jeans P01 Black	S/M/L/XL/XL	40.00	6	1	2023-03-30
+72	Colombian Jeans P01 White	S/M/L/XL/XL	40.00	6	1	2023-03-30
+73	Colombian Jeans P02 Navy	S/M/L/XL/XL	50.00	6	1	2023-03-30
+74	Colombian Jeans P02 Blue	S/M/L/XL/XL	50.00	6	1	2023-03-30
+75	Colombian Jeans P02 Skye	S/M/L/XL/XL	50.00	6	1	2023-03-30
+76	Colombian Jeans P02 Skye	S/M/L/XL/XL	50.00	6	1	2023-03-30
+77	Colombian Jeans P02 Skye	S/M/L/XL/XL	50.00	6	1	2023-03-30
+78	Colombian Jeans P03 Skye	S/M/L/XL/XL	46.00	6	1	2023-03-30
+79	Colombian Jeans P03 Skye	S/M/L/XL/XL	46.00	6	1	2023-03-30
+80	Colombian Jeans P03 Skye	S/M/L/XL/XL	46.00	6	1	2023-03-30
+81	Colombian Jeans P03 Skye	S/M/L/XL/XL	46.00	6	1	2023-03-30
+82	Capri Jeans P04 Butt lift Navy	S/M/L/XL/XL	30.00	6	1	2023-03-30
+83	Capri Jeans P04 Blue	S/M/L/XL/XL	30.00	6	1	2023-03-30
+84	Capri Jeans P04 Skye	S/M/L/XL/XL	30.00	6	1	2023-03-30
+85	Capri Jeans P04 Black	S/M/L/XL/XL	30.00	6	1	2023-03-30
+86	Capri Jeans P04 Waist Control Navy	S/M/L/XL/XL	35.00	6	1	2023-03-30
+87	Capri Jeans P04 Blue	S/M/L/XL/XL	35.00	6	1	2023-03-30
+88	Capri Jeans P04 Skye	S/M/L/XL/XL	35.00	6	1	2023-03-30
+89	Capri Jeans P04 Black	S/M/L/XL/XL	35.00	6	1	2023-03-30
+90	Shirt V Neck Navy	S/M/L/XL/XL	14.99	7	1	2023-03-30
+91	Shirt V Neck Blue	S/M/L/XL/XL	14.99	7	1	2023-03-30
+92	Shirt V Neck Black	S/M/L/XL/XL	14.99	7	1	2023-03-30
+93	Shirt V Neck White	S/M/L/XL/XL	14.99	7	1	2023-03-30
+94	Shirt V Neck Pink	S/M/L/XL/XL	14.99	7	1	2023-03-30
+95	Leggins Under Fit Navy	S/M/L/XL/XL	29.00	7	1	2023-03-30
+96	Leggins Under Fit Blue	S/M/L/XL/XL	29.00	7	1	2023-03-30
+97	Leggins Under Fit Black	S/M/L/XL/XL	29.00	7	1	2023-03-30
+98	Leggins Under Fit White	S/M/L/XL/XL	29.00	7	1	2023-03-30
+99	Leggins Under Fit Pink	S/M/L/XL/XL	29.00	7	1	2023-03-30
+100	Bikers Under Fit Navy	S/M/L/XL/XL	15.00	7	1	2023-03-30
+101	Bikers Under Fit Blue	S/M/L/XL/XL	15.00	7	1	2023-03-30
+102	Bikers Under Fit Black	S/M/L/XL/XL	15.00	7	1	2023-03-30
+103	Bikers Under Fit White	S/M/L/XL/XL	15.00	7	1	2023-03-30
+104	Bikers Under Fit Pink	S/M/L/XL/XL	15.00	7	1	2023-03-30
+105	Shorts Navy	S/M/L/XL/XL	12.00	7	1	2023-03-30
+106	Shorts Blue	S/M/L/XL/XL	12.00	7	1	2023-03-30
+107	Shorts Black	S/M/L/XL/XL	12.00	7	1	2023-03-30
+108	Shorts White	S/M/L/XL/XL	12.00	7	1	2023-03-30
+109	Crop Top Under Fit Pink	S/M/L/XL/XL	15.00	7	1	2023-03-30
+110	Crop Top Under Fit Navy	S/M/L/XL/XL	15.00	7	1	2023-03-30
+111	Crop Top Under Fit Blue	S/M/L/XL/XL	15.00	7	1	2023-03-30
+112	Crop Top Under Fit Black	S/M/L/XL/XL	15.00	7	1	2023-03-30
+113	Crop Top Under Fit White	S/M/L/XL/XL	15.00	7	1	2023-03-30
