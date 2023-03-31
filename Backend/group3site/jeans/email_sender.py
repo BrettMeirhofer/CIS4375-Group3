@@ -1,29 +1,26 @@
 import smtplib
-from email.message import EmailMessage
+#SERVER = "localhost"
 
+FROM = 'idahbest@gmail.com'
 
-smtp_server = "smtp.gmail.com" #server address
-smtp_port = 465 #port number
-Email = "idahbest@gmail.com" #sender email
-Pass = "aB@Y6GCYX" #sender password
+TO = ["seth.i.esparza@gmail.com"] # must be a list
 
+SUBJECT = "Hello!"
 
-Contacts = ["seth.i.esparza@gmail.com"]
+TEXT = "This message was sent with Python's smtplib."
 
+# Prepare actual message
 
-message = EmailMessage()
-message["Subject"] = "Test Message"
-message["From"] = Email #Sender email
-message["To"] = Contacts #Receiver email
-message.set_content("This is just a Test Message")
-    
-message.add_alternative("""\
-    
-    
-    
-""", subtype="html")
+message = """\
+From: %s
+To: %s
+Subject: %s
 
+%s
+""" % (FROM, ", ".join(TO), SUBJECT, TEXT)
 
-with smtplib.STMP_SSL(smtp_server, smtp_port) as smtp:
-    smtp.login(Email, Pass)
-    smtp.send_message(message) 
+# Send the mail
+
+server = smtplib.SMTP('myserver')
+server.sendmail(FROM, TO, message)
+server.quit()
