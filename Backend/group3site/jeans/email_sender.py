@@ -1,26 +1,27 @@
 import smtplib
-#SERVER = "localhost"
 
-FROM = 'idahbest@gmail.com'
+gmail_user = 'idahbest@gmail.com'
+gmail_password = '*********'
 
-TO = ["seth.i.esparza@gmail.com"] # must be a list
+sent_from = gmail_user
+to = ['seth.i.esparza@gmail.com']
+subject = 'Lorem ipsum dolor sit amet'
+body = 'consectetur adipiscing elit'
 
-SUBJECT = "Hello!"
-
-TEXT = "This message was sent with Python's smtplib."
-
-# Prepare actual message
-
-message = """\
+email_text = """\
 From: %s
 To: %s
 Subject: %s
 
 %s
-""" % (FROM, ", ".join(TO), SUBJECT, TEXT)
+""" % (sent_from, ", ".join(to), subject, body)
 
-# Send the mail
-
-server = smtplib.SMTP('myserver')
-server.sendmail(FROM, TO, message)
-server.quit()
+try:
+    smtp_server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+    smtp_server.ehlo()
+    smtp_server.login(gmail_user, gmail_password)
+    smtp_server.sendmail(sent_from, to, email_text)
+    smtp_server.close()
+    print ("Email sent successfully!")
+except Exception as ex:
+    print ("Something went wrong….",ex)
