@@ -26,176 +26,118 @@
 {% endblock %}
 
 {% block extrabody %}{{ block.super }}
-<div>
-<select id="promo-selector" style="display:inline-block;">
-    <option value="" selected="">---------</option>
-    {% for promo in promos %}
-        <option value="{{promo.id}}" selected="">{{promo}}</option>
-    {% endfor %}
-</select>
-<a class = "button-1" id="email_promo" href="">Email Promo to Customers</a>
+<input type="hidden" id="Best_Cust" data-url="{% url 'graph'%}" />
+<input type="hidden" id="Best_Promo" data-url="{% url 'graph2'%}" />
+<input type="hidden" id="Unique_Cust" data-url="{% url 'graph3'%}" />
+<div id="aligned">
+          <div class="chart_container">
+            <canvas id="chart1" width="400" height="400"></canvas>
+          </div>
+          <div class="chart_container">
+            <canvas id="chart2" width="400" height="400"></canvas>
+          </div>
+          <div class="chart_container">
+            <canvas id="chart3" width="400" height="400"></canvas>
+          </div>
 </div>
 
 
-<input type="hidden" id="Product_Perf" data-url="{% url 'graph'%}" />
-<canvas id="chart1" style="height: 250px; width: 600px; display:inline-block; margin: 30px;"></canvas>
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-$(document).ready(function() {
 
-var url = $("#Product_Perf").attr("data-url");
-	console.log(url)
-	$.ajax({
+$(document).ready(function () {
+    var url = $("#Best_Cust").attr("data-url");
+    console.log(url)
+    $.ajax({
         url: url,
         success: function (data) {
-
-console.log(data)
-const ctx = document.getElementById('chart1');
-  new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: data.labels,
-      datasets: [{
-        label: '# of Votes',
-        data: data.data,
-        borderWidth: 1
-      }]
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true
-
-    <input type="hidden" id="Best_Cust" data-url="{% url 'graph'%}" />
-    <input type="hidden" id="Best_Promo" data-url="{% url 'graph2'%}" />
-    <input type="hidden" id="Unique_Cust" data-url="{% url 'graph3'%}" />
-    <div id="aligned">
-      <div class="chart_container">
-        <canvas id="chart1" width="400" height="400"></canvas>
-      </div>
-      <div class="chart_container">
-        <canvas id="chart2" width="400" height="400"></canvas>
-      </div>
-      <div class="chart_container">
-        <canvas id="chart3" width="400" height="400"></canvas>
-      </div>
-   </div>
-    
-    <script>
-    window.onload = function() {
-    
-    var url = $("#Best_Cust").attr("data-url");
-      console.log(url)
-      $.ajax({
-            url: url,
-            success: function (data) {
-    
-    console.log(data)
-    const ctx = document.getElementById('chart1').getContext('2d');
-      new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: data.labels,
-          datasets: [{
-            label: '# of Visits',
-            data: data.data,
-            borderWidth: 1,
-            backgroundColor: '#ffa500'
-          }]
-        },
-        options: {
-          responsive: false,
-          scales: {
-            y: {
-              beginAtZero: true
-            }
-          }
+            console.log(data)
+            const ctx = document.getElementById('chart1').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: '# of Visits',
+                        data: data.data,
+                        borderWidth: 1,
+                        backgroundColor: '#ffa500'
+                    }]
+                },
+                options: {
+                    responsive: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
         }
-      });
-    }
-  });
-}
-});
-
- $('#email_promo').click(function(ev) {
-        id = $('#promo-selector').val();
-        console.log(id)
-        if (confirm("Are you sure you want to email all active customers?") == true) {
-          $.post({
-            url: {% url 'promo-email'%} ,
-            data: { csrfmiddlewaretoken: "{{ csrf_token }}", "id": id, },
-            success: function (data) {
-            },
-          });
-          }
-          });
-});
-</script>
     });
 
     var url = $("#Best_Promo").attr("data-url");
-      console.log(url)
-      $.ajax({
-            url: url,
-            success: function (data) {
-    
-    console.log(data)
-    const ctx = document.getElementById('chart2').getContext('2d');
-      new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: data.labels,
-          datasets: [{
-            label: '# of Redemptions',
-            data: data.data,
-            borderWidth: 1,
-            backgroundColor: '#008000'
-          }]
-        },
-        options: {
-          responsive: false,
-          scales: {
-            y: {
-              beginAtZero: true
-            }
-          }
+    console.log(url)
+    $.ajax({
+        url: url,
+        success: function (data) {
+
+            console.log(data)
+            const ctx = document.getElementById('chart2').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: '# of Redemptions',
+                        data: data.data,
+                        borderWidth: 1,
+                        backgroundColor: '#008000'
+                    }]
+                },
+                options: {
+                    responsive: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
         }
-      });
-    }
     });
 
     var url = $("#Unique_Cust").attr("data-url");
-      console.log(url)
-      $.ajax({
-            url: url,
-            success: function (data) {
-    
-    console.log(data)
-    const ctx = document.getElementById('chart3').getContext('2d');
-      new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: data.labels,
-          datasets: [{
-            label: '# of Customers',
-            data: data.data,
-            borderWidth: 1,
-            backgroundColor: '#000080'
-          }]
-        },
-        options: {
-          responsive: false,
-          scales: {
-            y: {
-              beginAtZero: true
-            }
-          }
-        }
-      });
-    }
-    });
+    console.log(url)
+    $.ajax({
+        url: url,
+        success: function (data) {
 
-    }
+            console.log(data)
+            const ctx = document.getElementById('chart3').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: '# of Customers',
+                        data: data.data,
+                        borderWidth: 1,
+                        backgroundColor: '#000080'
+                    }]
+                },
+                options: {
+                    responsive: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+    });
+});
+
     </script>
 {% endblock %}

@@ -40,6 +40,7 @@ urlpatterns = [
     path('delete_rows/', views.delete_rows, name='delete_rows'),
     path('jeans/', include(router.urls)),
     path('', views.index, name='index'),
+    path('send_email', views.promo_email_page, name='send_email'),
     path('dd', views.dict3, name='datadictionary'),
     path('create', views.generate_create, name='create'),
     path('altar', views.generate_alter, name='altar'),
@@ -53,7 +54,7 @@ urlpatterns = [
     path('edit_row/<table>/<int:id>/', views.edit_single, name='edit_row'),
     path('testcreate/', views.ProductCreate.as_view(), name='create_product'),
     path('testupdate/<int:pk>/',views. ProductUpdate.as_view(), name='update_product'),
-    path('promo-email/', views.send_promo_email, name="promo-email")
+    path('promo-email/', views.send_promo_email, name="promo-email"),
     path('graph', views.best_cust_month, name='graph'),
     path('graph2', views.best_promo_month, name='graph2'),
     path('graph3', views.uniq_cust_month, name='graph3'),

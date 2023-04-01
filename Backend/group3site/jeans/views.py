@@ -21,23 +21,8 @@ import json
 
 
 def index(request):
-    out = """Hello, world. You're at the jeans index. """
-    team = ["Brett Meirhofer", "Perminder Singh", "Laura Moreno" , "Daniel Thomas", "Alex Bermudez", "Daniel Hernandez"]
-    solid_tables = data_dict_helper.get_solid_models("jeans")
-    tables = []
-    for table in solid_tables:
-        tables.append(table._meta.verbose_name_plural)
-
-    form = forms.ProductForm()
     template = loader.get_template('jeans/index.html')
-    promos = models.Promo.objects.filter(promo_status=1)
-    context = {
-        'tables': tables,
-        'form': form,
-        'form2': forms.PromoForm(),
-        "promos": promos
-    }
-    return HttpResponse(template.render(context, request))
+    return HttpResponse(template.render({}, request))
 
 
 class FieldTypeMap:
@@ -337,3 +322,15 @@ def send_promo_email(request):
     return HttpResponse(200)
 
 
+def promo_email_page(request):
+    solid_tables = data_dict_helper.get_solid_models("jeans")
+    tables = []
+    for table in solid_tables:
+        tables.append(table._meta.verbose_name_plural)
+
+    template = loader.get_template('jeans/send_promos.html')
+    promos = models.Promo.objects.filter(promo_status=1)
+    context = {
+        "promos": promos
+    }
+    return HttpResponse(template.render(context, request))
