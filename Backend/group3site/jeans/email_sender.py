@@ -1,12 +1,30 @@
 import smtplib
 
-gmail_user = 'idahbest@gmail.com'
-gmail_password = '*********'
+'''import mysql.connector as mysql
+
+db = mysql.connect(
+    host = "localhost",
+    user = "root",
+    passwd = "dbms"
+)
+
+## creating an instance of 'cursor' class which is used to execute the 'SQL' statements in 'Python'
+cursor = db.cursor()
+
+cursor.execute("SELECT email FROM customer WHERE status = 'ACTIVE'")''' 
+
+
+
+
+
+
+gmail_user = 'jeansyfajaspromos@gmail.com'
+gmail_password = 'TechfolioUH2023'
 
 sent_from = gmail_user
 to = ['seth.i.esparza@gmail.com']
-subject = 'Lorem ipsum dolor sit amet'
-body = 'consectetur adipiscing elit'
+subject = 'Test for Promotional Emails'
+body = 'This is a test'
 
 email_text = """\
 From: %s
