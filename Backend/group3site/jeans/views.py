@@ -291,7 +291,5 @@ class ProductUpdate(ProductPromoInline, UpdateView):
 def graph_view(request):
     labels = ['Test', 'Test2', 'Test3']
     data = [16, 64, 42]
-    return HttpResponse(request, 'jeans/graph.html', {
-        'labels': labels,
-        'data': data
-    })
+    response_data = {"labels": labels, 'data': data}
+    return HttpResponse(json.dumps(response_data), content_type="application/json")

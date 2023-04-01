@@ -2,6 +2,26 @@
 {% load i18n %}
 {% load static %}
 
+
+{% block extrahead %}{{ block.super }}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<style>
+    input[type=button]{
+        padding: 20px 30px;
+        font-size: 1.2em;
+        margin: auto;
+    }
+
+    #content{
+        margin: auto;
+        float: none;
+        width: 1400px;
+        text-align:center
+    }
+
+</style>
+{% endblock %}
+
 {% block extrabody %}{{ block.super }}
 <h1>Team</h1>
 <ul>
@@ -9,4 +29,42 @@
         <li>{{ member }}</li>
     {% endfor %}
     </ul>
+
+<input type="hidden" id="Product_Perf" data-url="{% url 'graph'%}" />
+<canvas id="chart1" style="height: 250px; width: 600px; display:inline-block; margin: 30px;"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+window.onload = function() {
+
+var url = $("#Product_Perf").attr("data-url");
+	console.log(url)
+	$.ajax({
+        url: url,
+        success: function (data) {
+
+console.log(data)
+const ctx = document.getElementById('chart1');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: data.labels,
+      datasets: [{
+        label: '# of Votes',
+        data: data.data,
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+}
+});
+}
+</script>
 {% endblock %}
