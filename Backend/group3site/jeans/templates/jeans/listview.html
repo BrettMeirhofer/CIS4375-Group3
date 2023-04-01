@@ -12,9 +12,21 @@
         <table>
             <tr>
                 <th style="width:20px;"><input type="checkbox" class="selectall"></th>
-                <th>ID</th>
+                        {% if order_by == "id" and direction == "asc" %}
+                            <th class=""><a href="?page=1&order_by=id&direction=desc">ID</a></th>
+                        {% else %}
+                            <th class="headerSortUp{% if order_by == 'id' %} {% endif %}"><a href="?page=1&order_by=id&direction=asc">ID</a></th>
+                        {% endif %}
                 {% for header in headers %}
-                    <th>{{header}}</th>
+                    {% if header.name %}
+                        {% if header.name == order_by and direction == "asc" %}
+                            <th class="{% if header.name == order_by %}headerSortDown {% endif %}"><a href="?page=1&order_by={{header.name}}&direction=desc">{{header.title}}</a></th>
+                        {% else %}
+                            <th class="{% if header.name == order_by %}headerSortUp{% endif %}"><a href="?page=1&order_by={{header.name}}&direction=asc">{{header.title}}</a></th>
+                        {% endif %}
+                    {% else %}
+                        <th>{{header.title}}</th>
+                    {% endif %}
                 {% endfor %}
             </tr>
             {% for row in page_obj %}
@@ -31,8 +43,8 @@
 <div class="pagination">
     <span class="step-links">
         {% if page_obj.has_previous %}
-            <a class = "button-1" href="?page=1">&laquo; First</a>
-            <a class = "button-1" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+            <a class = "button-1" href="?page=1&order_by={{ order_by }}&direction={{ direction }}">&laquo; First</a>
+            <a class = "button-1" href="?page={{ page_obj.previous_page_number }}&order_by={{ order_by }}&direction={{ direction }}">Previous</a>
         {% endif %}
 
         <span class="current">
@@ -40,8 +52,8 @@
         </span>
 
         {% if page_obj.has_next %}
-            <a class = "button-1" href="?page={{ page_obj.next_page_number }}">Next</a>
-            <a class = "button-1" href="?page={{ page_obj.paginator.num_pages }}">Last &raquo;</a>
+            <a class = "button-1" href="?page={{ page_obj.next_page_number }}&order_by={{ order_by }}&direction={{ direction }}">Next</a>
+            <a class = "button-1" href="?page={{ page_obj.paginator.num_pages }}&order_by={{ order_by }}&direction={{ direction }}">Last &raquo;</a>
         {% endif %}
     </span>
 </div>

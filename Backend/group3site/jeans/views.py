@@ -11,9 +11,6 @@ from . import models
 from . import forms
 from django.apps import apps
 from django.core.exceptions import FieldDoesNotExist
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from django.views.generic import ListView
 from django.views.generic.edit import (
     CreateView, UpdateView
 )
@@ -79,6 +76,14 @@ def view_products(request):
 
 
 def view_products_list(request, table):
+    order_by = request.GET.get('order_by')
+    if order_by is None:
+        order_by = "id"
+
+    direction = request.GET.get('direction')
+    if direction is None:
+        direction = "asc"
+
     app = apps.get_app_config("jeans")
     app_models = app.models.values()
     current_table = None
@@ -89,18 +94,23 @@ def view_products_list(request, table):
     if not current_table:
         return HttpResponse("Failed")
 
+    list_fields = current_table.list_fields
     headers = []
-    for field in current_table.list_fields:
+    for field in list_fields:
         try:
-            headers.append(current_table._meta.get_field(field).verbose_name)
+            headers.append({"title": current_table._meta.get_field(field).verbose_name, "name":current_table._meta.get_field(field).name})
         except FieldDoesNotExist:
-            headers.append(current_table.list_func_names[field])
+            headers.append({"title": current_table.list_func_names[field], "name": None})
 
-    paginator = Paginator(current_table.objects.all(), 25)  # Show 25 contacts per page.
+    ordering = order_by.lower()
+    if direction == 'desc':
+        ordering = '-{}'.format(ordering)
+    paginator = Paginator(current_table.objects.all().order_by(ordering), 25)  # Show 25 contacts per page.
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     template = loader.get_template('jeans/listview.html')
-    context = {'page_obj': page_obj, 'title': current_table._meta.db_table, "fields": current_table.list_fields, "headers": headers, "table": table}
+    context = {'page_obj': page_obj, 'title': current_table._meta.db_table, "fields": list_fields,
+               "headers": headers, "table": table,  'order_by': order_by, 'direction': direction}
     return HttpResponse(template.render(context, request))
 
 

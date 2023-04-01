@@ -233,6 +233,34 @@ align-items: center;
 justify-content: space-around;
 }
 
+tr th a { color: white !important; }
+tr th a:hover { color: white !important; }
+tr th a:visited { color: white !important; }
+tr th a:active { color: white !important; }
+
+.headerSortDown:after,
+.headerSortUp:after {
+  content: ' ';
+  position: relative;
+  left: 2px;
+  border: 8px solid transparent;
+}
+
+.headerSortDown:after {
+  top: 10px;
+  border-top-color: silver;
+}
+
+.headerSortUp:after {
+  bottom: 15px;
+  border-bottom-color: silver;
+}
+
+.headerSortDown,
+.headerSortUp {
+  padding-right: 10px;
+}
+
 </style>
 <head>
     {% block extrahead %}
