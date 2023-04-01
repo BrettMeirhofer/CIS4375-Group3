@@ -1,6 +1,10 @@
 from django.db import models
 import xlsxwriter
 from django.apps import apps
+from django.db import connection, ProgrammingError, DataError
+from django.http import HttpResponse
+from djmoney.models.fields import MoneyField
+import json
 import os
 
 #employee_id int FOREIGN KEY REFERENCES Employee(id),
@@ -81,10 +85,12 @@ def extract_all_field_props(model, field_type_dict):
                       not isinstance(field, models.fields.reverse_related.ManyToOneRel)
                       and not isinstance(field, models.fields.reverse_related.ManyToManyRel)
                       and not isinstance(field, models.fields.related.ManyToManyField)]
+
     for current_field in visible_fields:
         output_row = extract_field_props(current_field, model, field_type_dict)
         output_list.append(output_row)
     return output_list
+
 
 
 def generate_data_dict_excel(file_path, title_row, field_type_dict):
@@ -175,13 +181,17 @@ def generate_create_sql(app_name, field_type_dict):
         for current_field in visible_fields:
             field_name = current_field.name
             field_type = field_type_dict[type(current_field).__name__]
+            if isinstance(current_field, models.fields.DecimalField):
+                field_type = "numeric(19,4)"
             field_type_text = " " + field_type
             if field_type == "nvarchar":
                 field_type_text = " nvarchar({})".format(current_field.max_length)
             null = ""
             default = ""
             if current_field.default != models.fields.NOT_PROVIDED:
-                if field_type == "bit":
+                if field_type == "nvarchar":
+                    default = " DEFAULT '{}'".format(current_field.default)
+                elif field_type == "bit":
                     default = " DEFAULT {}".format(int(current_field.default))
                 else:
                     default = " DEFAULT {}".format(current_field.default)
@@ -249,3 +259,18 @@ def send_promo_email(app_name, email_list):
         print ("Email sent successfully!")
     except Exception as ex:
         print ("Something went wrong….",ex)
+
+def get_graph_data(file):
+    module_dir = os.path.dirname(__file__)
+    path = os.path.join(os.path.dirname(module_dir), "group3site", "SQL", "Reports",
+                        file)
+    sql = open(path).read()
+    with connection.cursor() as cursor:
+        cursor.execute(sql)
+        sql_output = cursor.fetchall()
+
+    response_data = {"label": [], "y": []}
+    for row in sql_output:
+        response_data["label"].append(row[0])
+        response_data["y"].append(str(row[1]))
+    return HttpResponse(json.dumps(response_data), content_type="application/json")

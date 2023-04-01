@@ -94,8 +94,6 @@ table {
 }
 
 td {
-    border-top: 1px solid black;
-    border-bottom: 1px solid black;
     padding: 8px;
     text-align: left;
 }
@@ -162,6 +160,19 @@ input[type=text] {
   box-sizing: border-box;
 }
 
+textarea {
+  display: block;
+  padding: 12px 20px;
+  margin: 8px 0;
+}
+
+input[type=text] {
+  display: block;
+  padding: 12px 20px;
+  margin: 8px 0;
+  box-sizing: border-box;
+}
+
 .button-1, input[type=submit]{
   background-color: #333;
   border-radius: 8px;
@@ -193,6 +204,7 @@ input[type=text] {
 .button-1:focus {
   background-color: #525252;
 }
+
 </style>
 <head>
     {% block extrahead %}
@@ -206,14 +218,15 @@ input[type=text] {
             <li class="navli"><a class="navlink bignav" href="{% url 'listall' table='promo' %}">Promos</a></li>
             <li class="navli"><a class="navlink bignav" href="{% url 'listall' table='product'  %}">Products</a></li>
             <li class="navli"><a class="navlink bignav" href="{% url 'index'%}">Reports</a></li>
+            <li class="navli"><a class="navlink bignav" href="{% url 'graph'%}">Graphs</a></li>
         </ul>
         <ul class="navbar">
             <li class="navli"><a class="navlink"  href="{% url 'listall' table='customer'  %}">Customer</a></li>
-            <li class="navli"><a class="navlink"  href="{% url 'listall' table='producttag' %}">ProductTag</a></li>
-            <li class="navli"><a class="navlink"  href="{% url 'listall' table='productstatus'  %}">ProductStatus</a></li>
+            <li class="navli"><a class="navlink"  href="{% url 'listall' table='producttag' %}">Product Tags</a></li>
+            <li class="navli"><a class="navlink"  href="{% url 'listall' table='productstatus'  %}">Product Status</a></li>
             <li class="navli"><a class="navlink"  href="{% url 'listall' table='brand'  %}">Brand</a></li>
             <li class="navli"><a class="navlink"  href="{% url 'listall' table='promostatus'  %}">Promo Status</a></li>
-            <li class="navli"><a class="navlink"  href="{% url 'listall' table='customerpromo'  %}">Customer Promo</a></li>
+            <li class="navli"><a class="navlink"  href="{% url 'listall' table='customerstatus'  %}">Customer Status</a></li>
         </ul>
     </div>
     <div class="container">

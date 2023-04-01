@@ -1,3 +1,5 @@
+import django.db.models
+
 from . import data_dict_helper as ddh
 from django.http import HttpResponse
 import os
@@ -8,13 +10,14 @@ from django.core.paginator import Paginator
 from . import models
 from . import forms
 from django.apps import apps
+from django.core.exceptions import FieldDoesNotExist
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.views.generic import ListView
 from django.views.generic.edit import (
     CreateView, UpdateView
 )
-
+import json
 
 def index(request):
     out = """Hello, world. You're at the jeans index. """
@@ -39,7 +42,7 @@ class FieldTypeMap:
     field_type_dict = {"CharField": "nvarchar", "DateField": "date", "BooleanField": "bit", "BigAutoField": "bigint",
                        "EmailField": "nvarchar", "TextField": "nvarchar", "ForeignKey": "int", "IntegerField": "int",
                        "DecimalField": "numeric", "AutoField": "int", "PhoneNumberField": "nvarchar",
-                       "URLField": "nvarchar", "MoneyField": "numeric"}
+                       "URLField": "nvarchar", "MoneyField": "numeric", "CurrencyField": "nvarchar"}
 
 
 def dict3(request):
@@ -99,17 +102,18 @@ def view_products_list(request, table):
     if not current_table:
         return HttpResponse("Failed")
 
+    headers = []
+    for field in current_table.list_fields:
+        try:
+            headers.append(current_table._meta.get_field(field).verbose_name)
+        except FieldDoesNotExist:
+            headers.append(current_table.list_func_names[field])
+
     paginator = Paginator(current_table.objects.all(), 10)  # Show 25 contacts per page.
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     template = loader.get_template('jeans/listview.html')
-    context = {
-        'page_obj': page_obj,
-        'title': current_table._meta.db_table,
-    }
-    if hasattr(current_table, "list_headers") and hasattr(current_table, "list_fields"):
-        context["fields"] = current_table.list_fields
-        context["headers"]: current_table.list_headers
+    context = {'page_obj': page_obj, 'title': current_table._meta.db_table, "fields": current_table.list_fields, "headers": headers}
     return HttpResponse(template.render(context, request))
 
 
@@ -121,8 +125,14 @@ def delete_single(request, table, id):
         if model._meta.db_table.lower() == table.lower():
             current_table = model
 
-    current_table.objects.filter(id=id).delete()
-    return HttpResponseRedirect('/listall/' + table + "/")
+    template = loader.get_template('jeans/deletefailed.html')
+    try:
+        current_table.objects.filter(id=id).delete()
+        return HttpResponseRedirect('/listall/' + table + "/")
+    except django.db.IntegrityError as e:
+        context = {'error': e}
+        return HttpResponse(template.render(context, request))
+
 
 
 def create_single(request, table):
@@ -209,6 +219,9 @@ def edit_single(request, table, id):
         'form': form,
         'action': "/edit_row/{}/{}/".format(table, id),
         'formsets': formsets,
+        'edit': True,
+        'table': table,
+        'id': id
     }
     return HttpResponse(template.render(context, request))
 
@@ -273,3 +286,10 @@ class ProductUpdate(ProductPromoInline, UpdateView):
         return {
             'variants': forms.ProductPromoFormSet(self.request.POST or None, self.request.FILES or None, instance=self.object, prefix='variants'),
         }
+
+
+def graph_view(request):
+    labels = ['Test', 'Test2', 'Test3']
+    data = [16, 64, 42]
+    response_data = {"labels": labels, 'data': data}
+    return HttpResponse(json.dumps(response_data), content_type="application/json")

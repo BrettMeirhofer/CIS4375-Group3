@@ -4,6 +4,8 @@
 {% load i18n %}
 {% load static %}
 {% load my_extras %}
+{% block extrahead %}{{ block.super }}
+{% endblock %}
 
 {% block extrabody %}{{ block.super }}
 <h1>{{title}}</h1>
@@ -28,7 +30,6 @@
         {% endfor %}
     </div>
     <br>
-
     {% for current_formset in formsets %}
     <h3>{{ current_formset.form.title }}</h3>
      {% with current_formset as formset %}
@@ -43,6 +44,7 @@
                 {% for fields in formset.empty_form.visible_fields %}
                     <td>{{fields}}</td>
                 {% endfor %}
+                <td></td>
             </tr>
         </script>
         <div class="table-responsive card mt-4">
@@ -52,6 +54,9 @@
                     <th>{{header}}</th>
                     {% endfor %}
                     <th style="width: 100px">Delete?</th>
+                    <th style="width: 20px">
+                        <a href="#" id="add-variant-button" class="btn btn-secondary add-{{current_formset.form.title}} button-1">+</a>
+                    </th>
                 </thead>
                 <tbody id="item-{{current_formset.form.title}}">  <!-- id="item-inlineformsetname" -->
                     <!-- formset non forms errors -->
@@ -72,26 +77,32 @@
                                     {% comment %} {{ field.DELETE }} {% endcomment %}
                                 </td>
                             {% endfor %}
+                            <td></td>
                             {% comment %} for delete {% endcomment %}
                         </tr>
+
                     {% endfor %}
                 </tbody>
             </table>
-            <a href="#" id="add-variant-button" class="btn btn-secondary add-{{current_formset.form.title}} button-1">Add More</a> <!-- id="add-inlineformsetname-button" -->
+             <!-- id="add-inlineformsetname-button" -->
         </div>
 
         {% endwith %}
     {% endfor %}
     <input type="submit" value="Submit">
 </form>
+{% if edit %}
+    <a style="background-color:red;" class = "button-1" href="{% url 'delete_row' table=table id=id%}">Delete</a>
+{% endif %}
+
 
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-
+<link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
 {% for current_formset in formsets %}
       $(document).ready(function() {
-    // when user clicks add more btn of variants
-    console.log('.add-{{current_formset.form.title}}')
+    // when user clicks add more btn of formsets
       $('.add-{{current_formset.form.title}}').click(function(ev) {
           ev.preventDefault();
           var count = $('#item-{{current_formset.form.title}}').children().length;
@@ -105,5 +116,15 @@
       });
   });
 {% endfor %}
+$(document).ready(function() {
+    $('.js-example-basic-single').select2();
+      $('.money').change(function(ev) {
+        ev.target.value = parseFloat(ev.target.value).toFixed(2);
+      });
+
+      $('.money').each(function(i,e ) {
+        e.value = parseFloat(e.value).toFixed(2);
+});
+        });
 </script>
 {% endblock %}

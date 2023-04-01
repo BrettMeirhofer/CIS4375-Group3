@@ -28,7 +28,7 @@ CREATE TABLE ProductTag(
 
 CREATE TABLE Brand(
 	id int NOT NULL PRIMARY KEY IDENTITY(1,1),
-	brand_name nvarchar(80),
+	brand_name nvarchar(40),
 	brand_desc nvarchar(200) NULL,
 	brand_site nvarchar(200),
 );
@@ -37,7 +37,7 @@ CREATE TABLE Product(
 	id int NOT NULL PRIMARY KEY IDENTITY(1,1),
 	product_name nvarchar(80),
 	product_desc nvarchar(200) NULL,
-	product_price numeric DEFAULT 0,
+	product_price numeric(19,4) DEFAULT 0.0,
 	product_brand_id int FOREIGN KEY REFERENCES Brand(id) NULL,
 	product_status_id int FOREIGN KEY REFERENCES ProductStatus(id) NULL,
 	created_date date,
@@ -49,6 +49,7 @@ CREATE TABLE Promo(
 	promo_code nvarchar(10) UNIQUE,
 	promo_status_id int FOREIGN KEY REFERENCES PromoStatus(id),
 	created_date date,
+	promo_desc nvarchar(400) NULL,
 );
 
 CREATE TABLE Customer(
@@ -78,8 +79,8 @@ CREATE TABLE ProductPromo(
 	id int NOT NULL PRIMARY KEY IDENTITY(1,1),
 	product_id int FOREIGN KEY REFERENCES Product(id),
 	promo_id int FOREIGN KEY REFERENCES Promo(id),
-	current_price numeric DEFAULT 0,
-	promo_price numeric DEFAULT 0,
+	current_price numeric(19,4) DEFAULT 0.0,
+	promo_price numeric(19,4) DEFAULT 0.0,
 );
 
 CREATE TABLE CustomerPromo(
