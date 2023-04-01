@@ -202,8 +202,8 @@ class ProductImage(DescriptiveModel):
 
 class ProductPromo(DescriptiveModel):
     description = 'Used to associate a Product with a Promo and stores promo price data'
-    product = models.ForeignKey(Product, on_delete=models.RESTRICT, verbose_name="Product")
-    promo = models.ForeignKey(Promo, on_delete=models.RESTRICT, verbose_name="Promo")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name="Product")
+    promo = models.ForeignKey(Promo, on_delete=models.CASCADE, verbose_name="Promo")
     current_price = MoneyField(max_digits=19, decimal_places=4, verbose_name="Current Price $", default=0.00)
     promo_price = MoneyField(max_digits=19, decimal_places=4, verbose_name="Promo Price $", default=0.00)
     load_order = 3
@@ -238,8 +238,8 @@ class Customer(DescriptiveModel):
 
 class CustomerPromo(DescriptiveModel):
     description = 'Records when a customer redeems a promo. Key data point for promo success'
-    customer = models.ForeignKey(Customer, on_delete=models.RESTRICT)
-    promo = models.ForeignKey(Promo, on_delete=models.RESTRICT)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    promo = models.ForeignKey(Promo, on_delete=models.CASCADE)
     created_date = models.DateField()
     load_order = 4
 

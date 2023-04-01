@@ -6,21 +6,24 @@
 {% block extrabody %}{{ block.super }}
         <h1>{{title}}</h1>
         <a class = "button-1" href="{% url 'create_row' table=title %}">Create</a>
-        <table class="center">
+        <a id="delete-all" class = "deletebutton button-1" >Delete</a>
+        <br>
+        <p style="color:red; font-size:20px;" id="error"></p>
+        <table>
             <tr>
+                <th style="width:20px;"><input type="checkbox" class="selectall"></th>
                 <th>ID</th>
                 {% for header in headers %}
                     <th>{{header}}</th>
                 {% endfor %}
-                <th style="width: 100px"></th>
             </tr>
             {% for row in page_obj %}
                 <tr>
+                    <td style="width:20px;"><input type="checkbox" class="select-row" rowid={{row.id}}></td>
                     <td><a href="{% url 'edit_row' table=row|model_name id=row.id %}">{{row.id}}</a></td>
                     {% for field in fields %}
                     <td>{{ row|get_attr:field }}</td>
                     {% endfor %}
-                    <td><a class = "button-1" href="{% url 'delete_row' table=row|model_name id=row.id %}">Delete</a></td>
                 </tr>
             {% endfor %}
         </table>
@@ -42,4 +45,55 @@
         {% endif %}
     </span>
 </div>
+
+<script>
+
+    $(document).ready(function() {
+      delete_rows = [];
+      $('.select-row').change(function(ev) {
+        id = parseInt($(ev.target).attr("rowid"))
+        if (ev.target.checked){
+            delete_rows.push(id)
+        } else {
+            delete_rows = delete_rows.filter(function(e) { return e !== id })
+        }
+        console.log(delete_rows)
+      });
+      $('.selectall').change(function(ev) {
+        state = ev.target.checked
+        $('.select-row').each(function(i,e ) {
+            id = parseInt($(e).attr("rowid"))
+            e.checked = state;
+            if (state){
+                delete_rows.push(id)
+            } else {
+                delete_rows = delete_rows.filter(function(e) { return e !== id })
+            }
+        });
+        console.log(delete_rows)
+      });
+      $('#delete-all').click(function(ev) {
+        if (delete_rows.length == 0)
+            return
+
+        if (confirm("Are you sure you want to delete this?") == true) {
+          $.post({
+            url: {% url 'delete_rows' %},
+            data: { csrfmiddlewaretoken: "{{ csrf_token }}", "rows": delete_rows, "table": "{{table}}" },
+            success: function (data) {
+                if (data == 200){
+                    location.reload()
+                }
+                else {
+                    $('#error').text(data)
+                }
+
+            },
+          });
+          }
+          });
+
+  });
+</script>
 {% endblock %}
+

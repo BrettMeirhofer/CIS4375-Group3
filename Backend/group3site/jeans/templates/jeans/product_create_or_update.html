@@ -90,10 +90,11 @@
         {% endwith %}
     {% endfor %}
     <input type="submit" value="Submit">
-</form>
-{% if edit %}
-    <a style="background-color:red;" class = "button-1" href="{% url 'delete_row' table=table id=id%}">Delete</a>
+    {% if edit %}
+    <a class = "deletebutton button-1" href="{% url 'delete_row' table=table id=id%}" onclick="return confirm('Are you sure you want to delete this?')">Delete</a>
 {% endif %}
+</form>
+
 
 
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>

@@ -109,11 +109,11 @@ def view_products_list(request, table):
         except FieldDoesNotExist:
             headers.append(current_table.list_func_names[field])
 
-    paginator = Paginator(current_table.objects.all(), 10)  # Show 25 contacts per page.
+    paginator = Paginator(current_table.objects.all(), 25)  # Show 25 contacts per page.
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     template = loader.get_template('jeans/listview.html')
-    context = {'page_obj': page_obj, 'title': current_table._meta.db_table, "fields": current_table.list_fields, "headers": headers}
+    context = {'page_obj': page_obj, 'title': current_table._meta.db_table, "fields": current_table.list_fields, "headers": headers, "table": table}
     return HttpResponse(template.render(context, request))
 
 
@@ -130,7 +130,7 @@ def delete_single(request, table, id):
         current_table.objects.filter(id=id).delete()
         return HttpResponseRedirect('/listall/' + table + "/")
     except django.db.IntegrityError as e:
-        context = {'error': e}
+        context = {'error': "Cannot delete rows due to ForeignKey constraint."}
         return HttpResponse(template.render(context, request))
 
 
@@ -293,3 +293,27 @@ def graph_view(request):
     data = [16, 64, 42]
     response_data = {"labels": labels, 'data': data}
     return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+
+def delete_rows(request):
+    app = apps.get_app_config("jeans")
+    app_models = app.models.values()
+    current_table = None
+    data = request.POST.dict()
+    print(request.POST)
+    for model in app_models:
+        if model._meta.db_table.lower() == data["table"].lower():
+            current_table = model
+
+    if not current_table:
+        return HttpResponse("Failed")
+
+    print(current_table)
+    rows = request.POST.getlist('rows[]')
+    rows = [int(i) for i in rows]
+    try:
+        current_table.objects.filter(pk__in=rows).delete()
+    except django.db.IntegrityError as e:
+        return HttpResponse("Cannot delete rows due to ForeignKey constraint.")
+
+    return HttpResponse(200)
