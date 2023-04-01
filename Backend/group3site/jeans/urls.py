@@ -37,6 +37,7 @@ router.register(r'product', ProductViewSet)
 
 
 urlpatterns = [
+    path('delete_rows/', views.delete_rows, name='delete_rows'),
     path('jeans/', include(router.urls)),
     path('', views.index, name='index'),
     path('dd', views.dict3, name='datadictionary'),
@@ -53,6 +54,4 @@ urlpatterns = [
     path('testcreate/', views.ProductCreate.as_view(), name='create_product'),
     path('testupdate/<int:pk>/',views. ProductUpdate.as_view(), name='update_product'),
     path('graph', views.graph_view, name='graph'),
-
-
 ]
