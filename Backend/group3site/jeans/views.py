@@ -288,11 +288,21 @@ class ProductUpdate(ProductPromoInline, UpdateView):
         }
 
 
-def graph_view(request):
-    labels = ['Test', 'Test2', 'Test3']
-    data = [16, 64, 42]
+def graph_view(data):
+    labels = ['Test', 'Test2', 'Test3', 'Test4', 'Test5']
     response_data = {"labels": labels, 'data': data}
     return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+def best_cust_month(request):
+    return graph_view([16, 64, 29, 82, 53])
+
+
+def best_promo_month(request):
+    return graph_view([28, 45, 99, 19, 74])
+
+
+def uniq_cust_month(request):
+    return graph_view([72, 4, 88, 36, 51])
 
 
 def delete_rows(request):

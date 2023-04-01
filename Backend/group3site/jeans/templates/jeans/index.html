@@ -5,20 +5,23 @@
 
 {% block extrahead %}{{ block.super }}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-    input[type=button]{
-        padding: 20px 30px;
-        font-size: 1.2em;
-        margin: auto;
-    }
-
-    #content{
-        margin: auto;
-        float: none;
-        width: 1400px;
-        text-align:center
-    }
-
+  #chart1, #chart2, #chart3 {
+    width: 500;
+    height: 500;
+  }
+  .label {/*from  w  ww. ja  v  a 2  s  .  co  m*/
+    text-align: center;
+    width: 600px;
+    font-size: 20px;
+    font-weight: bold;
+    margin: 20px;
+  }
+  .chart_container {
+    float: left;
+    margin: 20px;
+  }
 </style>
 {% endblock %}
 
@@ -30,41 +33,117 @@
     {% endfor %}
     </ul>
 
-<input type="hidden" id="Product_Perf" data-url="{% url 'graph'%}" />
-<canvas id="chart1" style="height: 250px; width: 600px; display:inline-block; margin: 30px;"></canvas>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-window.onload = function() {
-
-var url = $("#Product_Perf").attr("data-url");
-	console.log(url)
-	$.ajax({
-        url: url,
-        success: function (data) {
-
-console.log(data)
-const ctx = document.getElementById('chart1');
-  new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: data.labels,
-      datasets: [{
-        label: '# of Votes',
-        data: data.data,
-        borderWidth: 1
-      }]
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true
+    <input type="hidden" id="Best_Cust" data-url="{% url 'graph'%}" />
+    <input type="hidden" id="Best_Promo" data-url="{% url 'graph2'%}" />
+    <input type="hidden" id="Unique_Cust" data-url="{% url 'graph3'%}" />
+    <div id="aligned">
+      <div class="chart_container">
+        <canvas id="chart1" width="400" height="400"></canvas>
+      </div>
+      <div class="chart_container">
+        <canvas id="chart2" width="400" height="400"></canvas>
+      </div>
+      <div class="chart_container">
+        <canvas id="chart3" width="400" height="400"></canvas>
+      </div>
+   </div>
+    
+    <script>
+    window.onload = function() {
+    
+    var url = $("#Best_Cust").attr("data-url");
+      console.log(url)
+      $.ajax({
+            url: url,
+            success: function (data) {
+    
+    console.log(data)
+    const ctx = document.getElementById('chart1').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: data.labels,
+          datasets: [{
+            label: '# of Visits',
+            data: data.data,
+            borderWidth: 1,
+            backgroundColor: '#ffa500'
+          }]
+        },
+        options: {
+          responsive: false,
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
         }
-      }
+      });
     }
-  });
-}
-});
-}
-</script>
+    });
+
+    var url = $("#Best_Promo").attr("data-url");
+      console.log(url)
+      $.ajax({
+            url: url,
+            success: function (data) {
+    
+    console.log(data)
+    const ctx = document.getElementById('chart2').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: data.labels,
+          datasets: [{
+            label: '# of Redemptions',
+            data: data.data,
+            borderWidth: 1,
+            backgroundColor: '#008000'
+          }]
+        },
+        options: {
+          responsive: false,
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+    });
+
+    var url = $("#Unique_Cust").attr("data-url");
+      console.log(url)
+      $.ajax({
+            url: url,
+            success: function (data) {
+    
+    console.log(data)
+    const ctx = document.getElementById('chart3').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: data.labels,
+          datasets: [{
+            label: '# of Customers',
+            data: data.data,
+            borderWidth: 1,
+            backgroundColor: '#000080'
+          }]
+        },
+        options: {
+          responsive: false,
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+    });
+
+    }
+    </script>
 {% endblock %}

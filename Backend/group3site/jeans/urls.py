@@ -53,5 +53,7 @@ urlpatterns = [
     path('edit_row/<table>/<int:id>/', views.edit_single, name='edit_row'),
     path('testcreate/', views.ProductCreate.as_view(), name='create_product'),
     path('testupdate/<int:pk>/',views. ProductUpdate.as_view(), name='update_product'),
-    path('graph', views.graph_view, name='graph'),
+    path('graph', views.best_cust_month, name='graph'),
+    path('graph2', views.best_promo_month, name='graph2'),
+    path('graph3', views.uniq_cust_month, name='graph3'),
 ]
