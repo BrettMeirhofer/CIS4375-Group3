@@ -19,7 +19,7 @@ cursor.execute("SELECT email FROM customer WHERE status = 'ACTIVE'")'''
 
 
 gmail_user = 'jeansyfajaspromos@gmail.com'
-gmail_password = 'TechfolioUH2023'
+gmail_password = 'hnhzjfajwiorxuju'
 
 sent_from = gmail_user
 to = ['seth.i.esparza@gmail.com']
