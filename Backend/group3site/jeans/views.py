@@ -1,10 +1,10 @@
 import django.db.models
-
 from . import data_dict_helper as ddh
 from django.http import HttpResponse
 import os
 from django.template import loader
 from . import data_dict_helper
+from . import email_sender
 from django.http import HttpResponseRedirect
 from django.core.paginator import Paginator
 from . import models
@@ -19,6 +19,7 @@ from django.views.generic.edit import (
 )
 import json
 
+
 def index(request):
     out = """Hello, world. You're at the jeans index. """
     team = ["Brett Meirhofer", "Perminder Singh", "Laura Moreno" , "Daniel Thomas", "Alex Bermudez", "Daniel Hernandez"]
@@ -29,11 +30,12 @@ def index(request):
 
     form = forms.ProductForm()
     template = loader.get_template('jeans/index.html')
+    promos = models.Promo.objects.filter(promo_status=1)
     context = {
         'tables': tables,
-        'team': team,
         'form': form,
         'form2': forms.PromoForm(),
+        "promos": promos
     }
     return HttpResponse(template.render(context, request))
 
@@ -317,3 +319,11 @@ def delete_rows(request):
         return HttpResponse("Cannot delete rows due to ForeignKey constraint.")
 
     return HttpResponse(200)
+
+
+def send_promo_email(request):
+    print(request.POST)
+    email_sender.send_promo_email_test(int(request.POST["id"]))
+    return HttpResponse(200)
+
+

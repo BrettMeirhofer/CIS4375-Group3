@@ -54,4 +54,5 @@ urlpatterns = [
     path('testcreate/', views.ProductCreate.as_view(), name='create_product'),
     path('testupdate/<int:pk>/',views. ProductUpdate.as_view(), name='update_product'),
     path('graph', views.graph_view, name='graph'),
+    path('promo-email/', views.send_promo_email, name="promo-email")
 ]

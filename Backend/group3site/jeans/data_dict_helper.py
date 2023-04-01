@@ -6,6 +6,7 @@ from django.http import HttpResponse
 from djmoney.models.fields import MoneyField
 import json
 import os
+import smtplib
 
 #employee_id int FOREIGN KEY REFERENCES Employee(id),
 # Extracts the field props for a single field
@@ -233,32 +234,6 @@ def generate_insert_sql(app_name):
         drop_file.write("\n")
     drop_file.close()
 
-def send_promo_email(app_name, email_list):
-    gmail_user = 'jeansyfajaspromos@gmail.com'
-    gmail_password = 'hnhzjfajwiorxuju'
-
-    sent_from = gmail_user
-    to = [email_list]
-    subject = 'Test for Promotional Emails'
-    body = 'This is a test'
-
-    email_text = """\
-    From: %s
-    To: %s
-    Subject: %s
-
-    %s
-    """ % (sent_from, ", ".join(to), subject, body)
-
-    try:
-        smtp_server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-        smtp_server.ehlo()
-        smtp_server.login(gmail_user, gmail_password)
-        smtp_server.sendmail(sent_from, to, email_text)
-        smtp_server.close()
-        print ("Email sent successfully!")
-    except Exception as ex:
-        print ("Something went wrong….",ex)
 
 def get_graph_data(file):
     module_dir = os.path.dirname(__file__)
