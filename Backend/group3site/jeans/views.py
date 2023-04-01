@@ -334,3 +334,17 @@ def promo_email_page(request):
         "promos": promos
     }
     return HttpResponse(template.render(context, request))
+
+
+def preview_promo(request):
+    solid_tables = data_dict_helper.get_solid_models("jeans")
+    tables = []
+    for table in solid_tables:
+        tables.append(table._meta.verbose_name_plural)
+
+    template = loader.get_template('jeans/promo.html')
+    promo = models.Promo.objects.get(id=int(request.POST["id"]))
+    context = {
+        "promo": promo
+    }
+    return HttpResponse(template.render(context, request))

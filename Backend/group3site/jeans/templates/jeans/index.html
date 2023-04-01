@@ -26,6 +26,8 @@
 {% endblock %}
 
 {% block extrabody %}{{ block.super }}
+
+
 <input type="hidden" id="Best_Cust" data-url="{% url 'graph'%}" />
 <input type="hidden" id="Best_Promo" data-url="{% url 'graph2'%}" />
 <input type="hidden" id="Unique_Cust" data-url="{% url 'graph3'%}" />
@@ -41,6 +43,12 @@
           </div>
 </div>
 
+<div style="margin:auto; text-align:center;">
+    <a class="button-1 button-2"  href="{% url 'listall' table='promo'  %}">Manage Promos</a>
+    <a class="button-1 button-2"  href="{% url 'index'  %}">View Reports</a>
+    <a class="button-1 button-2"  href="{% url 'listall' table='product'  %}">Manage Products</a>
+    <a class="button-1 button-2"  href="{% url 'send_email'  %}">Send Emails</a>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
