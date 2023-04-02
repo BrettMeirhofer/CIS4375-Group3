@@ -44,6 +44,8 @@ class StatusCode(DescriptiveModel):
     status_name = models.CharField(max_length=40)
     status_desc = models.CharField(max_length=200, blank=True, null=True)
     is_active = models.BooleanField(default=True)
+    list_fields = ["status_name", "status_desc"]
+    list_headers = ["Name", "Description"]
     category = "Other"
 
     def __str__(self):
@@ -70,24 +72,19 @@ class LabelCode(DescriptiveModel):
         managed = IsManaged
 
 
-class Image(DescriptiveModel):
-    image_url = models.URLField()
-    image_caption = models.CharField(max_length=200, blank=True, null=True)
-    description = "A link to an image"
-    pk_desc = "Standard Auto-Increment PK"
+class CustomerStatus(StatusCode):
+    description = 'Refers to the current state of the customer'
     load_order = 1
 
     class Meta:
-        db_table = "Image"
-        verbose_name_plural = "Image"
+        db_table = "CustomerStatus"
+        verbose_name_plural = "Customer Status"
         managed = IsManaged
 
 
 class ProductStatus(StatusCode):
     description = 'Refers to the current state of the product'
     load_order = 1
-    list_fields = ["status_name", "status_desc"]
-    list_headers = ["Name", "Description"]
 
     class Meta:
         db_table = "ProductStatus"
@@ -98,8 +95,6 @@ class ProductStatus(StatusCode):
 class PromoStatus(StatusCode):
     description = 'Refers to the current state of the promo'
     load_order = 1
-    list_fields = ["status_name", "status_desc"]
-    list_headers = ["Name", "Description"]
 
     class Meta:
         db_table = "PromoStatus"
@@ -118,7 +113,7 @@ class ProductTag(StatusCode):
 
 
 class Brand(DescriptiveModel):
-    description = 'The Brand that supplies certain Products'
+    description = 'The company that owns the Brand for a product'
     brand_name = models.CharField(max_length=80)
     brand_desc = models.CharField(max_length=200, blank=True, null=True)
     brand_site = models.URLField()
@@ -134,14 +129,13 @@ class Brand(DescriptiveModel):
 
 
 class Product(DescriptiveModel):
-    description = 'Anything sold by a Store'
+    description = 'Anything sold by a Store.'
     product_name = models.CharField(max_length=80)
     product_desc = models.CharField(max_length=200, blank=True, null=True)
     product_price = models.DecimalField(max_digits=19, decimal_places=4, default=0)
-    product_brand = models.ForeignKey(Brand, on_delete=models.RESTRICT)
-    product_status = models.ForeignKey(ProductStatus, on_delete=models.RESTRICT)
+    product_brand = models.ForeignKey(Brand, on_delete=models.RESTRICT, blank=True, null=True)
+    product_status = models.ForeignKey(ProductStatus, on_delete=models.RESTRICT, blank=True, null=True)
     product_tags = models.ManyToManyField(ProductTag, through="ProductProductTag")
-    product_images = models.ManyToManyField(Image, through="ProductImage")
     created_date = models.DateField(name="created_date")
     load_order = 2
     list_fields = ["product_name", "product_desc", "created_date", "product_status"]
@@ -157,7 +151,7 @@ class Product(DescriptiveModel):
 
 
 class Promo(DescriptiveModel):
-    description = 'Describes a promotion for a group of products'
+    description = 'Describes a promotion for a group of products most often a sale'
     promo_name = models.CharField(max_length=80)
     promo_code = models.CharField(max_length=10, unique=True)
     promo_status = models.ForeignKey(PromoStatus, on_delete=models.RESTRICT)
@@ -190,10 +184,14 @@ class ProductProductTag(DescriptiveModel):
 
 
 class ProductImage(DescriptiveModel):
-    description = 'Used to associate an Image with a Product'
+    description = 'An image with a caption that displays a product'
     product = models.ForeignKey(Product, on_delete=models.RESTRICT)
-    product_image = models.ForeignKey(Image, on_delete=models.RESTRICT)
+    image_url = models.URLField()
+    image_caption = models.CharField(max_length=200, blank=True, null=True)
     load_order = 3
+
+    def getfk(self):
+        return self.product
 
     class Meta:
         db_table = "ProductImage"
@@ -202,10 +200,15 @@ class ProductImage(DescriptiveModel):
 
 
 class ProductPromo(DescriptiveModel):
-    description = 'Used to associate a Product with a Promo'
+    description = 'Used to associate a Product with a Promo and stores promo price data'
     product = models.ForeignKey(Product, on_delete=models.RESTRICT)
     promo = models.ForeignKey(Promo, on_delete=models.RESTRICT)
+    current_price = MoneyField()
+    promo_price = MoneyField()
     load_order = 3
+
+    def getfk(self):
+        return self.promo
 
     class Meta:
         db_table = "ProductPromo"
@@ -219,9 +222,23 @@ class Customer(DescriptiveModel):
     last_name = models.CharField(max_length=200)
     email = models.EmailField()
     created_date = models.DateField()
-    load_order = 1
+    customer_status = models.ForeignKey(CustomerStatus, on_delete=models.RESTRICT)
+    load_order = 2
 
     class Meta:
         db_table = "Customer"
         verbose_name_plural = "Customer"
+        managed = IsManaged
+
+
+class CustomerPromo(DescriptiveModel):
+    description = 'Records when a customer redeems a promo. Key data point for promo success'
+    customer = models.ForeignKey(Customer, on_delete=models.RESTRICT)
+    promo = models.ForeignKey(Promo, on_delete=models.RESTRICT)
+    created_date = models.DateField()
+    load_order = 4
+
+    class Meta:
+        db_table = "CustomerPromo"
+        verbose_name_plural = "Customer Promo"
         managed = IsManaged
