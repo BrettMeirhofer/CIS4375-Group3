@@ -58,5 +58,7 @@ urlpatterns = [
     path('graph', views.best_cust_month, name='graph'),
     path('graph2', views.best_promo_month, name='graph2'),
     path('graph3', views.uniq_cust_month, name='graph3'),
-    path('preview_promo/', views.preview_promo, name='preview_promo')
+    path('preview_promo/', views.preview_promo, name='preview_promo'),
+    path('report/', views.top_promos, name='report'),
+   
 ]
