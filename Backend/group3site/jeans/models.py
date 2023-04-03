@@ -78,7 +78,7 @@ class CustomerStatus(StatusCode):
 
     class Meta:
         db_table = "CustomerStatus"
-        verbose_name_plural = "Customer Status"
+        verbose_name_plural = "Customer.tsv Status"
         managed = IsManaged
 
 
@@ -226,8 +226,8 @@ class Customer(DescriptiveModel):
     load_order = 2
 
     class Meta:
-        db_table = "Customer"
-        verbose_name_plural = "Customer"
+        db_table = "Customer.tsv"
+        verbose_name_plural = "Customer.tsv"
         managed = IsManaged
 
 
@@ -240,5 +240,5 @@ class CustomerPromo(DescriptiveModel):
 
     class Meta:
         db_table = "CustomerPromo"
-        verbose_name_plural = "Customer Promo"
+        verbose_name_plural = "Customer.tsv Promo"
         managed = IsManaged
