@@ -15,7 +15,7 @@
                         {% if order_by == "id" and direction == "asc" %}
                             <th class=""><a href="?page=1&order_by=id&direction=desc">ID</a></th>
                         {% else %}
-                            <th class="headerSortUp{% if order_by == 'id' %} {% endif %}"><a href="?page=1&order_by=id&direction=asc">ID</a></th>
+                            <th class="{% if order_by == 'id' %}headerSortUp {% endif %}"><a href="?page=1&order_by=id&direction=asc">ID</a></th>
                         {% endif %}
                 {% for header in headers %}
                     {% if header.name %}
