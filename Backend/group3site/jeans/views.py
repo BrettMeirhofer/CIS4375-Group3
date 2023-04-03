@@ -1,45 +1,35 @@
+import django.db.models
 from . import data_dict_helper as ddh
 from django.http import HttpResponse
 import os
 from django.template import loader
 from . import data_dict_helper
+from . import email_sender
 from django.http import HttpResponseRedirect
 from django.core.paginator import Paginator
 from . import models
 from . import forms
+from django.shortcuts import render
+from .models import Customer, CustomerPromo, Promo
+from django.db.models import Count
 from django.apps import apps
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from django.views.generic import ListView
+from django.core.exceptions import FieldDoesNotExist
 from django.views.generic.edit import (
     CreateView, UpdateView
 )
+import json
 
 
 def index(request):
-    out = """Hello, world. You're at the jeans index. """
-    team = ["Brett Meirhofer", "Perminder Singh", "Laura Moreno" , "Daniel Thomas", "Alex Bermudez", "Daniel Hernandez"]
-    solid_tables = data_dict_helper.get_solid_models("jeans")
-    tables = []
-    for table in solid_tables:
-        tables.append(table._meta.verbose_name_plural)
-
-    form = forms.ProductForm()
     template = loader.get_template('jeans/index.html')
-    context = {
-        'tables': tables,
-        'team': team,
-        'form': form,
-        'form2': forms.PromoForm(),
-    }
-    return HttpResponse(template.render(context, request))
+    return HttpResponse(template.render({}, request))
 
 
 class FieldTypeMap:
     field_type_dict = {"CharField": "nvarchar", "DateField": "date", "BooleanField": "bit", "BigAutoField": "bigint",
                        "EmailField": "nvarchar", "TextField": "nvarchar", "ForeignKey": "int", "IntegerField": "int",
                        "DecimalField": "numeric", "AutoField": "int", "PhoneNumberField": "nvarchar",
-                       "URLField": "nvarchar", "MoneyField": "numeric"}
+                       "URLField": "nvarchar", "MoneyField": "numeric", "CurrencyField": "nvarchar"}
 
 
 def dict3(request):
@@ -89,6 +79,14 @@ def view_products(request):
 
 
 def view_products_list(request, table):
+    order_by = request.GET.get('order_by')
+    if order_by is None:
+        order_by = "id"
+
+    direction = request.GET.get('direction')
+    if direction is None:
+        direction = "asc"
+
     app = apps.get_app_config("jeans")
     app_models = app.models.values()
     current_table = None
@@ -99,17 +97,23 @@ def view_products_list(request, table):
     if not current_table:
         return HttpResponse("Failed")
 
-    paginator = Paginator(current_table.objects.all(), 10)  # Show 25 contacts per page.
+    list_fields = current_table.list_fields
+    headers = []
+    for field in list_fields:
+        try:
+            headers.append({"title": current_table._meta.get_field(field).verbose_name, "name":current_table._meta.get_field(field).name})
+        except FieldDoesNotExist:
+            headers.append({"title": current_table.list_func_names[field], "name": None})
+
+    ordering = order_by.lower()
+    if direction == 'desc':
+        ordering = '-{}'.format(ordering)
+    paginator = Paginator(current_table.objects.all().order_by(ordering), 25)  # Show 25 contacts per page.
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     template = loader.get_template('jeans/listview.html')
-    context = {
-        'page_obj': page_obj,
-        'title': current_table._meta.db_table,
-    }
-    if hasattr(current_table, "list_headers") and hasattr(current_table, "list_fields"):
-        context["fields"] = current_table.list_fields
-        context["headers"]: current_table.list_headers
+    context = {'page_obj': page_obj, 'title': current_table._meta.db_table, "fields": list_fields,
+               "headers": headers, "table": table,  'order_by': order_by, 'direction': direction}
     return HttpResponse(template.render(context, request))
 
 
@@ -121,8 +125,14 @@ def delete_single(request, table, id):
         if model._meta.db_table.lower() == table.lower():
             current_table = model
 
-    current_table.objects.filter(id=id).delete()
-    return HttpResponseRedirect('/listall/' + table + "/")
+    template = loader.get_template('jeans/deletefailed.html')
+    try:
+        current_table.objects.filter(id=id).delete()
+        return HttpResponseRedirect('/listall/' + table + "/")
+    except django.db.IntegrityError as e:
+        context = {'error': "Cannot delete rows due to ForeignKey constraint."}
+        return HttpResponse(template.render(context, request))
+
 
 
 def create_single(request, table):
@@ -209,6 +219,9 @@ def edit_single(request, table, id):
         'form': form,
         'action': "/edit_row/{}/{}/".format(table, id),
         'formsets': formsets,
+        'edit': True,
+        'table': table,
+        'id': id
     }
     return HttpResponse(template.render(context, request))
 
@@ -273,3 +286,94 @@ class ProductUpdate(ProductPromoInline, UpdateView):
         return {
             'variants': forms.ProductPromoFormSet(self.request.POST or None, self.request.FILES or None, instance=self.object, prefix='variants'),
         }
+
+
+def graph_view(data):
+    labels = ['Test', 'Test2', 'Test3', 'Test4', 'Test5']
+    response_data = {"labels": labels, 'data': data}
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+def best_cust_month(request):
+    return graph_view([16, 64, 29, 82, 53])
+
+
+def best_promo_month(request):
+    return graph_view([28, 45, 99, 19, 74])
+
+
+def uniq_cust_month(request):
+    return graph_view([72, 4, 88, 36, 51])
+
+
+def delete_rows(request):
+    app = apps.get_app_config("jeans")
+    app_models = app.models.values()
+    current_table = None
+    data = request.POST.dict()
+    print(request.POST)
+    for model in app_models:
+        if model._meta.db_table.lower() == data["table"].lower():
+            current_table = model
+
+    if not current_table:
+        return HttpResponse("Failed")
+
+    print(current_table)
+    rows = request.POST.getlist('rows[]')
+    rows = [int(i) for i in rows]
+    try:
+        current_table.objects.filter(pk__in=rows).delete()
+    except django.db.IntegrityError as e:
+        return HttpResponse("Cannot delete rows due to ForeignKey constraint.")
+
+    return HttpResponse(200)
+
+
+def send_promo_email(request):
+    print(request.POST)
+    email_sender.send_promo_email_test(int(request.POST["id"]))
+    return HttpResponse(200)
+
+
+def promo_email_page(request):
+    solid_tables = data_dict_helper.get_solid_models("jeans")
+    tables = []
+    for table in solid_tables:
+        tables.append(table._meta.verbose_name_plural)
+
+    template = loader.get_template('jeans/send_promos.html')
+    promos = models.Promo.objects.filter(promo_status=1)
+    context = {
+        "promos": promos
+    }
+    return HttpResponse(template.render(context, request))
+
+
+def preview_promo(request):
+    solid_tables = data_dict_helper.get_solid_models("jeans")
+    tables = []
+    for table in solid_tables:
+        tables.append(table._meta.verbose_name_plural)
+
+    template = loader.get_template('jeans/promo.html')
+    promo = models.Promo.objects.get(id=int(request.POST["id"]))
+    context = {
+        "promo": promo
+    }
+    return HttpResponse(template.render(context, request))
+
+
+def top_promos(request):
+    # Get top promos being used
+    promo_customer_counts = CustomerPromo.objects.values('promo_id').annotate(customer_count=Count('customer_id', distinct=True)).order_by('-customer_count')[:10]
+    promo_ids = [row['promo_id'] for row in promo_customer_counts]
+    promos = Promo.objects.filter(id__in=promo_ids).values('id', 'promo_name', 'promo_code', 'promo_desc')
+    top_promos_data = [{'promo': {'id': promo['id'], 'name': promo['promo_name'], 'code': promo['promo_code'], 'desc': promo['promo_desc']}, 'customer_count': row['customer_count']} for row, promo in zip(promo_customer_counts, promos)]
+
+    # Get top customers using promos
+    top_customers_data = CustomerPromo.objects.values('customer_id', 'customer__first_name', 'customer__last_name').annotate(promo_count=Count('promo_id')).order_by('-promo_count')[:10]
+
+    context = {'top_promos': top_promos_data, 'top_customers': top_customers_data}
+    return render(request, 'jeans/report.html', context)
+
+

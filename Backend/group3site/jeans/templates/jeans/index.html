@@ -2,27 +2,150 @@
 {% load i18n %}
 {% load static %}
 
-{% block extrabody %}{{ block.super }}
-<h1>Team</h1>
-<ul>
-    {% for member in team %}
-        <li>{{ member }}</li>
-    {% endfor %}
-</ul>
+
+{% block extrahead %}{{ block.super }}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  #chart1, #chart2, #chart3 {
+    width: 500;
+    height: 500;
+  }
+  .label {/*from  w  ww. ja  v  a 2  s  .  co  m*/
+    text-align: center;
+    width: 600px;
+    font-size: 20px;
+    font-weight: bold;
+    margin: 20px;
+  }
+  .chart_container {
+    float: left;
+    margin: 20px;
+  }
+</style>
 {% endblock %}
-<body class="background">
-    <div class="navcontainer">
-        <ul class="navbar">
-            //Buttons with links to respective pages within the website.
-            <li class="navli"><a class="navlink" href="{% url 'index'%}">Home</a></li>
-            <li class="navli"><a class="navlink" href="{% url 'listall' table='product'  %}">Products</a></li>
-            <li class="navli"><a class="navlink" href="{% url 'index'%}">Reports</a></li>
-            <li class="navli"><a class="navlink" href="{% url 'listall' table='promo' %}">Promos</a></li>
-            <li class="navli"><a class="navlink" href="{% url 'listall' table='customer'  %}">Customers</a></li>
-        </ul>
-    </div>
-    <div class="container">
-        {% block extrabody %}
-        {% endblock %}
-    </div>
-</body>
+
+{% block extrabody %}{{ block.super }}
+
+
+<input type="hidden" id="Best_Cust" data-url="{% url 'graph'%}" />
+<input type="hidden" id="Best_Promo" data-url="{% url 'graph2'%}" />
+<input type="hidden" id="Unique_Cust" data-url="{% url 'graph3'%}" />
+<div id="aligned">
+          <div class="chart_container">
+            <canvas id="chart1" width="400" height="400"></canvas>
+          </div>
+          <div class="chart_container">
+            <canvas id="chart2" width="400" height="400"></canvas>
+          </div>
+          <div class="chart_container">
+            <canvas id="chart3" width="400" height="400"></canvas>
+          </div>
+</div>
+
+<div style="margin:auto; text-align:center;">
+    <a class="button-1 button-2"  href="{% url 'listall' table='promo'  %}">Manage Promos</a>
+    <a class="button-1 button-2"  href="{% url 'report'  %}">View Reports</a>
+    <a class="button-1 button-2"  href="{% url 'listall' table='product'  %}">Manage Products</a>
+    <a class="button-1 button-2"  href="{% url 'send_email'  %}">Send Emails</a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+
+$(document).ready(function () {
+    var url = $("#Best_Cust").attr("data-url");
+    console.log(url)
+    $.ajax({
+        url: url,
+        success: function (data) {
+            console.log(data)
+            const ctx = document.getElementById('chart1').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: '# of Visits',
+                        data: data.data,
+                        borderWidth: 1,
+                        backgroundColor: '#ffa500'
+                    }]
+                },
+                options: {
+                    responsive: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+    });
+
+    var url = $("#Best_Promo").attr("data-url");
+    console.log(url)
+    $.ajax({
+        url: url,
+        success: function (data) {
+
+            console.log(data)
+            const ctx = document.getElementById('chart2').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: '# of Redemptions',
+                        data: data.data,
+                        borderWidth: 1,
+                        backgroundColor: '#008000'
+                    }]
+                },
+                options: {
+                    responsive: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+    });
+
+    var url = $("#Unique_Cust").attr("data-url");
+    console.log(url)
+    $.ajax({
+        url: url,
+        success: function (data) {
+
+            console.log(data)
+            const ctx = document.getElementById('chart3').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: '# of Customers',
+                        data: data.data,
+                        borderWidth: 1,
+                        backgroundColor: '#000080'
+                    }]
+                },
+                options: {
+                    responsive: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+    });
+});
+
+    </script>
+{% endblock %}
