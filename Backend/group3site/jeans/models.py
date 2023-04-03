@@ -104,7 +104,7 @@ class ProductTag(StatusCode):
 
     class Meta:
         db_table = "ProductTag"
-        verbose_name_plural = "Product Tag"
+        verbose_name_plural = "Product Tags"
         managed = IsManaged
 
 
@@ -118,7 +118,7 @@ class Brand(DescriptiveModel):
 
     class Meta:
         db_table = "Brand"
-        verbose_name_plural = "Brand"
+        verbose_name_plural = "Brands"
         managed = IsManaged
 
     def __str__(self):
@@ -144,7 +144,7 @@ class Product(DescriptiveModel):
 
     class Meta:
         db_table = "Product"
-        verbose_name_plural = "Product"
+        verbose_name_plural = "Products"
         managed = IsManaged
 
     def __str__(self):
@@ -164,7 +164,7 @@ class Promo(DescriptiveModel):
 
     class Meta:
         db_table = "Promo"
-        verbose_name_plural = "Promo"
+        verbose_name_plural = "Promos"
         managed = IsManaged
 
     def __str__(self):
@@ -232,7 +232,7 @@ class Customer(DescriptiveModel):
 
     class Meta:
         db_table = "Customer"
-        verbose_name_plural = "Customer"
+        verbose_name_plural = "Customers"
         managed = IsManaged
 
 
