@@ -9,6 +9,9 @@ from django.http import HttpResponseRedirect
 from django.core.paginator import Paginator
 from . import models
 from . import forms
+from django.shortcuts import render
+from .models import Customer, CustomerPromo, Promo
+from django.db.models import Count
 from django.apps import apps
 from django.core.exceptions import FieldDoesNotExist
 from django.views.generic.edit import (
@@ -358,3 +361,20 @@ def preview_promo(request):
         "promo": promo
     }
     return HttpResponse(template.render(context, request))
+
+
+def top_promos(request):
+    # Get top promos being used
+    promo_customer_counts = CustomerPromo.objects.values('promo_id').annotate(customer_count=Count('customer_id', distinct=True)).order_by('-customer_count')[:10]
+    promo_ids = [row['promo_id'] for row in promo_customer_counts]
+    promos = Promo.objects.filter(id__in=promo_ids).values('id', 'promo_name', 'promo_code', 'promo_desc')
+    top_promos_data = [{'promo': {'id': promo['id'], 'name': promo['promo_name'], 'code': promo['promo_code'], 'desc': promo['promo_desc']}, 'customer_count': row['customer_count']} for row, promo in zip(promo_customer_counts, promos)]
+
+    # Get top customers using promos
+    top_customers_data = CustomerPromo.objects.values('customer_id', 'customer__first_name', 'customer__last_name').annotate(promo_count=Count('promo_id')).order_by('-promo_count')[:10]
+
+    context = {'top_promos': top_promos_data, 'top_customers': top_customers_data}
+    return render(request, 'jeans/report.html', context)
+
+
+
