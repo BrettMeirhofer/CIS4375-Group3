@@ -269,6 +269,10 @@ textarea {
     {% block extrahead %}
     <meta charset="UTF-8">
     {% endblock %}
+    {% block branding %}
+    <img src="{% static 'Fajas&Jeans.png' %}" height="60px" />
+    {% endblock %}
+
 </head>
 <body class="background">
     <div class="navcontainer">
@@ -277,7 +281,7 @@ textarea {
             <li class="navli"><a class="navlink bignav" href="{% url 'listall' table='promo' %}">Promos</a></li>
             <li class="navli"><a class="navlink bignav" href="{% url 'listall' table='product'  %}">Products</a></li>
             <li class="navli"><a class="navlink bignav" href="{% url 'report'%}">Reports</a></li>
-            <li class="navli"><a class="navlink bignav" href="{% url 'send_email'%}">Email</a></li>
+            <li class="navli"><a class="navlink bignav" href="{% url 'send_email'%}">Print Promos</a></li>
         </ul>
         <ul class="navbar">
             <li class="navli"><a class="navlink"  href="{% url 'listall' table='customer'  %}">Customer</a></li>

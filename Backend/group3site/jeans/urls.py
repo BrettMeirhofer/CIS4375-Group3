@@ -54,13 +54,13 @@ urlpatterns = [
     path('edit_row/<table>/<int:id>/', views.edit_single, name='edit_row'),
     path('testcreate/', views.ProductCreate.as_view(), name='create_product'),
     path('testupdate/<int:pk>/',views. ProductUpdate.as_view(), name='update_product'),
-    path('promo-email/', views.send_promo_email, name="promo-email"),
     path('graph', views.top5_cust, name='graph'),
     path('graph2', views.top5_promos, name='graph2'),
     path('graph3', views.uniq_cust_month, name='graph3'),
     path('preview_promo/', views.preview_promo, name='preview_promo'),
     path('report/', views.report, name='report'),
     path('top_promos/', views.top_promos, name='top_promos'),
-    path('top_customers/', views.top_customers, name='top_customers'),
-   
+    path('top_customers/', views.top_customers, name='top_customers'), 
+    path('print_promo/<int:id>/', views.print_promo, name='print_promo'),
+    path('report/', views.top_promos, name='report'),
 ]

@@ -4,44 +4,10 @@
 {% load my_extras %}
 
 {% block extrabody %}{{ block.super }}
-<h1>Send Promo Emails</h1>
-<div>
-<select id="promo-selector" style="display:inline-block;">
+<h1 style="text-align:center;">Print Promos</h1>
+<div style="text-align:center;">
     {% for promo in promos %}
-        <option value="{{promo.id}}" selected="">{{promo}}</option>
+        <a class="button-1 button-2" style="margin:20px;display:flex; padding:10px;" href="{% url 'print_promo' id=promo.id %}">{{promo}}</a>
     {% endfor %}
-</select>
-<a class = "button-1" id="email_promo" href="">Email Promo to Customers</a>
 </div>
-<div id="preview">
-</div>
-
-<script>
-$(document).ready(function () {
-    $('#promo-selector').change(function (ev) {
-        id = $('#promo-selector').val();
-        console.log(id)
-            $.post({
-                url: {% url 'preview_promo' %},
-                data: { csrfmiddlewaretoken: "{{ csrf_token }}", "id": id, },
-                success: function (data) {
-                    $('#preview').empty()
-                    $('#preview').append(data)
-                },
-              });
-    });
-      $('#email_promo').click(function (ev) {
-        id = $('#promo-selector').val();
-        console.log(id)
-        if (confirm("Are you sure you want to email all active customers?") == true) {
-            $.post({
-                url: {% url 'promo-email' %},
-                data: { csrfmiddlewaretoken: "{{ csrf_token }}", "id": id, },
-                success: function (data) {
-                },
-              });
-        }
-    });
-});
-</script>
 {% endblock %}

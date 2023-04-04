@@ -5,7 +5,6 @@ import os
 from django.db import connection
 from django.template import loader
 from . import data_dict_helper
-from . import email_sender
 from django.http import HttpResponseRedirect
 from django.core.paginator import Paginator
 from . import models
@@ -334,13 +333,6 @@ def delete_rows(request):
 
     return HttpResponse(200)
 
-
-def send_promo_email(request):
-    print(request.POST)
-    email_sender.send_promo_email_test(int(request.POST["id"]))
-    return HttpResponse(200)
-
-
 def promo_email_page(request):
     solid_tables = data_dict_helper.get_solid_models("jeans")
     tables = []
@@ -356,18 +348,38 @@ def promo_email_page(request):
 
 
 def preview_promo(request):
+    promo = models.Promo.objects.get(id=int(request.POST["id"]))
+    return render_promo(request, promo)
+
+
+def render_promo(request, promo):
     solid_tables = data_dict_helper.get_solid_models("jeans")
     tables = []
     for table in solid_tables:
         tables.append(table._meta.verbose_name_plural)
 
     template = loader.get_template('jeans/promo.html')
-    promo = models.Promo.objects.get(id=int(request.POST["id"]))
+    products = promo.promo_products.all()
+    images = models.ProductImage.objects.filter(product__in=products)
     context = {
-        "promo": promo
+        "promo": promo,
+        "products": products,
+        "images": images
     }
     return HttpResponse(template.render(context, request))
 
+
+def print_promo(request, id):
+    promo = models.Promo.objects.get(id=id)
+    return render_promo(request,promo)
+
+
+def top_promos(request):
+    # Get top promos being used
+    promo_customer_counts = CustomerPromo.objects.values('promo_id').annotate(customer_count=Count('customer_id', distinct=True)).order_by('-customer_count')[:10]
+    promo_ids = [row['promo_id'] for row in promo_customer_counts]
+    promos = Promo.objects.filter(id__in=promo_ids).values('id', 'promo_name', 'promo_code', 'promo_desc')
+    top_promos_data = [{'promo': {'id': promo['id'], 'name': promo['promo_name'], 'code': promo['promo_code'], 'desc': promo['promo_desc']}, 'customer_count': row['customer_count']} for row, promo in zip(promo_customer_counts, promos)]
 
 
 def report(request):
