@@ -5,7 +5,7 @@
 
 {% block extrabody %}{{ block.super }}
         <h1>{{title}}</h1>
-        <a class = "button-1" href="{% url 'create_row' table=title %}">Create</a>
+        <a class = "button-1" href="{% url 'create_row' table=table %}">Create</a>
         <a id="delete-all" class = "deletebutton button-1" >Delete</a>
         <br>
         <p style="color:red; font-size:20px;" id="error"></p>
