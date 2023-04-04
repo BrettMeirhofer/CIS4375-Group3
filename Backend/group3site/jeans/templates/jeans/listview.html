@@ -5,7 +5,7 @@
 
 {% block extrabody %}{{ block.super }}
         <h1>{{title}}</h1>
-        <a class = "button-1" href="{% url 'create_row' table=title %}">Create</a>
+        <a class = "button-1" href="{% url 'create_row' table=table %}">Create</a>
         <a id="delete-all" class = "deletebutton button-1" >Delete</a>
         <br>
         <p style="color:red; font-size:20px;" id="error"></p>
@@ -15,7 +15,7 @@
                         {% if order_by == "id" and direction == "asc" %}
                             <th class=""><a href="?page=1&order_by=id&direction=desc">ID</a></th>
                         {% else %}
-                            <th class="headerSortUp{% if order_by == 'id' %} {% endif %}"><a href="?page=1&order_by=id&direction=asc">ID</a></th>
+                            <th class="{% if order_by == 'id' %}headerSortUp {% endif %}"><a href="?page=1&order_by=id&direction=asc">ID</a></th>
                         {% endif %}
                 {% for header in headers %}
                     {% if header.name %}

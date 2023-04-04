@@ -79,7 +79,7 @@ class ProductForm(ModelForm):
 
     class Meta:
         model = models.Product
-        fields = ['product_name', 'product_desc', 'created_date', 'product_status', 'product_price']
+        fields = ['product_name', 'created_date', 'product_status', 'product_price', 'product_desc']
         widgets = {
             'created_date': DateInput(),
             'product_price': forms.widgets.NumberInput(attrs={'class': 'money'})
