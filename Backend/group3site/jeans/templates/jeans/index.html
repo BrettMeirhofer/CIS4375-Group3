@@ -20,7 +20,11 @@
   }
   .chart_container {
     float: left;
-    margin: 20px;
+    margin: 30px;
+  }
+  .chart_container2 {
+    display: block;
+    margin: 10px;
   }
 </style>
 {% endblock %}
@@ -28,19 +32,19 @@
 {% block extrabody %}{{ block.super }}
 
 
-<input type="hidden" id="Best_Cust" data-url="{% url 'graph'%}" />
-<input type="hidden" id="Best_Promo" data-url="{% url 'graph2'%}" />
-<input type="hidden" id="Unique_Cust" data-url="{% url 'graph3'%}" />
+<input type="hidden" id="Top5_Cust" data-url="{% url 'graph'%}" />
+<input type="hidden" id="Top5_Promo" data-url="{% url 'graph2'%}" />
+<input type="hidden" id="Unique_Cust_Month" data-url="{% url 'graph3'%}" />
 <div id="aligned">
           <div class="chart_container">
-            <canvas id="chart1" width="400" height="400"></canvas>
+            <canvas id="chart1" width="600" height="250"></canvas>
           </div>
           <div class="chart_container">
-            <canvas id="chart2" width="400" height="400"></canvas>
+            <canvas id="chart2" width="600" height="250"></canvas>
           </div>
-          <div class="chart_container">
-            <canvas id="chart3" width="400" height="400"></canvas>
-          </div>
+</div>
+<div class="chart_container2">
+    <canvas id="chart3" width="750" height="200"></canvas>
 </div>
 
 <div style="margin:auto; text-align:center;">
@@ -54,7 +58,7 @@
 <script>
 
 $(document).ready(function () {
-    var url = $("#Best_Cust").attr("data-url");
+    var url = $("#Top5_Cust").attr("data-url");
     console.log(url)
     $.ajax({
         url: url,
@@ -66,7 +70,7 @@ $(document).ready(function () {
                 data: {
                     labels: data.labels,
                     datasets: [{
-                        label: '# of Visits',
+                        label: '# of Promos Redeemed',
                         data: data.data,
                         borderWidth: 1,
                         backgroundColor: '#ffa500'
@@ -78,13 +82,19 @@ $(document).ready(function () {
                         y: {
                             beginAtZero: true
                         }
+                    },
+                    plugins: {
+                        title: {
+                        display: true,
+                        text: 'Top 5 Customers by Promo Engagement'
+                        }
                     }
                 }
             });
         }
     });
 
-    var url = $("#Best_Promo").attr("data-url");
+    var url = $("#Top5_Promo").attr("data-url");
     console.log(url)
     $.ajax({
         url: url,
@@ -97,7 +107,7 @@ $(document).ready(function () {
                 data: {
                     labels: data.labels,
                     datasets: [{
-                        label: '# of Redemptions',
+                        label: '# of Times Redeemed',
                         data: data.data,
                         borderWidth: 1,
                         backgroundColor: '#008000'
@@ -109,13 +119,19 @@ $(document).ready(function () {
                         y: {
                             beginAtZero: true
                         }
+                    },
+                    plugins: {
+                        title: {
+                        display: true,
+                        text: 'Top 5 Most Redeemed Promos'
+                        }
                     }
                 }
             });
         }
     });
 
-    var url = $("#Unique_Cust").attr("data-url");
+    var url = $("#Unique_Cust_Month").attr("data-url");
     console.log(url)
     $.ajax({
         url: url,
@@ -128,17 +144,23 @@ $(document).ready(function () {
                 data: {
                     labels: data.labels,
                     datasets: [{
-                        label: '# of Customers',
+                        label: '# of Unique Customers',
                         data: data.data,
                         borderWidth: 1,
                         backgroundColor: '#000080'
                     }]
                 },
                 options: {
-                    responsive: false,
+                    responsive: true,
                     scales: {
                         y: {
                             beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        title: {
+                        display: true,
+                        text: 'Unique Customers by Month'
                         }
                     }
                 }
