@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <title>{{report.name}}</title>
+    <link rel="stylesheet" href="{% static 'css/report_table_styling.css' %}">
+    <style>
+          h2{
+            text-align: center
+        }
+
+        h3{
+            text-align: left
+        }
+
+        table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          margin:auto;
+          width: 80%;
+        }
+
+        td {
+          border: 1px solid #dddddd;
+          padding: 8px;
+          text-align: left;
+        }
+
+        th {
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+        }
+
+        tr:nth-child(even) {
+          background-color: #dddddd;
+
+        }
+
+        .right {
+            text-align: right;
+        }
+
+</style>
+</head>
+<body>
+<h2>{{report.name}}</h2>
+<h2>Generated: {{date}}</h2>
+<table style="page-break-after: always;">
+    <thead>
+    <tr>
+        {% for column in report.titles %}
+        <th>
+            {{column}}
+        </th>
+        {% endfor %}
+    </tr>
+    </thead>
+
+    {% if report.data %}
+    {% for row in report.data %}
+    <tr>
+        {% for column in row %}
+        <td class="{{column.1}}">
+            {{column.0}}
+        </td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+    {% endif %}
+</table>
+</body>

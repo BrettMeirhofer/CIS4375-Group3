@@ -62,5 +62,5 @@ urlpatterns = [
     path('top_promos/', views.top_promos, name='top_promos'),
     path('top_customers/', views.top_customers, name='top_customers'), 
     path('print_promo/<int:id>/', views.print_promo, name='print_promo'),
-    path('report/', views.top_promos, name='report'),
+    path('print_report/<int:index>/', views.html_report, name='print_report'),
 ]

@@ -12,12 +12,14 @@ from . import forms
 from django.shortcuts import render
 from .models import Customer, CustomerPromo, Promo
 from django.db.models import Count
+import glob
 from django.apps import apps
 from django.core.exceptions import FieldDoesNotExist
 from django.views.generic.edit import (
     CreateView, UpdateView
 )
 import json
+from datetime import date
 
 
 def index(request):
@@ -383,14 +385,17 @@ def top_promos(request):
 
 
 def report(request):
-    return render(request, 'jeans/report.html')
+    paths, names = get_report_paths()
+    context = {"reports": names}
+    return render(request, 'jeans/report.html', context)
+
 
 def top_customers(request):
     # Define the base directory for the SQL files
     base_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'SQL', 'Reports')
     
     # Build the path to the TopCustomers.sql file
-    sql_file_path = os.path.join(base_dir, 'TopCustomer.sql')
+    sql_file_path = os.path.join(base_dir, 'ReportTopCustomer.sql')
     
     with open(sql_file_path, 'r') as file:
         sql_query = file.read()
@@ -402,23 +407,88 @@ def top_customers(request):
 
     # Pass the result to the template
     context = {'top_customers': result}
-    return render(request, 'jeans/top_customers.html', context)
+    return render(request, 'jeans/print_report.html', context)
 
-def top_promos(request):
-    # Get the path to the TopPromos.sql file in the SQL/Reports directory
-    sql_file_path = os.path.join(os.path.dirname(__file__), 'SQL/Reports/TopPromo.sql')
-    
-    with open(sql_file_path, 'r') as file:
-        sql_query = file.read()
 
-    # Execute the SQL query
+class ReportData:
+    owner = ""
+    name = ""
+    rule = ""
+    desc = ""
+    data = []
+    titles = []
+    sql = []
+
+    def __init__(self, owner, name, rule, data, titles, sql, desc):
+        self.owner = owner
+        self.name = name
+        self.rule = rule
+        self.data = data
+        self.titles = titles
+        self.sql = sql
+        self.desc = desc
+
+
+def build_report_obj(path):
+    print(path)
+    with open(path, "r") as report_object:
+        report_text = report_object.readlines()
+
+    owner = report_text.pop(0).replace("--", "")
+    name = report_text.pop(0).replace("--", "")
+    rule = report_text.pop(0).replace("--", "")
+    desc = report_text.pop(0).replace("--", "")
+    titles = report_text.pop(0).replace("--", "").split(",")
+    align = report_text.pop(0).replace("--", "").replace("\n", "").split(",")
+
+    with open(path, "r") as report_object:
+        sql = report_object.read()
+
     with connection.cursor() as cursor:
-        cursor.execute(sql_query)
-        result = cursor.fetchall()
+        cursor.execute(sql)
+        output = cursor.fetchall()
 
-    # Pass the result to the template
-    context = {'top_promos': result}
-    return render(request, 'jeans/top_promos.html', context)
+        new_output = []
+        for row in output:
+            new_row = []
+            for index, column in enumerate(row):
+                col_class = align[index]
+                new_row.append([column, col_class])
+            new_output.append(new_row)
+
+    report_data = ReportData(owner, name, rule, new_output, titles, report_text, desc)
+    return report_data
+
+
+def get_reports(path):
+    return glob.glob(os.path.join(path, "SQL/Reports/Report*"))
+
+
+def get_report_paths():
+    module_dir = os.path.dirname(__file__)
+    paths = get_reports(module_dir)
+    out = []
+    print(paths)
+
+    for path in paths:
+        print(path)
+        name = open(path).readlines()[1]
+        name = name.replace("--", "")
+        out.append([name, path])
+    out.sort(key=lambda x: x[0].replace(" ", ""))
+    paths = []
+    names = []
+    for element in out:
+        paths.append(element[1])
+        names.append(element[0])
+    return paths, names
+
+
+def html_report(request, index):
+    paths, names = get_report_paths()
+    file_path = paths[index]
+    context = {"report": build_report_obj(file_path), "date": date.today()}
+    return render(request, 'jeans/print_report.html', context)
 
 
 

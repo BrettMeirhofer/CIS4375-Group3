@@ -1,9 +1,10 @@
 {% extends "jeans/jeanssite.html" %}
 
 {% block extrabody %}
-<h2>Reports</h2>
+<h1 style="text-align:center;">Print Reports</h1>
   <p>
-    <a href="{% url 'top_promos' %}" class="btn btn-primary">Top Promos</a>
-    <a href="{% url 'top_customers' %}" class="btn btn-primary">Top Customers</a>
+    {% for report in reports %}
+    <a class="button-1 button-2" style="margin:20px;display:flex; padding:10px;" href="{% url 'print_report' index=forloop.counter0 %}" >{{report}}</a>
+    {% endfor %}
   </p>
 {% endblock %}
