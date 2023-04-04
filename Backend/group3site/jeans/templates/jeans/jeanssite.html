@@ -270,12 +270,13 @@ textarea {
     <meta charset="UTF-8">
     {% endblock %}
     {% block branding %}
-    <img src="{% static 'Fajas&Jeans.png' %}" height="60px" />
     {% endblock %}
 
 </head>
 <body class="background">
+    <img style="position: absolute; padding:20px;" src="{% static 'FajasJeans.png' %}" height="60px" />
     <div class="navcontainer">
+
         <ul class="navbar navbar-expand-lg navbar-light bg-light">
             <li class="navli"><a class="navlink bignav" href="{% url 'index'%}">Home</a></li>
             <li class="navli"><a class="navlink bignav" href="{% url 'listall' table='promo' %}">Promos</a></li>
