@@ -4,7 +4,6 @@ from django.http import HttpResponse
 import os
 from django.template import loader
 from . import data_dict_helper
-from . import email_sender
 from django.http import HttpResponseRedirect
 from django.core.paginator import Paginator
 from . import models
@@ -333,13 +332,6 @@ def delete_rows(request):
 
     return HttpResponse(200)
 
-
-def send_promo_email(request):
-    print(request.POST)
-    email_sender.send_promo_email_test(int(request.POST["id"]))
-    return HttpResponse(200)
-
-
 def promo_email_page(request):
     solid_tables = data_dict_helper.get_solid_models("jeans")
     tables = []
@@ -355,17 +347,31 @@ def promo_email_page(request):
 
 
 def preview_promo(request):
+    promo = models.Promo.objects.get(id=int(request.POST["id"]))
+    return render_promo(request, promo)
+
+
+def render_promo(request, promo):
     solid_tables = data_dict_helper.get_solid_models("jeans")
     tables = []
     for table in solid_tables:
         tables.append(table._meta.verbose_name_plural)
 
     template = loader.get_template('jeans/promo.html')
-    promo = models.Promo.objects.get(id=int(request.POST["id"]))
+    products = promo.promo_products.all()
+    images = models.ProductImage.objects.filter(product__in=products)
     context = {
-        "promo": promo
+        "promo": promo,
+        "products": products,
+        "images": images
     }
     return HttpResponse(template.render(context, request))
+
+
+
+def print_promo(request, id):
+    promo = models.Promo.objects.get(id=id)
+    return render_promo(request,promo)
 
 
 def top_promos(request):
