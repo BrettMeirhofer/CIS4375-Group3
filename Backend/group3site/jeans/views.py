@@ -293,16 +293,21 @@ def graph_view(data):
     response_data = {"labels": labels, 'data': data}
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
-def best_cust_month(request):
+def graph_view_month(data):
+    labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+    response_data = {"labels": labels, 'data': data}
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+def top5_cust(request):
     return graph_view([16, 64, 29, 82, 53])
 
 
-def best_promo_month(request):
+def top5_promos(request):
     return graph_view([28, 45, 99, 19, 74])
 
 
 def uniq_cust_month(request):
-    return graph_view([72, 4, 88, 36, 51])
+    return graph_view_month([72, 4, 88, 36, 51, 91, 25, 48, 73, 45, 19, 30])
 
 
 def delete_rows(request):
