@@ -18,6 +18,7 @@ from django.core.exceptions import FieldDoesNotExist
 from django.views.generic.edit import (
     CreateView, UpdateView
 )
+from django.db import connection, ProgrammingError, DataError
 import json
 from datetime import date
 
@@ -290,26 +291,47 @@ class ProductUpdate(ProductPromoInline, UpdateView):
         }
 
 
-def graph_view(data):
-    labels = ['Test', 'Test2', 'Test3', 'Test4', 'Test5']
-    response_data = {"labels": labels, 'data': data}
+def graph_view(file):
+    module_dir = os.path.dirname(__file__)
+    path = os.path.join(os.path.dirname(module_dir), "jeans", "SQL", "Graphs",
+                        file)
+    sql = open(path).read()
+    with connection.cursor() as cursor:
+        cursor.execute(sql)
+        sql_output = cursor.fetchall()
+
+    response_data = {"labels": [], "data": []}
+    for row in sql_output:
+        response_data["labels"].append(row[0])
+        response_data["data"].append(str(row[1]))
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
-def graph_view_month(data):
-    labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-    response_data = {"labels": labels, 'data': data}
+def graph_view_month(file):
+    module_dir = os.path.dirname(__file__)
+    path = os.path.join(os.path.dirname(module_dir), "jeans", "SQL", "Graphs",
+                        file)
+    sql = open(path).read()
+    with connection.cursor() as cursor:
+        cursor.execute(sql)
+        sql_output = cursor.fetchall()
+
+    response_data = {"labels": ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'], "data": []}
+    for i in response_data["labels"]:
+        response_data["data"].append('0')
+    for row in sql_output:
+        response_data["data"].insert(row[0]-1, str(row[1]))
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 def top5_cust(request):
-    return graph_view([16, 64, 29, 82, 53])
+    return graph_view("Top5_Cust_Promo.sql")
 
 
 def top5_promos(request):
-    return graph_view([28, 45, 99, 19, 74])
+    return graph_view("Top5_Promo_Redeem.sql")
 
 
 def uniq_cust_month(request):
-    return graph_view_month([72, 4, 88, 36, 51, 91, 25, 48, 73, 45, 19, 30])
+    return graph_view_month("UniqueCustMonth.sql")
 
 
 def delete_rows(request):
