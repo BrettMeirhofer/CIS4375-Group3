@@ -2,6 +2,7 @@ import django.db.models
 from . import data_dict_helper as ddh
 from django.http import HttpResponse
 import os
+from django.db import connection
 from django.template import loader
 from . import data_dict_helper
 from django.http import HttpResponseRedirect
@@ -368,7 +369,6 @@ def render_promo(request, promo):
     return HttpResponse(template.render(context, request))
 
 
-
 def print_promo(request, id):
     promo = models.Promo.objects.get(id=id)
     return render_promo(request,promo)
@@ -381,11 +381,44 @@ def top_promos(request):
     promos = Promo.objects.filter(id__in=promo_ids).values('id', 'promo_name', 'promo_code', 'promo_desc')
     top_promos_data = [{'promo': {'id': promo['id'], 'name': promo['promo_name'], 'code': promo['promo_code'], 'desc': promo['promo_desc']}, 'customer_count': row['customer_count']} for row, promo in zip(promo_customer_counts, promos)]
 
-    # Get top customers using promos
-    top_customers_data = CustomerPromo.objects.values('customer_id', 'customer__first_name', 'customer__last_name').annotate(promo_count=Count('promo_id')).order_by('-promo_count')[:10]
 
-    context = {'top_promos': top_promos_data, 'top_customers': top_customers_data}
-    return render(request, 'jeans/report.html', context)
+def report(request):
+    return render(request, 'jeans/report.html')
+
+def top_customers(request):
+    # Define the base directory for the SQL files
+    base_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'SQL', 'Reports')
+    
+    # Build the path to the TopCustomers.sql file
+    sql_file_path = os.path.join(base_dir, 'TopCustomer.sql')
+    
+    with open(sql_file_path, 'r') as file:
+        sql_query = file.read()
+
+    # Execute the SQL query
+    with connection.cursor() as cursor:
+        cursor.execute(sql_query)
+        result = cursor.fetchall()
+
+    # Pass the result to the template
+    context = {'top_customers': result}
+    return render(request, 'jeans/top_customers.html', context)
+
+def top_promos(request):
+    # Get the path to the TopPromos.sql file in the SQL/Reports directory
+    sql_file_path = os.path.join(os.path.dirname(__file__), 'SQL/Reports/TopPromo.sql')
+    
+    with open(sql_file_path, 'r') as file:
+        sql_query = file.read()
+
+    # Execute the SQL query
+    with connection.cursor() as cursor:
+        cursor.execute(sql_query)
+        result = cursor.fetchall()
+
+    # Pass the result to the template
+    context = {'top_promos': result}
+    return render(request, 'jeans/top_promos.html', context)
 
 
 
