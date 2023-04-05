@@ -123,7 +123,7 @@ class CustomerStatusForm(ModelForm):
 class ProductTagForm(ModelForm):
     class Meta:
         model = models.ProductTag
-        fields = ["status_name", "status_desc"]
+        fields = ["tag_name", "tag_desc"]
 
 
 class CustomerPromoForm(ModelForm):

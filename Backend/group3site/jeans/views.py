@@ -168,6 +168,7 @@ def create_single(request, table):
         'form': form,
         'action': "/create_row/{}/".format(table),
         'formsets': formsets,
+        'title': current_table._meta.verbose_name
     }
     return HttpResponse(template.render(context, request))
 
@@ -224,7 +225,9 @@ def edit_single(request, table, id):
         'formsets': formsets,
         'edit': True,
         'table': table,
-        'id': id
+        'id': id,
+        'instance': current_row,
+        'title': current_table._meta.verbose_name
     }
     return HttpResponse(template.render(context, request))
 

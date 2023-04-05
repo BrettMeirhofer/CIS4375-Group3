@@ -21,9 +21,8 @@ CREATE TABLE PromoStatus(
 
 CREATE TABLE ProductTag(
 	id int NOT NULL PRIMARY KEY IDENTITY(1,1),
-	status_name nvarchar(40),
-	status_desc nvarchar(200) NULL,
-	is_active bit DEFAULT 1,
+	tag_name nvarchar(40),
+	tag_desc nvarchar(200) NULL,
 );
 
 CREATE TABLE Brand(

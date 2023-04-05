@@ -8,7 +8,11 @@
 {% endblock %}
 
 {% block extrabody %}{{ block.super }}
-<h1>{{title}}</h1>
+{% if edit %}
+<h1>Edit  {{title}} - {{instance}}</h1>
+{% else %}
+<h1>Add New {{title}}</h1>
+{% endif %}
 <form enctype="multipart/form-data" method="post" id="product_form" action={{ action }}>
     {% csrf_token %}
     <div class="card">
@@ -118,6 +122,28 @@
   });
 {% endfor %}
 $(document).ready(function() {
+    $('input[name="promo_name"]').css("display", "inline-block")
+    $('input[name="promo_code"]').css("display", "inline-block")
+    $('select[name="promo_status"]').css("display", "inline-block")
+    $('input[name="promo_name"]').parent().css("display", "inline-block")
+    $('input[name="promo_code"]').parent().css("display", "inline-block")
+    $('select[name="promo_status"]').parent().css("display", "inline-block")
+
+    $('select[name="product_status"]').parent().css("display", "inline-block")
+    $('select[name="product_status"]').css("display", "inline-block")
+
+    $('input[name="product_price"]').parent().css("display", "inline-block")
+    $('input[name="product_price"]').css("display", "inline-block")
+
+    $('input[name="created_date"]').parent().css("display", "inline-block")
+    $('input[name="created_date"]').css("display", "inline-block")
+
+    $('input[name="product_name"]').parent().css("display", "inline-block")
+    $('input[name="product_name"]').css("display", "inline-block")
+
+    $('select[name="customer_status"]').parent().css("display", "inline-block")
+    $('select[name="customer_status"]').css("display", "inline-block")
+
     $('.js-example-basic-single').select2();
       $('.money').change(function(ev) {
         ev.target.value = parseFloat(ev.target.value).toFixed(2);
