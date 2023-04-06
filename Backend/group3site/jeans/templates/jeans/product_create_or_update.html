@@ -168,6 +168,15 @@ $('.phone').each(function() {
   $(this).val(text);
 });
 
+$('td input[type=url]').change(function() {
+    $(this).parent().find("img").attr("src", $(this).val())
+    $(this).css("display", "inline-block")
+});
+
+$('td input[type=url]').each(function() {
+    $(this).parent().append("<img style='height:50px;width:50px;display:inline-block;vertical-align: middle' src="+ $(this).val() +"></img>")
+    $(this).css("display", "inline-block")
+});
 
 });
 </script>
