@@ -88,7 +88,7 @@ class ProductForm(ModelForm):
 
 class PromoForm(ModelForm):
     formsets = [ProductPromoFormSet]
-
+    add_actions = [{"name": "Print", "url": "print_promo"}]
     class Meta:
         model = models.Promo
         fields = ['promo_name', 'promo_code', 'promo_status', 'promo_desc']

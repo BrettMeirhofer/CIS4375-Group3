@@ -1,10 +1,6 @@
 <h2>{{promo.promo_name}}</h2>
 <p>{{promo.promo_desc}}</p>
 
-{% for product in products %}
-    <p>{{product}}</p>
-{% endfor %}
-
 {% for image in images %}
-    <p>{{image.image_url}}</p>
+    <img style="height:100px;width:100px;border:1px solid black;" src="{{image.image_url}}"></img>
 {% endfor %}

@@ -219,6 +219,11 @@ def edit_single(request, table, id):
         if result is not None:
             return result
 
+    add_actions = []
+    if hasattr(form, "add_actions"):
+        add_actions = form.add_actions
+
+
     template = loader.get_template('jeans/product_create_or_update.html')
     context = {
         'form': form,
@@ -228,7 +233,8 @@ def edit_single(request, table, id):
         'table': table,
         'id': id,
         'instance': current_row,
-        'title': current_table._meta.verbose_name
+        'title': current_table._meta.verbose_name,
+        'actions':add_actions
     }
     return HttpResponse(template.render(context, request))
 

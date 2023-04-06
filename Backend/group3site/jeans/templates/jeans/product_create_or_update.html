@@ -8,13 +8,21 @@
 {% endblock %}
 
 {% block extrabody %}{{ block.super }}
-{% if edit %}
-<h1>Edit  {{title}} - {{instance}}</h1>
-{% else %}
-<h1>Add New {{title}}</h1>
-{% endif %}
 <form enctype="multipart/form-data" method="post" id="product_form" action={{ action }}>
     {% csrf_token %}
+    <input type="submit" value="Submit">
+    {% if edit %}
+    {% for link in actions %}
+         <a class = "button-1" href="{% url link.url id=id%}">{{link.name}}</a>
+    {% endfor %}
+    <a class = "deletebutton button-1" href="{% url 'delete_row' table=table id=id%}" onclick="return confirm('Are you sure you want to delete this?')">Delete</a>
+    {% endif %}
+
+    {% if edit %}
+    <h1>Edit  {{title}} - {{instance}}</h1>
+    {% else %}
+    <h1>Add New {{title}}</h1>
+    {% endif %}
     <div class="card">
         {% for field in form %}
             <div class="form-group card-body">
