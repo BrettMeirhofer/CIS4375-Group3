@@ -58,6 +58,7 @@ CREATE TABLE Customer(
 	email nvarchar(254),
 	created_date date,
 	customer_status_id int FOREIGN KEY REFERENCES CustomerStatus(id),
+	phone_number nvarchar(12) NULL,
 );
 
 CREATE TABLE ProductProductTag(

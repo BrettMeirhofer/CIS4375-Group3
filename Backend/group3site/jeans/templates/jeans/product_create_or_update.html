@@ -152,6 +152,23 @@ $(document).ready(function() {
       $('.money').each(function(i,e ) {
         e.value = parseFloat(e.value).toFixed(2);
 });
-        });
+    $('.phone').on('input', function() {
+  let text=$(this).val()
+  text=text.replace(/\D/g,'')
+  if(text.length>3) text=text.replace(/.{3}/,'$&-')
+  if(text.length>7) text=text.replace(/.{7}/,'$&-')
+  $(this).val(text);
+});
+
+$('.phone').each(function() {
+  let text=$(this).val()
+  text=text.replace(/\D/g,'')
+  if(text.length>3) text=text.replace(/.{3}/,'$&-')
+  if(text.length>7) text=text.replace(/.{7}/,'$&-')
+  $(this).val(text);
+});
+
+
+});
 </script>
 {% endblock %}

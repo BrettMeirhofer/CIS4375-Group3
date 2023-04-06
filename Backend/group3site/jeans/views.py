@@ -32,7 +32,8 @@ class FieldTypeMap:
     field_type_dict = {"CharField": "nvarchar", "DateField": "date", "BooleanField": "bit", "BigAutoField": "bigint",
                        "EmailField": "nvarchar", "TextField": "nvarchar", "ForeignKey": "int", "IntegerField": "int",
                        "DecimalField": "numeric", "AutoField": "int", "PhoneNumberField": "nvarchar",
-                       "URLField": "nvarchar", "MoneyField": "numeric", "CurrencyField": "nvarchar"}
+                       "URLField": "nvarchar", "MoneyField": "numeric", "CurrencyField": "nvarchar",
+                       "PhoneField": "nvarchar"}
 
 
 def dict3(request):

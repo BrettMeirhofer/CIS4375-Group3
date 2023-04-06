@@ -1,7 +1,7 @@
 from django.db import models
 from django import forms
 from django.utils import timezone
-
+from django.core.validators import RegexValidator
 from decimal import Decimal
 from django.forms.widgets import Input
 
@@ -10,6 +10,10 @@ IsManaged = False
 
 
 class MoneyField(models.DecimalField):
+    pass
+
+
+class PhoneField(models.CharField):
     pass
 
 
@@ -237,8 +241,12 @@ class Customer(DescriptiveModel):
     first_name = models.CharField(max_length=200, verbose_name="First Name")
     last_name = models.CharField(max_length=200, verbose_name="Last Name")
     email = models.EmailField(verbose_name="Email Address")
+    phone_regex = RegexValidator(regex=r'[0-9]{3}-[0-9]{3}-[0-9]{4}',
+                                 message="Phone number must be entered in the format: 'xxx-xxx-xxxx'.")
     created_date = models.DateField(verbose_name="Created Date")
     customer_status = models.ForeignKey(CustomerStatus, on_delete=models.RESTRICT, verbose_name="Status")
+    phone_number = PhoneField(validators=[phone_regex], max_length=12, blank=True,
+                              null=True)  # Validators should be a list
     load_order = 2
     list_fields = ["first_name", "last_name", "email", "created_date", "customer_status"]
 

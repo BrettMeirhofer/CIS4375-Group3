@@ -151,9 +151,10 @@ class CustomerForm(ModelForm):
     class Meta:
         autocomplete_fields = ('customer',)
         model = models.Customer
-        fields = ["first_name", "last_name", "email", "created_date", "customer_status"]
+        fields = ["first_name", "last_name", "email", "phone_number", "created_date", "customer_status"]
         widgets = {
             'created_date': DateInput(),
+            'phone_number': forms.widgets.TextInput(attrs={"placeholder":"123-453-6748", "pattern":"[0-9]{3}-[0-9]{3}-[0-9]{4}", "class": "phone", "maxlength": 12}),
         }
 
 
