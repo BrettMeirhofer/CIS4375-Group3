@@ -56,8 +56,5 @@ $(document).ready(function() {
         $("[name='total_spent']").val(total)
     });
 
-     $("[name$='product']").on(('DOMNodeInserted', 'select', function () {
-      //$(this).combobox();
-});
-
+    $("[name='promo']").trigger("change")
 });
