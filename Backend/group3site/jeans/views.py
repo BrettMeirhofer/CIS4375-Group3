@@ -112,7 +112,7 @@ def view_products_list(request, table):
     ordering = order_by.lower()
     if direction == 'desc':
         ordering = '-{}'.format(ordering)
-    paginator = Paginator(current_table.objects.all().order_by(ordering), 25)  # Show 25 contacts per page.
+    paginator = Paginator(current_table.objects.all().order_by(ordering), 15)  # Show 25 contacts per page.
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     template = loader.get_template('jeans/listview.html')
