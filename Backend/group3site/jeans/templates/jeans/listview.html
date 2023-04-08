@@ -28,14 +28,16 @@
                         <th>{{header.title}}</th>
                     {% endif %}
                 {% endfor %}
+                <th style="width:50px"></th>
             </tr>
             {% for row in page_obj %}
                 <tr>
                     <td style="width:20px;"><input type="checkbox" class="select-row" rowid={{row.id}}></td>
-                    <td><a href="{% url 'edit_row' table=row|model_name id=row.id %}">{{row.id}}</a></td>
+                    <td>{{row.id}}</td>
                     {% for field in fields %}
                     <td>{{ row|get_attr:field }}</td>
                     {% endfor %}
+                    <td><a class="button-1" href="{% url 'edit_row' table=row|model_name id=row.id %}">Edit</a></td>
                 </tr>
             {% endfor %}
         </table>

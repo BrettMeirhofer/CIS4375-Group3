@@ -76,7 +76,7 @@ class NumberInput(forms.widgets.Input):
 
 class ProductForm(ModelForm):
     formsets = [ProductImageFormSet, ProductProductTagFormSet]
-
+    inline = ["created_date", "product_status"]
     class Meta:
         model = models.Product
         fields = ['product_name', 'created_date', 'product_status', 'product_price', 'product_desc']
@@ -89,6 +89,7 @@ class ProductForm(ModelForm):
 class PromoForm(ModelForm):
     formsets = [ProductPromoFormSet]
     add_actions = [{"name": "Print", "url": "print_promo"}]
+    inline = ["created_date", "end_date"]
 
     class Meta:
         model = models.Promo
@@ -144,7 +145,6 @@ class ProductTagForm(ModelForm):
 
 class CustomerPromoForm(ModelForm):
     field_titles = ["Promo", "Redeem Date"]
-
     def setfk(self, instance, parentinstance):
         instance.customer = parentinstance
 
@@ -164,6 +164,7 @@ CustomerPromoFormSet = inlineformset_factory(
 
 class CustomerForm(ModelForm):
     formsets = [CustomerPromoFormSet]
+    inline = ["created_date", "customer_status", "first_name", "last_name", "state", "country"]
     class Meta:
         autocomplete_fields = ('customer',)
         model = models.Customer
@@ -172,6 +173,7 @@ class CustomerForm(ModelForm):
         widgets = {
             'created_date': DateInput(),
             'phone_number': forms.widgets.TextInput(attrs={"placeholder":"123-453-6748", "pattern":"[0-9]{3}-[0-9]{3}-[0-9]{4}", "class": "phone", "maxlength": 12}),
+            'address': forms.widgets.TextInput(attrs={"style": "width:500px;"})
         }
 
 
