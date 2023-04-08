@@ -3,7 +3,7 @@
 --The client can use this report as one metric to access cashier performance. Cashiers with high customer spending may have skills that could be transferred to lower performing Cashiers increasing the overall revenue of the business.
 --Displays all the active cashiers and the total amount of customer spending with them acting as the cashier.
 --Row Number, Customer ID, Full Name, Email Address, Promos Redeemed
---,,,,right,right,right
+--,,,,
 
 SELECT
     ROW_NUMBER() OVER(ORDER BY (SELECT NULL)),
