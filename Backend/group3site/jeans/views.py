@@ -18,6 +18,7 @@ from django.core.exceptions import FieldDoesNotExist
 from django.views.generic.edit import (
     CreateView, UpdateView
 )
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import connection, ProgrammingError, DataError
 import json
 from datetime import date
@@ -522,4 +523,12 @@ def html_report(request, index, start_date, end_date):
     return render(request, 'jeans/print_report.html', context)
 
 
+def get_product_promo_prices(request, product_id, promo_id):
+    instance = models.ProductPromo.objects.get(product=product_id, promo=promo_id)
+    return HttpResponse(json.dumps({"current_price": instance.current_price, "promo_price": instance.promo_price},
+                                   cls=DjangoJSONEncoder))
 
+
+def get_promo_products(request, row_id):
+    rows = models.ProductPromo.objects.filter(promo=row_id).values("product__pk", "product__product_name")
+    return HttpResponse(json.dumps({"products": list(rows)}))

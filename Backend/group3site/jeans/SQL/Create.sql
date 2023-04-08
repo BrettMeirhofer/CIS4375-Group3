@@ -59,7 +59,7 @@ CREATE TABLE Promo(
 	promo_code nvarchar(10) UNIQUE,
 	promo_status_id int FOREIGN KEY REFERENCES PromoStatus(id),
 	created_date date,
-	end_date date,
+	end_date date NULL,
 	promo_desc nvarchar(400) NULL,
 );
 
@@ -104,6 +104,19 @@ CREATE TABLE CustomerPromo(
 	id int NOT NULL PRIMARY KEY IDENTITY(1,1),
 	customer_id int FOREIGN KEY REFERENCES Customer(id),
 	promo_id int FOREIGN KEY REFERENCES Promo(id),
+	total_spent numeric(19,4) DEFAULT 0.0,
+	total_discount numeric(19,4) DEFAULT 0.0,
 	created_date date,
+);
+
+CREATE TABLE CustomerProductPromo(
+	id int NOT NULL PRIMARY KEY IDENTITY(1,1),
+	customer_promo_id int FOREIGN KEY REFERENCES CustomerPromo(id),
+	product_id int FOREIGN KEY REFERENCES Product(id),
+	normal_price numeric(19,4) DEFAULT 0.0,
+	promo_price numeric(19,4) DEFAULT 0.0,
+	line_total numeric(19,4) DEFAULT 0.0,
+	line_discount numeric(19,4) DEFAULT 0.0,
+	quantity int DEFAULT 0,
 );
 

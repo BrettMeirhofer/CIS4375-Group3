@@ -261,6 +261,12 @@ tr th a:active { color: white !important; }
   padding-right: 10px;
 }
 
+.money {
+    text-align:right;
+    width:100px;
+    padding: 10px 0px;
+}
+
 textarea {
     width:75%;
     }
@@ -281,6 +287,7 @@ textarea {
             <li class="navli"><a class="navlink bignav" href="{% url 'index'%}">Home</a></li>
             <li class="navli"><a class="navlink bignav" href="{% url 'listall' table='promo' %}">Promos</a></li>
             <li class="navli"><a class="navlink bignav" href="{% url 'listall' table='product'  %}">Products</a></li>
+            <li class="navli"><a class="navlink bignav" href="{% url 'listall' table='customerpromo'  %}">Redeem Promos</a></li>
             <li class="navli"><a class="navlink bignav" href="{% url 'report'%}">Reports</a></li>
         </ul>
         <ul class="navbar">

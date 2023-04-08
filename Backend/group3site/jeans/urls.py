@@ -62,5 +62,7 @@ urlpatterns = [
     path('top_promos/', views.top_promos, name='top_promos'),
     path('top_customers/', views.top_customers, name='top_customers'), 
     path('print_promo/<int:id>/', views.print_promo, name='print_promo'),
-    path('print_report/<int:index>/<start_date>/<end_date>/', views.html_report, name='print_report'),
+    path('print_report/<int:row_id>/<start_date>/<end_date>/', views.html_report, name='print_report'),
+    path('get_product_promo_prices/<int:product_id>/<int:promo_id>/', views.get_product_promo_prices, name='get_product_promo_prices'),
+    path('get_promo_products/<int:row_id>/', views.get_promo_products, name='get_promo_products'),
 ]

@@ -1,7 +1,7 @@
 from django.db import models
 from django import forms
 from django.utils import timezone
-from django.core.validators import RegexValidator
+from django.core.validators import RegexValidator, MinValueValidator
 from decimal import Decimal
 from django.forms.widgets import Input
 
@@ -21,6 +21,11 @@ def past_validator(value):
     if value > timezone.now().date():
         raise forms.ValidationError("The date must be in the past!")
     return value
+
+
+def not_zero_validator(value):
+    if value == 0:
+        raise forms.ValidationError("The value cannot be zero")
 
 
 def not_zero_validator(value):
@@ -301,15 +306,41 @@ class Customer(DescriptiveModel):
 
 class CustomerPromo(DescriptiveModel):
     description = 'Records when a customer redeems a promo. Key data point for promo success'
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    promo = models.ForeignKey(Promo, on_delete=models.CASCADE)
-    created_date = models.DateField()
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, verbose_name="Customer")
+    promo = models.ForeignKey(Promo, on_delete=models.CASCADE, verbose_name="Promo")
+    total_spent = MoneyField(max_digits=19, decimal_places=4, verbose_name="Total Spent $", default=0.00)
+    total_discount = MoneyField(max_digits=19, decimal_places=4, verbose_name="Total Discount $", default=0.00)
+    created_date = models.DateField(verbose_name="Created Date")
     load_order = 4
 
     list_fields = ["customer", "promo", "created_date"]
+
+    def __str__(self):
+        return str(self.customer) + " (" + str(self.id) + ")"
 
     class Meta:
         db_table = "CustomerPromo"
         verbose_name = "Customer Promo"
         verbose_name_plural = "Customer Promo"
+        managed = IsManaged
+
+
+class CustomerProductPromo(DescriptiveModel):
+    description = 'Records the promotional products a customer redeems a promo for'
+    customer_promo = models.ForeignKey(CustomerPromo, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    normal_price = MoneyField(max_digits=19, decimal_places=4, verbose_name="Normal Price $", default=0.00)
+    promo_price = MoneyField(max_digits=19, decimal_places=4, verbose_name="Promo Price $", default=0.00)
+    line_total = MoneyField(max_digits=19, decimal_places=4, verbose_name="Line Total $", default=0.00)
+    line_discount = MoneyField(max_digits=19, decimal_places=4, verbose_name="Line Discount $", default=0.00)
+    one_validator = MinValueValidator(limit_value=1, message="Value cannot be less then one")
+    quantity = models.IntegerField(verbose_name="Quantity", default=1, validators=[one_validator])
+    load_order = 5
+
+    list_fields = []
+
+    class Meta:
+        db_table = "CustomerProductPromo"
+        verbose_name = "Customer Product Promo"
+        verbose_name_plural = "Customer Product Promo"
         managed = IsManaged

@@ -143,27 +143,48 @@ class ProductTagForm(ModelForm):
         fields = ["tag_name", "tag_desc"]
 
 
-class CustomerPromoForm(ModelForm):
-    field_titles = ["Promo", "Redeem Date"]
+class CustomerPromoProductForm(ModelForm):
+    field_titles = ["Product", "Quantity", "Normal Price", "Promo Price", "Line Total", "Line Discount"]
+    title = "Products"
     def setfk(self, instance, parentinstance):
-        instance.customer = parentinstance
+        instance.customer_promo = parentinstance
 
     class Meta:
-        model = models.CustomerPromo
-        fields = ["promo", "created_date"]
+        model = models.CustomerProductPromo
+        fields = ["product", "quantity", "normal_price", "promo_price", "line_total", "line_discount"]
         widgets = {
-            'created_date': DateInput(),
+            'quantity': forms.widgets.NumberInput(attrs={"style": "width:75px;padding:10px 0px"}),
+            'normal_price': forms.widgets.NumberInput(attrs={'class': 'money', 'readonly': ""}),
+            'promo_price': forms.widgets.NumberInput(attrs={'class': 'money', 'readonly': ""}),
+            'line_total': forms.widgets.NumberInput(attrs={'class': 'money', 'readonly': ""}),
+            'line_discount': forms.widgets.NumberInput(attrs={'class': 'money', 'readonly': ""})
         }
 
 
-CustomerPromoFormSet = inlineformset_factory(
-    models.Customer, models.CustomerPromo, form=CustomerPromoForm,
+CustomerProductPromoFormSet = inlineformset_factory(
+    models.CustomerPromo, models.CustomerProductPromo, form=CustomerPromoProductForm,
     extra=1, can_delete=True, can_delete_extra=True
 )
 
 
+class CustomerPromoForm(ModelForm):
+    formsets = [CustomerProductPromoFormSet]
+    inline = ["total_spent", "total_discount"]
+    class Meta:
+        model = models.CustomerPromo
+        fields = ["customer", "promo", "created_date", "total_spent", "total_discount"]
+        widgets = {
+            'customer': forms.widgets.Select(attrs={'class': 'js-example-basic-single'}),
+            'created_date': DateInput(),
+            'total_spent': forms.widgets.NumberInput(attrs={'class': 'money', 'readonly': ""}),
+            'total_discount': forms.widgets.NumberInput(attrs={'class': 'money', 'readonly': ""})
+        }
+
+    class Media:
+        js = ('js/customer_product_promo.js',)
+
+
 class CustomerForm(ModelForm):
-    formsets = [CustomerPromoFormSet]
     inline = ["created_date", "customer_status", "first_name", "last_name", "state", "country"]
     class Meta:
         autocomplete_fields = ('customer',)

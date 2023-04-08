@@ -152,3 +152,14 @@ WITH
 	)
 GO
 
+BULK INSERT CustomerProductPromo
+FROM "F:\School\CIS4375-Group3\Backend\group3site\jeans\Data\CustomerProductPromo.tsv"
+WITH
+	(
+	CHECK_CONSTRAINTS,
+	FIELDTERMINATOR = '\t',
+	ROWTERMINATOR = '\n',
+	KEEPIDENTITY
+	)
+GO
+
