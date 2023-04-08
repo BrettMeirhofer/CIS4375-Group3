@@ -1,2 +1,5 @@
 1	Avaliable	Standard Active	1
 2	Unavaliable	Standard Inactive	0
+3	Future	Promo not yet avaliable	0
+4	Ended	Promo reached it's end date	0
+5	Discontinued	Promo manually stopped	0

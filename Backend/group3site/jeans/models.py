@@ -72,6 +72,39 @@ class LabelCode(DescriptiveModel):
         managed = IsManaged
 
 
+class Country(DescriptiveModel):
+    description = 'A nation that an address can be located within'
+    country_name = models.CharField(max_length=60, verbose_name="Name")
+    load_order = 1
+    list_fields = ["country_name"]
+
+    def __str__(self):
+        return self.country_name
+
+    class Meta:
+        db_table = "Country"
+        verbose_name_plural = "Countries"
+        verbose_name = "Country"
+        managed = False
+
+
+class State(DescriptiveModel):
+    description = 'A state/province that an address can be located within'
+    state_name = models.CharField(max_length=60, verbose_name="Name")
+    country = models.ForeignKey(Country, on_delete=models.RESTRICT, default=233, verbose_name="Country")
+    load_order = 2
+    list_fields = ["state_name", "country"]
+
+    def __str__(self):
+        return self.state_name
+
+    class Meta:
+        db_table = "StateProvince"
+        verbose_name_plural = "State/Province"
+        verbose_name = "State/Province"
+        managed = False
+
+
 class CustomerStatus(StatusCode):
     description = 'Refers to the current state of the customer'
     load_order = 1
@@ -148,7 +181,7 @@ class Product(DescriptiveModel):
     product_brand = models.ForeignKey(Brand, on_delete=models.RESTRICT, blank=True, null=True, verbose_name="Brand")
     product_status = models.ForeignKey(ProductStatus, on_delete=models.RESTRICT, blank=True, null=True, verbose_name="Status")
     product_tags = models.ManyToManyField(ProductTag, through="ProductProductTag")
-    created_date = models.DateField(verbose_name="Date")
+    created_date = models.DateField(verbose_name="Created Date")
     load_order = 2
     list_fields = ["product_name", "created_date", "product_status", "get_current_price"]
     list_func_names = {"get_current_price": "Price"}
@@ -173,10 +206,11 @@ class Promo(DescriptiveModel):
     promo_code = models.CharField(max_length=10, unique=True, verbose_name="Redemption Code")
     promo_status = models.ForeignKey(PromoStatus, on_delete=models.RESTRICT, verbose_name="Status")
     promo_products = models.ManyToManyField(Product, through="ProductPromo")
-    created_date = models.DateField(verbose_name="Date")
+    created_date = models.DateField(verbose_name="Created Date")
+    end_date = models.DateField(verbose_name="End Date", blank=True, null=True)
     promo_desc = models.TextField(max_length=400, verbose_name="Description", blank=True, null=True)
     load_order = 2
-    list_fields = ["promo_name", "promo_code", "promo_status"]
+    list_fields = ["promo_name", "promo_code", "created_date", "end_date", "promo_status"]
 
     class Meta:
         db_table = "Promo"
@@ -246,9 +280,14 @@ class Customer(DescriptiveModel):
     created_date = models.DateField(verbose_name="Created Date")
     customer_status = models.ForeignKey(CustomerStatus, on_delete=models.RESTRICT, verbose_name="Status")
     phone_number = PhoneField(validators=[phone_regex], max_length=12, blank=True,
-                              null=True)  # Validators should be a list
-    load_order = 2
-    list_fields = ["first_name", "last_name", "email", "created_date", "customer_status"]
+                              null=True, verbose_name="Phone Number")  # Validators should be a list
+    zip_code = models.CharField(max_length=10, verbose_name="Zip Code")
+    city = models.CharField(max_length=35, default="Houston", verbose_name="City")
+    address = models.CharField(max_length=100, default="3242 StreetName", verbose_name="Address")
+    state = models.ForeignKey(State, on_delete=models.RESTRICT, default=1407, verbose_name="State")
+    country = models.ForeignKey(Country, on_delete=models.RESTRICT, default=233, verbose_name="Country")
+    load_order = 3
+    list_fields = ["first_name", "last_name", "email", 'phone_number', "created_date", "customer_status"]
 
     def __str__(self):
         return self.email

@@ -6,11 +6,15 @@ DROP TABLE "ProductImage"
 
 DROP TABLE "ProductPromo"
 
+DROP TABLE "Customer"
+
+DROP TABLE "StateProvince"
+
 DROP TABLE "Product"
 
 DROP TABLE "Promo"
 
-DROP TABLE "Customer"
+DROP TABLE "Country"
 
 DROP TABLE "CustomerStatus"
 

@@ -89,10 +89,14 @@ class ProductForm(ModelForm):
 class PromoForm(ModelForm):
     formsets = [ProductPromoFormSet]
     add_actions = [{"name": "Print", "url": "print_promo"}]
+
     class Meta:
         model = models.Promo
-        fields = ['promo_name', 'promo_code', 'promo_status', 'promo_desc']
-
+        fields = ['promo_name', 'promo_code', 'promo_status', 'created_date', 'end_date', 'promo_desc']
+        widgets = {
+            'created_date': DateInput(),
+            'end_date': DateInput(),
+        }
 
 
 class BrandForm(ModelForm):
@@ -118,6 +122,18 @@ class CustomerStatusForm(ModelForm):
     class Meta:
         model = models.CustomerStatus
         fields = ["status_name", "status_desc"]
+
+
+class StateForm(ModelForm):
+    class Meta:
+        model = models.State
+        fields = ["state_name", "country"]
+
+
+class CountryForm(ModelForm):
+    class Meta:
+        model = models.Country
+        fields = ["country_name"]
 
 
 class ProductTagForm(ModelForm):
@@ -151,7 +167,8 @@ class CustomerForm(ModelForm):
     class Meta:
         autocomplete_fields = ('customer',)
         model = models.Customer
-        fields = ["first_name", "last_name", "email", "phone_number", "created_date", "customer_status"]
+        fields = ["first_name", "last_name", "email", "phone_number", "created_date",
+                  "customer_status", "zip_code", "city", "address", "state", "country"]
         widgets = {
             'created_date': DateInput(),
             'phone_number': forms.widgets.TextInput(attrs={"placeholder":"123-453-6748", "pattern":"[0-9]{3}-[0-9]{3}-[0-9]{4}", "class": "phone", "maxlength": 12}),
@@ -159,5 +176,5 @@ class CustomerForm(ModelForm):
 
 
 form_listing = [ProductForm, PromoForm, ProductStatusForm, CustomerPromoForm, CustomerForm, BrandForm, PromoStatusForm,
-                CustomerStatusForm, ProductTagForm]
+                CustomerStatusForm, ProductTagForm, CountryForm, StateForm]
 

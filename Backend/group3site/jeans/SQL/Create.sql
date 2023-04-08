@@ -1,3 +1,8 @@
+CREATE TABLE Country(
+	id int NOT NULL PRIMARY KEY IDENTITY(1,1),
+	country_name nvarchar(60),
+);
+
 CREATE TABLE CustomerStatus(
 	id int NOT NULL PRIMARY KEY IDENTITY(1,1),
 	status_name nvarchar(40),
@@ -32,6 +37,12 @@ CREATE TABLE Brand(
 	brand_site nvarchar(200),
 );
 
+CREATE TABLE StateProvince(
+	id int NOT NULL PRIMARY KEY IDENTITY(1,1),
+	state_name nvarchar(60),
+	country_id int FOREIGN KEY REFERENCES Country(id),
+);
+
 CREATE TABLE Product(
 	id int NOT NULL PRIMARY KEY IDENTITY(1,1),
 	product_name nvarchar(80),
@@ -48,17 +59,8 @@ CREATE TABLE Promo(
 	promo_code nvarchar(10) UNIQUE,
 	promo_status_id int FOREIGN KEY REFERENCES PromoStatus(id),
 	created_date date,
+	end_date date,
 	promo_desc nvarchar(400) NULL,
-);
-
-CREATE TABLE Customer(
-	id int NOT NULL PRIMARY KEY IDENTITY(1,1),
-	first_name nvarchar(200),
-	last_name nvarchar(200),
-	email nvarchar(254),
-	created_date date,
-	customer_status_id int FOREIGN KEY REFERENCES CustomerStatus(id),
-	phone_number nvarchar(12) NULL,
 );
 
 CREATE TABLE ProductProductTag(
@@ -81,6 +83,21 @@ CREATE TABLE ProductPromo(
 	promo_id int FOREIGN KEY REFERENCES Promo(id),
 	current_price numeric(19,4) DEFAULT 0.0,
 	promo_price numeric(19,4) DEFAULT 0.0,
+);
+
+CREATE TABLE Customer(
+	id int NOT NULL PRIMARY KEY IDENTITY(1,1),
+	first_name nvarchar(200),
+	last_name nvarchar(200),
+	email nvarchar(254),
+	created_date date,
+	customer_status_id int FOREIGN KEY REFERENCES CustomerStatus(id),
+	phone_number nvarchar(12) NULL,
+	zip_code nvarchar(10),
+	city nvarchar(35) DEFAULT 'Houston',
+	address nvarchar(100) DEFAULT '3242 StreetName',
+	state_id int FOREIGN KEY REFERENCES StateProvince(id),
+	country_id int FOREIGN KEY REFERENCES Country(id),
 );
 
 CREATE TABLE CustomerPromo(
