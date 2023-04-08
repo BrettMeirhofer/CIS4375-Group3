@@ -516,9 +516,9 @@ def get_report_paths():
     return paths, names
 
 
-def html_report(request, index, start_date, end_date):
+def html_report(request, row_id, start_date, end_date):
     paths, names = get_report_paths()
-    file_path = paths[index]
+    file_path = paths[row_id]
     context = {"report": build_report_obj(file_path, start_date, end_date), "date": date.today(), "start_date":start_date, "end_date": end_date}
     return render(request, 'jeans/print_report.html', context)
 
