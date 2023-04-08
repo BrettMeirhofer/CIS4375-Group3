@@ -13,6 +13,7 @@ SELECT
 FROM
     Customer
 INNER JOIN CustomerPromo ON Customer.id = CustomerPromo.customer_id
+WHERE CustomerPromo.created_date BETWEEN '{}' AND '{}'
 GROUP BY
     Customer.id,
     Customer.first_name,
