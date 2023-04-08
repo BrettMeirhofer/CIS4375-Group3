@@ -461,7 +461,7 @@ class ReportData:
         self.desc = desc
 
 
-def build_report_obj(path):
+def build_report_obj(path, start_date, end_date):
     print(path)
     with open(path, "r") as report_object:
         report_text = report_object.readlines()
@@ -475,6 +475,7 @@ def build_report_obj(path):
 
     with open(path, "r") as report_object:
         sql = report_object.read()
+        sql = sql.format(start_date, end_date)
 
     with connection.cursor() as cursor:
         cursor.execute(sql)
@@ -500,10 +501,8 @@ def get_report_paths():
     module_dir = os.path.dirname(__file__)
     paths = get_reports(module_dir)
     out = []
-    print(paths)
 
     for path in paths:
-        print(path)
         name = open(path).readlines()[1]
         name = name.replace("--", "")
         out.append([name, path])
@@ -516,10 +515,10 @@ def get_report_paths():
     return paths, names
 
 
-def html_report(request, index):
+def html_report(request, index, start_date, end_date):
     paths, names = get_report_paths()
     file_path = paths[index]
-    context = {"report": build_report_obj(file_path), "date": date.today()}
+    context = {"report": build_report_obj(file_path, start_date, end_date), "date": date.today(), "start_date":start_date, "end_date": end_date}
     return render(request, 'jeans/print_report.html', context)
 
 

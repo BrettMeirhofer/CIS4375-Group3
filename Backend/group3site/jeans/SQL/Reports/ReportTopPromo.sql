@@ -13,6 +13,7 @@ SELECT
 FROM
     Promo promo
 INNER JOIN CustomerPromo ON promo.id = CustomerPromo.promo_id
+WHERE CustomerPromo.created_date BETWEEN '{}' AND '{}'
 GROUP BY
     promo.id,
     promo.promo_name,
@@ -20,3 +21,4 @@ GROUP BY
     promo.promo_desc
 ORDER BY
     customer_count DESC;
+
