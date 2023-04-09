@@ -238,6 +238,9 @@ class ProductProductTag(DescriptiveModel):
         db_table = "ProductProductTag"
         verbose_name_plural = "Product Product Tag"
         managed = IsManaged
+        constraints = [
+            models.UniqueConstraint(fields=['product', 'product_tag'], name='unique_product_tag')
+        ]
 
 
 class ProductImage(DescriptiveModel):
