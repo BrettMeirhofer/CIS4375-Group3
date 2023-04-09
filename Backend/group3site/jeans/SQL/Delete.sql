@@ -2,11 +2,11 @@ DELETE FROM "CustomerProductPromo"
 
 DELETE FROM "CustomerPromo"
 
+DELETE FROM "ProductPromo"
+
 DELETE FROM "ProductProductTag"
 
 DELETE FROM "ProductImage"
-
-DELETE FROM "ProductPromo"
 
 DELETE FROM "Customer"
 

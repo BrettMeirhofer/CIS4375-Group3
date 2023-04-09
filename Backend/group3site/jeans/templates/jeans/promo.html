@@ -1,6 +1,34 @@
-<h2>{{promo.promo_name}}</h2>
-<p>{{promo.promo_desc}}</p>
+<style>
+    p {
+    color: white;
+    padding:0px;
+    margin:0px;
+    }
+    h2 {
+    color:white;
+    }
+</style>
 
-{% for image in images %}
-    <img style="height:100px;width:100px;border:1px solid black;" src="{{image.image_url}}"></img>
-{% endfor %}
+<div style="text-align: center;">
+    <div style="background-color:grey;padding:30px;display:inline-block;text-align: center;">
+        <h2>{{promo.promo_name}}</h2>
+        <p>{{promo.promo_desc}}</p>
+
+        {% for product in products %}
+            <div style="display:inline-block">
+                <img style="height:100px;width:100px;margin:10px;" src="{{product.2}}"></img>
+                <p class="price" style="text-align:center;text-decoration: line-through">"{{product.1}}"</p>
+                <p class="price" style="text-align:center;">"{{product.0}}"</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('.price').each(function() {
+        $(this).text("$" + parseFloat($(this).text().replace('"', '')).toFixed(2))
+    });
+});
+</script>

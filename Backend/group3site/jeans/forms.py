@@ -9,14 +9,14 @@ from django import forms
 
 class ProductPromoForm(ModelForm):
     title = "Products"
-    field_titles = ["Product", "Current Price $", "Promo Price $"]
+    field_titles = ["Product", "Current Price $", "Promo Price $", "Display"]
 
     def setfk(self, instance, parentinstance):
         instance.promo = parentinstance
 
     class Meta:
         model = models.ProductPromo
-        fields = ['product', 'current_price', 'promo_price']
+        fields = ['product', 'current_price', 'promo_price', "display_product"]
         widgets = {
             'current_price': forms.widgets.NumberInput(attrs={'class': 'money'}),
             'promo_price': forms.widgets.NumberInput(attrs={'class': 'money'}),

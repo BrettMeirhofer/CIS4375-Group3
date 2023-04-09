@@ -395,11 +395,19 @@ def render_promo(request, promo):
 
     template = loader.get_template('jeans/promo.html')
     products = promo.promo_products.all()
-    images = models.ProductImage.objects.filter(product__in=products)
+    query = """
+        SELECT promo_price, current_price, image_url FROM ProductPromo
+        INNER JOIN ProductImage ON ProductImage.product_id = ProductPromo.product_id
+        WHERE ProductImage.primary_image = 1 AND ProductPromo.display_product = 1 AND ProductPromo.promo_id = {}
+    """.format(promo.pk)
+    rows = []
+    with connection.cursor() as cursor:
+        cursor.execute(query)
+        rows = cursor.fetchall()
+    print(rows)
     context = {
         "promo": promo,
-        "products": products,
-        "images": images
+        "products": rows,
     }
     return HttpResponse(template.render(context, request))
 

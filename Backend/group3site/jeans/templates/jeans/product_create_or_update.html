@@ -112,6 +112,7 @@
 
 <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="{% static 'js/product_create_or_update.js' %}"></script>
 <script>
 {% for current_formset in formsets %}
       $(document).ready(function() {
@@ -119,13 +120,13 @@
       $('.add-{{current_formset.form.title}}').click(function(ev) {
           ev.preventDefault();
           var count = $('#item-{{current_formset.form.title}}').children().length;
-          console.log(count)
           var tmplMarkup = $('#{{current_formset.form.title}}-template').html();
           var compiledTmpl = tmplMarkup.replace(/__prefix__/g, count);
           $('#item-{{current_formset.form.title}}').append(compiledTmpl);
 
           // update form count
           $('#id_{{current_formset.form.title}}-TOTAL_FORMS').attr('value', count+1);
+          $('#add-variant-button').trigger("add:row");
 
       });
   });
@@ -137,41 +138,6 @@ $(document).ready(function() {
         $('input[name="{{field}}"]').parent().css("display", "inline-block")
         $('input[name="{{field}}"]').css("display", "inline-block")
     {% endfor %}
-
-    $('.js-example-basic-single').select2();
-      $('.money').change(function(ev) {
-        ev.target.value = parseFloat(ev.target.value).toFixed(2);
-      });
-
-      $('.money').each(function(i,e ) {
-        e.value = parseFloat(e.value).toFixed(2);
-});
-    $('.phone').on('input', function() {
-  let text=$(this).val()
-  text=text.replace(/\D/g,'')
-  if(text.length>3) text=text.replace(/.{3}/,'$&-')
-  if(text.length>7) text=text.replace(/.{7}/,'$&-')
-  $(this).val(text);
-});
-
-$('.phone').each(function() {
-  let text=$(this).val()
-  text=text.replace(/\D/g,'')
-  if(text.length>3) text=text.replace(/.{3}/,'$&-')
-  if(text.length>7) text=text.replace(/.{7}/,'$&-')
-  $(this).val(text);
-});
-
-$('td input[type=url]').change(function() {
-    $(this).parent().find("img").attr("src", $(this).val())
-    $(this).css("display", "inline-block")
-});
-
-$('td input[type=url]').each(function() {
-    $(this).parent().append("<img style='height:50px;width:50px;display:inline-block;vertical-align: middle' src="+ $(this).val() +"></img>")
-    $(this).css("display", "inline-block")
-});
-
 });
 </script>
 {{ form.media }}

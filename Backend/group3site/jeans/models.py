@@ -243,12 +243,16 @@ class ProductProductTag(DescriptiveModel):
 class ProductImage(DescriptiveModel):
     description = 'An image with a caption that displays a product'
     product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name="Product")
+    primary_image = models.BooleanField(verbose_name="Primary", default=True)
     image_url = models.URLField(verbose_name="Image URL")
     image_caption = models.CharField(max_length=200, blank=True, null=True, verbose_name="Caption")
     load_order = 3
 
     def getfk(self):
         return self.product
+
+    def __str__(self):
+        return self.image_caption
 
     class Meta:
         db_table = "ProductImage"
@@ -263,7 +267,8 @@ class ProductPromo(DescriptiveModel):
     promo = models.ForeignKey(Promo, on_delete=models.CASCADE, verbose_name="Promo")
     current_price = MoneyField(max_digits=19, decimal_places=4, verbose_name="Current Price $", default=0.00)
     promo_price = MoneyField(max_digits=19, decimal_places=4, verbose_name="Promo Price $", default=0.00)
-    load_order = 3
+    display_product = models.BooleanField(verbose_name="Display", default=True)
+    load_order = 4
 
     def getfk(self):
         return self.promo
@@ -311,7 +316,7 @@ class CustomerPromo(DescriptiveModel):
     total_spent = MoneyField(max_digits=19, decimal_places=4, verbose_name="Total Spent $", default=0.00)
     total_discount = MoneyField(max_digits=19, decimal_places=4, verbose_name="Total Discount $", default=0.00)
     created_date = models.DateField(verbose_name="Created Date")
-    load_order = 4
+    load_order = 5
 
     list_fields = ["customer", "promo", "created_date"]
 
@@ -335,7 +340,7 @@ class CustomerProductPromo(DescriptiveModel):
     line_discount = MoneyField(max_digits=19, decimal_places=4, verbose_name="Line Discount $", default=0.00)
     one_validator = MinValueValidator(limit_value=1, message="Value cannot be less then one")
     quantity = models.IntegerField(verbose_name="Quantity", default=1, validators=[one_validator])
-    load_order = 5
+    load_order = 6
 
     list_fields = []
 
@@ -344,3 +349,6 @@ class CustomerProductPromo(DescriptiveModel):
         verbose_name = "Customer Product Promo"
         verbose_name_plural = "Customer Product Promo"
         managed = IsManaged
+        constraints = [
+            models.UniqueConstraint(fields=['customer_promo', 'product'], name='unique_line_products')
+        ]

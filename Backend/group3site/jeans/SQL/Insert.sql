@@ -119,8 +119,8 @@ WITH
 	)
 GO
 
-BULK INSERT ProductPromo
-FROM "F:\School\CIS4375-Group3\Backend\group3site\jeans\Data\ProductPromo.tsv"
+BULK INSERT Customer
+FROM "F:\School\CIS4375-Group3\Backend\group3site\jeans\Data\Customer.tsv"
 WITH
 	(
 	CHECK_CONSTRAINTS,
@@ -130,8 +130,8 @@ WITH
 	)
 GO
 
-BULK INSERT Customer
-FROM "F:\School\CIS4375-Group3\Backend\group3site\jeans\Data\Customer.tsv"
+BULK INSERT ProductPromo
+FROM "F:\School\CIS4375-Group3\Backend\group3site\jeans\Data\ProductPromo.tsv"
 WITH
 	(
 	CHECK_CONSTRAINTS,

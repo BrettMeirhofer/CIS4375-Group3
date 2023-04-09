@@ -73,16 +73,9 @@ CREATE TABLE ProductProductTag(
 CREATE TABLE ProductImage(
 	id int NOT NULL PRIMARY KEY IDENTITY(1,1),
 	product_id int FOREIGN KEY REFERENCES Product(id),
+	primary_image bit DEFAULT 1,
 	image_url nvarchar(200),
 	image_caption nvarchar(200) NULL,
-);
-
-CREATE TABLE ProductPromo(
-	id int NOT NULL PRIMARY KEY IDENTITY(1,1),
-	product_id int FOREIGN KEY REFERENCES Product(id),
-	promo_id int FOREIGN KEY REFERENCES Promo(id),
-	current_price numeric(19,4) DEFAULT 0.0,
-	promo_price numeric(19,4) DEFAULT 0.0,
 );
 
 CREATE TABLE Customer(
@@ -98,6 +91,15 @@ CREATE TABLE Customer(
 	address nvarchar(100) DEFAULT '3242 StreetName',
 	state_id int FOREIGN KEY REFERENCES StateProvince(id),
 	country_id int FOREIGN KEY REFERENCES Country(id),
+);
+
+CREATE TABLE ProductPromo(
+	id int NOT NULL PRIMARY KEY IDENTITY(1,1),
+	product_id int FOREIGN KEY REFERENCES Product(id),
+	promo_id int FOREIGN KEY REFERENCES Promo(id),
+	current_price numeric(19,4) DEFAULT 0.0,
+	promo_price numeric(19,4) DEFAULT 0.0,
+	display_product bit DEFAULT 1,
 );
 
 CREATE TABLE CustomerPromo(
@@ -117,6 +119,6 @@ CREATE TABLE CustomerProductPromo(
 	promo_price numeric(19,4) DEFAULT 0.0,
 	line_total numeric(19,4) DEFAULT 0.0,
 	line_discount numeric(19,4) DEFAULT 0.0,
-	quantity int DEFAULT 0,
+	quantity int DEFAULT 1,
 );
 
