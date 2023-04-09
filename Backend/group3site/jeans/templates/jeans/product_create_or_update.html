@@ -46,9 +46,9 @@
     <h3>{{ current_formset.form.title }}</h3>
      {% with current_formset as formset %}
         {{ formset.management_form }}
-        <script type="text/html" id="{{current_formset.form.title}}-template">  // id="inlineformsetname-template"
+        <script type="text/html" id="{{current_formset.form.prefix}}-template">  // id="inlineformsetname-template"
             // id='inlineformsetname-__prefix__'
-            <tr id="{{current_formset.form.title}}-__prefix__" class= hide_all>
+            <tr id="{{current_formset.form.prefix}}-__prefix__" class= hide_all>
                 {% for fields in formset.empty_form.hidden_fields %}
                     {{ fields }}
                 {% endfor %}
@@ -67,17 +67,17 @@
                     {% endfor %}
                     <th style="width: 100px">Delete?</th>
                     <th style="width: 20px">
-                        <a href="#" id="add-variant-button" class="btn btn-secondary add-{{current_formset.form.title}} button-1">+</a>
+                        <a href="#" id="add-variant-button" class="btn btn-secondary add-{{current_formset.form.prefix}} button-1">+</a>
                     </th>
                 </thead>
-                <tbody id="item-{{current_formset.form.title}}">  <!-- id="item-inlineformsetname" -->
+                <tbody id="item-{{current_formset.form.prefix}}">  <!-- id="item-inlineformsetname" -->
                     <!-- formset non forms errors -->
                     {% for error in formset.non_form_errors %}
                         <span style="color: red">{{ error }}</span>
                     {% endfor %}
                     {% for formss in formset %}
                         {{ formss.management_form }}
-                        <tr id="{{current_formset.form.title}}-{{ forloop.counter0 }}" class= hide_all>  <!-- id="inlineformsetname-counter" -->
+                        <tr id="{{current_formset.form.prefix}}-{{ forloop.counter0 }}" class= hide_all>  <!-- id="inlineformsetname-counter" -->
                             {{ formss.id }}
                             {% for field in formss.visible_fields %}
                                 <td>
@@ -117,15 +117,16 @@
 {% for current_formset in formsets %}
       $(document).ready(function() {
     // when user clicks add more btn of formsets
-      $('.add-{{current_formset.form.title}}').click(function(ev) {
+      $('.add-{{current_formset.form.prefix}}').click(function(ev) {
           ev.preventDefault();
-          var count = $('#item-{{current_formset.form.title}}').children().length;
-          var tmplMarkup = $('#{{current_formset.form.title}}-template').html();
+          var count = $('#item-{{current_formset.form.prefix}}').children().length;
+          var tmplMarkup = $('#{{current_formset.form.prefix}}-template').html();
           var compiledTmpl = tmplMarkup.replace(/__prefix__/g, count);
-          $('#item-{{current_formset.form.title}}').append(compiledTmpl);
+          $('#item-{{current_formset.form.prefix}}').append(compiledTmpl);
 
           // update form count
-          $('#id_{{current_formset.form.title}}-TOTAL_FORMS').attr('value', count+1);
+          console.log('{{current_formset.form.prefix}}')
+          $('#id_{{current_formset.form.prefix}}-TOTAL_FORMS').attr('value', count+1);
           $('#add-variant-button').trigger("add:row");
 
       });

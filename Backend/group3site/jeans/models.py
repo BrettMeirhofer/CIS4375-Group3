@@ -243,7 +243,7 @@ class ProductProductTag(DescriptiveModel):
 class ProductImage(DescriptiveModel):
     description = 'An image with a caption that displays a product'
     product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name="Product")
-    primary_image = models.BooleanField(verbose_name="Primary", default=True)
+    primary_image = models.BooleanField(verbose_name="Primary", default=False)
     image_url = models.URLField(verbose_name="Image URL")
     image_caption = models.CharField(max_length=200, blank=True, null=True, verbose_name="Caption")
     load_order = 3

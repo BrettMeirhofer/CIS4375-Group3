@@ -158,7 +158,7 @@ def create_single(request, table):
     formsets = []
     if hasattr(form, "formsets"):
         for formset in form.formsets:
-            formsets.append(formset(request.POST or None, request.FILES or None, prefix='variants'))
+            formsets.append(formset(request.POST or None, request.FILES or None, prefix=formset.form.prefix))
 
     if request.method == 'POST':
         result = save_form(form, formsets, table)
@@ -213,7 +213,7 @@ def edit_single(request, table, id):
     formsets = []
     if hasattr(form, "formsets"):
         for formset in form.formsets:
-            formsets.append(formset(request.POST or None, request.FILES or None, prefix='variants', instance=current_row))
+            formsets.append(formset(request.POST or None, request.FILES or None, prefix=formset.form.prefix, instance=current_row))
 
     if request.method == 'POST':
         result = save_form(form, formsets, table)
@@ -271,37 +271,6 @@ class ProductPromoInline():
         return HttpResponseRedirect("/listall/promo/")
 
 
-class ProductCreate(ProductPromoInline, CreateView):
-
-    def get_context_data(self, **kwargs):
-        ctx = super(ProductCreate, self).get_context_data(**kwargs)
-        ctx['named_formsets'] = self.get_named_formsets()
-        return ctx
-
-    def get_named_formsets(self):
-        if self.request.method == "GET":
-            return {
-                'variants': forms.ProductPromoFormSet(prefix='variants'),
-            }
-        else:
-            return {
-                'variants': forms.ProductPromoFormSet(self.request.POST or None, self.request.FILES or None, prefix='variants'),
-            }
-
-
-class ProductUpdate(ProductPromoInline, UpdateView):
-
-    def get_context_data(self, **kwargs):
-        ctx = super(ProductUpdate, self).get_context_data(**kwargs)
-        ctx['named_formsets'] = self.get_named_formsets()
-        return ctx
-
-    def get_named_formsets(self):
-        return {
-            'variants': forms.ProductPromoFormSet(self.request.POST or None, self.request.FILES or None, instance=self.object, prefix='variants'),
-        }
-
-
 def graph_view(file):
     module_dir = os.path.dirname(__file__)
     path = os.path.join(os.path.dirname(module_dir), "jeans", "SQL", "Graphs",
@@ -316,6 +285,7 @@ def graph_view(file):
         response_data["labels"].append(row[0])
         response_data["data"].append(str(row[1]))
     return HttpResponse(json.dumps(response_data), content_type="application/json")
+
 
 def graph_view_month(file):
     module_dir = os.path.dirname(__file__)
@@ -332,6 +302,7 @@ def graph_view_month(file):
     for row in sql_output:
         response_data["data"].insert(row[0]-1, str(row[1]))
     return HttpResponse(json.dumps(response_data), content_type="application/json")
+
 
 def top5_cust(request):
     return graph_view("Top5_Cust_Promo.sql")
@@ -367,6 +338,7 @@ def delete_rows(request):
         return HttpResponse("Cannot delete rows due to ForeignKey constraint.")
 
     return HttpResponse(200)
+
 
 def promo_email_page(request):
     solid_tables = data_dict_helper.get_solid_models("jeans")

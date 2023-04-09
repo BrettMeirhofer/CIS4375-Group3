@@ -10,6 +10,7 @@ from django import forms
 class ProductPromoForm(ModelForm):
     title = "Products"
     field_titles = ["Product", "Current Price $", "Promo Price $", "Display"]
+    prefix="productpromo"
 
     def setfk(self, instance, parentinstance):
         instance.promo = parentinstance
@@ -26,6 +27,7 @@ class ProductPromoForm(ModelForm):
 
 class ProductProductTagForm(ModelForm):
     title = "Tags"
+    prefix = "productproducttag"
     field_titles = ["Tag"]
 
     def setfk(self, instance, parentinstance):
@@ -38,14 +40,15 @@ class ProductProductTagForm(ModelForm):
 
 class ProductImageForm(ModelForm):
     title = "Images"
-    field_titles = ["URL", "Caption"]
+    prefix = "productimage"
+    field_titles = ["URL", "Caption", "Primary"]
 
     def setfk(self, instance, parentinstance):
         instance.product = parentinstance
 
     class Meta:
         model = models.ProductImage
-        fields = ['image_url', 'image_caption']
+        fields = ['image_url', 'image_caption', 'primary_image']
 
 
 ProductPromoFormSet = inlineformset_factory(
@@ -146,6 +149,7 @@ class ProductTagForm(ModelForm):
 class CustomerPromoProductForm(ModelForm):
     field_titles = ["Product", "Quantity", "Normal Price", "Promo Price", "Line Total", "Line Discount"]
     title = "Products"
+    prefix = "customerpromoproduct"
     def setfk(self, instance, parentinstance):
         instance.customer_promo = parentinstance
 
