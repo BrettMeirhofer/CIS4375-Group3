@@ -17,10 +17,11 @@ FROM
       MONTH(cp2.created_date) as month, 
       COUNT(DISTINCT cp2.promo_id) as promo_count 
     FROM 
-      CustomerPromo cp2 
+      CustomerPromo cp2
     GROUP BY 
       cp2.customer_id, YEAR(cp2.created_date), MONTH(cp2.created_date)
   ) as customer_promo_counts ON cp.customer_id = customer_promo_counts.customer_id AND YEAR(cp.created_date) = customer_promo_counts.year AND MONTH(cp.created_date) = customer_promo_counts.month AND customer_promo_counts.promo_count > 1
+WHERE cp.created_date BETWEEN '{}' AND '{}'
 GROUP BY 
   YEAR(cp.created_date), MONTH(cp.created_date)
 ORDER BY 

@@ -10,6 +10,7 @@ SELECT
   COUNT(DISTINCT cp.customer_id) as unique_customers 
 FROM 
   CustomerPromo cp 
+WHERE cp.created_date BETWEEN '{}' AND '{}'
 GROUP BY 
   YEAR(cp.created_date), MONTH(cp.created_date)
 ORDER BY 
