@@ -6,6 +6,8 @@ from django.http import HttpResponse
 from djmoney.models.fields import MoneyField
 import json
 import os
+import smtplib
+from . import models as jeans
 
 #employee_id int FOREIGN KEY REFERENCES Employee(id),
 # Extracts the field props for a single field
@@ -19,10 +21,17 @@ def extract_field_props(current_field, model, field_type_dict):
         help_text = model.pk_desc
     else:
         help_text = current_field.help_text
+    print(help_text)
 
     if isinstance(current_field, models.fields.DecimalField):
         max_length = current_field.max_digits
         domain = "{} Decimals".format(current_field.decimal_places)
+
+    if isinstance(current_field, models.fields.EmailField):
+        domain = "xxx@example.com"
+
+    if isinstance(current_field, jeans.PhoneField):
+        domain = "xxx-xxx-xxxx"
 
     if current_field.unique:
         if domain == "NA":
@@ -90,7 +99,6 @@ def extract_all_field_props(model, field_type_dict):
         output_row = extract_field_props(current_field, model, field_type_dict)
         output_list.append(output_row)
     return output_list
-
 
 
 def generate_data_dict_excel(file_path, title_row, field_type_dict):
@@ -233,32 +241,6 @@ def generate_insert_sql(app_name):
         drop_file.write("\n")
     drop_file.close()
 
-def send_promo_email(app_name, email_list):
-    gmail_user = 'jeansyfajaspromos@gmail.com'
-    gmail_password = 'hnhzjfajwiorxuju'
-
-    sent_from = gmail_user
-    to = [email_list]
-    subject = 'Test for Promotional Emails'
-    body = 'This is a test'
-
-    email_text = """\
-    From: %s
-    To: %s
-    Subject: %s
-
-    %s
-    """ % (sent_from, ", ".join(to), subject, body)
-
-    try:
-        smtp_server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-        smtp_server.ehlo()
-        smtp_server.login(gmail_user, gmail_password)
-        smtp_server.sendmail(sent_from, to, email_text)
-        smtp_server.close()
-        print ("Email sent successfully!")
-    except Exception as ex:
-        print ("Something went wrong….",ex)
 
 def get_graph_data(file):
     module_dir = os.path.dirname(__file__)

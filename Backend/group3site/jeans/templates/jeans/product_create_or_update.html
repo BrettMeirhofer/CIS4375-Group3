@@ -8,9 +8,21 @@
 {% endblock %}
 
 {% block extrabody %}{{ block.super }}
-<h1>{{title}}</h1>
 <form enctype="multipart/form-data" method="post" id="product_form" action={{ action }}>
     {% csrf_token %}
+    <input type="submit" value="Submit">
+    {% if edit %}
+    {% for link in actions %}
+         <a class = "button-1" href="{% url link.url id=id%}">{{link.name}}</a>
+    {% endfor %}
+    <a class = "deletebutton button-1" href="{% url 'delete_row' table=table id=id%}" onclick="return confirm('Are you sure you want to delete this?')">Delete</a>
+    {% endif %}
+
+    {% if edit %}
+    <h1>Edit  {{title}} - {{instance}}</h1>
+    {% else %}
+    <h1>Add New {{title}}</h1>
+    {% endif %}
     <div class="card">
         {% for field in form %}
             <div class="form-group card-body">
@@ -34,9 +46,9 @@
     <h3>{{ current_formset.form.title }}</h3>
      {% with current_formset as formset %}
         {{ formset.management_form }}
-        <script type="text/html" id="{{current_formset.form.title}}-template">  // id="inlineformsetname-template"
+        <script type="text/html" id="{{current_formset.form.prefix}}-template">  // id="inlineformsetname-template"
             // id='inlineformsetname-__prefix__'
-            <tr id="{{current_formset.form.title}}-__prefix__" class= hide_all>
+            <tr id="{{current_formset.form.prefix}}-__prefix__" class= hide_all>
                 {% for fields in formset.empty_form.hidden_fields %}
                     {{ fields }}
                 {% endfor %}
@@ -55,17 +67,17 @@
                     {% endfor %}
                     <th style="width: 100px">Delete?</th>
                     <th style="width: 20px">
-                        <a href="#" id="add-variant-button" class="btn btn-secondary add-{{current_formset.form.title}} button-1">+</a>
+                        <a href="#" id="add-variant-button" class="btn btn-secondary add-{{current_formset.form.prefix}} button-1">+</a>
                     </th>
                 </thead>
-                <tbody id="item-{{current_formset.form.title}}">  <!-- id="item-inlineformsetname" -->
+                <tbody id="item-{{current_formset.form.prefix}}">  <!-- id="item-inlineformsetname" -->
                     <!-- formset non forms errors -->
                     {% for error in formset.non_form_errors %}
                         <span style="color: red">{{ error }}</span>
                     {% endfor %}
                     {% for formss in formset %}
                         {{ formss.management_form }}
-                        <tr id="{{current_formset.form.title}}-{{ forloop.counter0 }}" class= hide_all>  <!-- id="inlineformsetname-counter" -->
+                        <tr id="{{current_formset.form.prefix}}-{{ forloop.counter0 }}" class= hide_all>  <!-- id="inlineformsetname-counter" -->
                             {{ formss.id }}
                             {% for field in formss.visible_fields %}
                                 <td>
@@ -90,41 +102,44 @@
         {% endwith %}
     {% endfor %}
     <input type="submit" value="Submit">
-</form>
-{% if edit %}
-    <a style="background-color:red;" class = "button-1" href="{% url 'delete_row' table=table id=id%}">Delete</a>
+    {% if edit %}
+    <a class = "deletebutton button-1" href="{% url 'delete_row' table=table id=id%}" onclick="return confirm('Are you sure you want to delete this?')">Delete</a>
 {% endif %}
+</form>
 
 
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+
+
 <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="{% static 'js/product_create_or_update.js' %}"></script>
 <script>
 {% for current_formset in formsets %}
       $(document).ready(function() {
     // when user clicks add more btn of formsets
-      $('.add-{{current_formset.form.title}}').click(function(ev) {
+      $('.add-{{current_formset.form.prefix}}').click(function(ev) {
           ev.preventDefault();
-          var count = $('#item-{{current_formset.form.title}}').children().length;
-          console.log(count)
-          var tmplMarkup = $('#{{current_formset.form.title}}-template').html();
+          var count = $('#item-{{current_formset.form.prefix}}').children().length;
+          var tmplMarkup = $('#{{current_formset.form.prefix}}-template').html();
           var compiledTmpl = tmplMarkup.replace(/__prefix__/g, count);
-          $('#item-{{current_formset.form.title}}').append(compiledTmpl);
+          $('#item-{{current_formset.form.prefix}}').append(compiledTmpl);
 
           // update form count
-          $('#id_{{current_formset.form.title}}-TOTAL_FORMS').attr('value', count+1);
+          console.log('{{current_formset.form.prefix}}')
+          $('#id_{{current_formset.form.prefix}}-TOTAL_FORMS').attr('value', count+1);
+          $('#add-variant-button').trigger("add:row");
+
       });
   });
 {% endfor %}
 $(document).ready(function() {
-    $('.js-example-basic-single').select2();
-      $('.money').change(function(ev) {
-        ev.target.value = parseFloat(ev.target.value).toFixed(2);
-      });
-
-      $('.money').each(function(i,e ) {
-        e.value = parseFloat(e.value).toFixed(2);
+    {% for field in form.inline %}
+        $('select[name="{{field}}"]').parent().css("display", "inline-block")
+        $('select[name="{{field}}"]').css("display", "inline-block")
+        $('input[name="{{field}}"]').parent().css("display", "inline-block")
+        $('input[name="{{field}}"]').css("display", "inline-block")
+    {% endfor %}
 });
-        });
 </script>
+{{ form.media }}
 {% endblock %}

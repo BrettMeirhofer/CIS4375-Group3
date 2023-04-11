@@ -1,48 +1,40 @@
 import django.db.models
-
 from . import data_dict_helper as ddh
 from django.http import HttpResponse
 import os
+from django.db import connection
 from django.template import loader
 from . import data_dict_helper
 from django.http import HttpResponseRedirect
 from django.core.paginator import Paginator
 from . import models
 from . import forms
+from django.shortcuts import render
+from .models import Customer, CustomerPromo, Promo
+from django.db.models import Count
+import glob
 from django.apps import apps
 from django.core.exceptions import FieldDoesNotExist
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from django.views.generic import ListView
 from django.views.generic.edit import (
     CreateView, UpdateView
 )
+from django.core.serializers.json import DjangoJSONEncoder
+from django.db import connection, ProgrammingError, DataError
 import json
+from datetime import date
+
 
 def index(request):
-    out = """Hello, world. You're at the jeans index. """
-    team = ["Brett Meirhofer", "Perminder Singh", "Laura Moreno" , "Daniel Thomas", "Alex Bermudez", "Daniel Hernandez"]
-    solid_tables = data_dict_helper.get_solid_models("jeans")
-    tables = []
-    for table in solid_tables:
-        tables.append(table._meta.verbose_name_plural)
-
-    form = forms.ProductForm()
     template = loader.get_template('jeans/index.html')
-    context = {
-        'tables': tables,
-        'team': team,
-        'form': form,
-        'form2': forms.PromoForm(),
-    }
-    return HttpResponse(template.render(context, request))
+    return HttpResponse(template.render({}, request))
 
 
 class FieldTypeMap:
     field_type_dict = {"CharField": "nvarchar", "DateField": "date", "BooleanField": "bit", "BigAutoField": "bigint",
                        "EmailField": "nvarchar", "TextField": "nvarchar", "ForeignKey": "int", "IntegerField": "int",
                        "DecimalField": "numeric", "AutoField": "int", "PhoneNumberField": "nvarchar",
-                       "URLField": "nvarchar", "MoneyField": "numeric", "CurrencyField": "nvarchar"}
+                       "URLField": "nvarchar", "MoneyField": "numeric", "CurrencyField": "nvarchar",
+                       "PhoneField": "nvarchar"}
 
 
 def dict3(request):
@@ -92,6 +84,14 @@ def view_products(request):
 
 
 def view_products_list(request, table):
+    order_by = request.GET.get('order_by')
+    if order_by is None:
+        order_by = "id"
+
+    direction = request.GET.get('direction')
+    if direction is None:
+        direction = "asc"
+
     app = apps.get_app_config("jeans")
     app_models = app.models.values()
     current_table = None
@@ -102,18 +102,23 @@ def view_products_list(request, table):
     if not current_table:
         return HttpResponse("Failed")
 
+    list_fields = current_table.list_fields
     headers = []
-    for field in current_table.list_fields:
+    for field in list_fields:
         try:
-            headers.append(current_table._meta.get_field(field).verbose_name)
+            headers.append({"title": current_table._meta.get_field(field).verbose_name, "name":current_table._meta.get_field(field).name})
         except FieldDoesNotExist:
-            headers.append(current_table.list_func_names[field])
+            headers.append({"title": current_table.list_func_names[field], "name": None})
 
-    paginator = Paginator(current_table.objects.all(), 10)  # Show 25 contacts per page.
+    ordering = order_by.lower()
+    if direction == 'desc':
+        ordering = '-{}'.format(ordering)
+    paginator = Paginator(current_table.objects.all().order_by(ordering), 15)  # Show 25 contacts per page.
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     template = loader.get_template('jeans/listview.html')
-    context = {'page_obj': page_obj, 'title': current_table._meta.db_table, "fields": current_table.list_fields, "headers": headers}
+    context = {'page_obj': page_obj, 'title': current_table._meta.verbose_name_plural, "fields": list_fields,
+               "headers": headers, "table": table,  'order_by': order_by, 'direction': direction,}
     return HttpResponse(template.render(context, request))
 
 
@@ -130,7 +135,7 @@ def delete_single(request, table, id):
         current_table.objects.filter(id=id).delete()
         return HttpResponseRedirect('/listall/' + table + "/")
     except django.db.IntegrityError as e:
-        context = {'error': e}
+        context = {'error': "Cannot delete rows due to ForeignKey constraint."}
         return HttpResponse(template.render(context, request))
 
 
@@ -153,7 +158,7 @@ def create_single(request, table):
     formsets = []
     if hasattr(form, "formsets"):
         for formset in form.formsets:
-            formsets.append(formset(request.POST or None, request.FILES or None, prefix='variants'))
+            formsets.append(formset(request.POST or None, request.FILES or None, prefix=formset.form.prefix))
 
     if request.method == 'POST':
         result = save_form(form, formsets, table)
@@ -165,6 +170,7 @@ def create_single(request, table):
         'form': form,
         'action': "/create_row/{}/".format(table),
         'formsets': formsets,
+        'title': current_table._meta.verbose_name
     }
     return HttpResponse(template.render(context, request))
 
@@ -207,12 +213,17 @@ def edit_single(request, table, id):
     formsets = []
     if hasattr(form, "formsets"):
         for formset in form.formsets:
-            formsets.append(formset(request.POST or None, request.FILES or None, prefix='variants', instance=current_row))
+            formsets.append(formset(request.POST or None, request.FILES or None, prefix=formset.form.prefix, instance=current_row))
 
     if request.method == 'POST':
         result = save_form(form, formsets, table)
         if result is not None:
             return result
+
+    add_actions = []
+    if hasattr(form, "add_actions"):
+        add_actions = form.add_actions
+
 
     template = loader.get_template('jeans/product_create_or_update.html')
     context = {
@@ -221,7 +232,10 @@ def edit_single(request, table, id):
         'formsets': formsets,
         'edit': True,
         'table': table,
-        'id': id
+        'id': id,
+        'instance': current_row,
+        'title': current_table._meta.verbose_name,
+        'actions':add_actions
     }
     return HttpResponse(template.render(context, request))
 
@@ -250,46 +264,246 @@ class ProductPromoInline():
             for obj in formset.deleted_objects:
                 obj.delete()
             for variant in variants:
-                print(self.object)
                 variant.promo = self.object
                 variant.save()
 
         return HttpResponseRedirect("/listall/promo/")
 
 
-class ProductCreate(ProductPromoInline, CreateView):
+def graph_view(file):
+    module_dir = os.path.dirname(__file__)
+    path = os.path.join(os.path.dirname(module_dir), "jeans", "SQL", "Graphs",
+                        file)
+    sql = open(path).read()
+    with connection.cursor() as cursor:
+        cursor.execute(sql)
+        sql_output = cursor.fetchall()
 
-    def get_context_data(self, **kwargs):
-        ctx = super(ProductCreate, self).get_context_data(**kwargs)
-        ctx['named_formsets'] = self.get_named_formsets()
-        return ctx
-
-    def get_named_formsets(self):
-        if self.request.method == "GET":
-            return {
-                'variants': forms.ProductPromoFormSet(prefix='variants'),
-            }
-        else:
-            return {
-                'variants': forms.ProductPromoFormSet(self.request.POST or None, self.request.FILES or None, prefix='variants'),
-            }
-
-
-class ProductUpdate(ProductPromoInline, UpdateView):
-
-    def get_context_data(self, **kwargs):
-        ctx = super(ProductUpdate, self).get_context_data(**kwargs)
-        ctx['named_formsets'] = self.get_named_formsets()
-        return ctx
-
-    def get_named_formsets(self):
-        return {
-            'variants': forms.ProductPromoFormSet(self.request.POST or None, self.request.FILES or None, instance=self.object, prefix='variants'),
-        }
-
-
-def graph_view(request):
-    labels = ['Test', 'Test2', 'Test3']
-    data = [16, 64, 42]
-    response_data = {"labels": labels, 'data': data}
+    response_data = {"labels": [], "data": []}
+    for row in sql_output:
+        response_data["labels"].append(row[0])
+        response_data["data"].append(str(row[1]))
     return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+
+def graph_view_month(file):
+    module_dir = os.path.dirname(__file__)
+    path = os.path.join(os.path.dirname(module_dir), "jeans", "SQL", "Graphs",
+                        file)
+    sql = open(path).read()
+    with connection.cursor() as cursor:
+        cursor.execute(sql)
+        sql_output = cursor.fetchall()
+
+    response_data = {"labels": ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'], "data": []}
+    for i in response_data["labels"]:
+        response_data["data"].append('0')
+    for row in sql_output:
+        response_data["data"].insert(row[0]-1, str(row[1]))
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+
+def top5_cust(request):
+    return graph_view("Top5_Cust_Promo.sql")
+
+
+def top5_promos(request):
+    return graph_view("Top5_Promo_Redeem.sql")
+
+
+def uniq_cust_month(request):
+    return graph_view_month("UniqueCustMonth.sql")
+
+
+def delete_rows(request):
+    app = apps.get_app_config("jeans")
+    app_models = app.models.values()
+    current_table = None
+    data = request.POST.dict()
+    for model in app_models:
+        if model._meta.db_table.lower() == data["table"].lower():
+            current_table = model
+
+    if not current_table:
+        return HttpResponse("Failed")
+
+    rows = request.POST.getlist('rows[]')
+    rows = [int(i) for i in rows]
+    try:
+        current_table.objects.filter(pk__in=rows).delete()
+    except django.db.IntegrityError as e:
+        return HttpResponse("Cannot delete rows due to ForeignKey constraint.")
+
+    return HttpResponse(200)
+
+
+def promo_email_page(request):
+    solid_tables = data_dict_helper.get_solid_models("jeans")
+    tables = []
+    for table in solid_tables:
+        tables.append(table._meta.verbose_name_plural)
+
+    template = loader.get_template('jeans/send_promos.html')
+    promos = models.Promo.objects.filter(promo_status=1)
+    context = {
+        "promos": promos
+    }
+    return HttpResponse(template.render(context, request))
+
+
+def preview_promo(request):
+    promo = models.Promo.objects.get(id=int(request.POST["id"]))
+    return render_promo(request, promo)
+
+
+def render_promo(request, promo):
+    solid_tables = data_dict_helper.get_solid_models("jeans")
+    tables = []
+    for table in solid_tables:
+        tables.append(table._meta.verbose_name_plural)
+
+    template = loader.get_template('jeans/promo.html')
+    products = promo.promo_products.all()
+    query = """
+        SELECT promo_price, current_price, image_url FROM ProductPromo
+        INNER JOIN ProductImage ON ProductImage.product_id = ProductPromo.product_id
+        WHERE ProductImage.primary_image = 1 AND ProductPromo.display_product = 1 AND ProductPromo.promo_id = {}
+    """.format(promo.pk)
+    rows = []
+    with connection.cursor() as cursor:
+        cursor.execute(query)
+        rows = cursor.fetchall()
+    context = {
+        "promo": promo,
+        "products": rows,
+    }
+    return HttpResponse(template.render(context, request))
+
+
+def print_promo(request, id):
+    promo = models.Promo.objects.get(id=id)
+    return render_promo(request,promo)
+
+
+def top_promos(request):
+    # Get top promos being used
+    promo_customer_counts = CustomerPromo.objects.values('promo_id').annotate(customer_count=Count('customer_id', distinct=True)).order_by('-customer_count')[:10]
+    promo_ids = [row['promo_id'] for row in promo_customer_counts]
+    promos = Promo.objects.filter(id__in=promo_ids).values('id', 'promo_name', 'promo_code', 'promo_desc')
+    top_promos_data = [{'promo': {'id': promo['id'], 'name': promo['promo_name'], 'code': promo['promo_code'], 'desc': promo['promo_desc']}, 'customer_count': row['customer_count']} for row, promo in zip(promo_customer_counts, promos)]
+
+
+def report(request):
+    paths, names = get_report_paths()
+    context = {"reports": names}
+    return render(request, 'jeans/report.html', context)
+
+
+def top_customers(request):
+    # Define the base directory for the SQL files
+    base_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'SQL', 'Reports')
+    
+    # Build the path to the TopCustomers.sql file
+    sql_file_path = os.path.join(base_dir, 'ReportTopCustomer.sql')
+    
+    with open(sql_file_path, 'r') as file:
+        sql_query = file.read()
+
+    # Execute the SQL query
+    with connection.cursor() as cursor:
+        cursor.execute(sql_query)
+        result = cursor.fetchall()
+
+    # Pass the result to the template
+    context = {'top_customers': result}
+    return render(request, 'jeans/print_report.html', context)
+
+
+class ReportData:
+    owner = ""
+    name = ""
+    rule = ""
+    desc = ""
+    data = []
+    titles = []
+    sql = []
+
+    def __init__(self, owner, name, rule, data, titles, sql, desc):
+        self.owner = owner
+        self.name = name
+        self.rule = rule
+        self.data = data
+        self.titles = titles
+        self.sql = sql
+        self.desc = desc
+
+
+def build_report_obj(path, start_date, end_date):
+    with open(path, "r") as report_object:
+        report_text = report_object.readlines()
+
+    owner = report_text.pop(0).replace("--", "")
+    name = report_text.pop(0).replace("--", "")
+    rule = report_text.pop(0).replace("--", "")
+    desc = report_text.pop(0).replace("--", "")
+    titles = report_text.pop(0).replace("--", "").split(",")
+    align = report_text.pop(0).replace("--", "").replace("\n", "").split(",")
+
+    with open(path, "r") as report_object:
+        sql = report_object.read()
+        sql = sql.format(start_date, end_date)
+
+    with connection.cursor() as cursor:
+        cursor.execute(sql)
+        output = cursor.fetchall()
+
+        new_output = []
+        for row in output:
+            new_row = []
+            for index, column in enumerate(row):
+                col_class = align[index]
+                new_row.append([column, col_class])
+            new_output.append(new_row)
+
+    report_data = ReportData(owner, name, rule, new_output, titles, report_text, desc)
+    return report_data
+
+
+def get_reports(path):
+    return glob.glob(os.path.join(path, "SQL/Reports/Report*"))
+
+
+def get_report_paths():
+    module_dir = os.path.dirname(__file__)
+    paths = get_reports(module_dir)
+    out = []
+
+    for path in paths:
+        name = open(path).readlines()[1]
+        name = name.replace("--", "")
+        out.append([name, path])
+    out.sort(key=lambda x: x[0].replace(" ", ""))
+    paths = []
+    names = []
+    for element in out:
+        paths.append(element[1])
+        names.append(element[0])
+    return paths, names
+
+
+def html_report(request, row_id, start_date, end_date):
+    paths, names = get_report_paths()
+    file_path = paths[row_id]
+    context = {"report": build_report_obj(file_path, start_date, end_date), "date": date.today(), "start_date":start_date, "end_date": end_date}
+    return render(request, 'jeans/print_report.html', context)
+
+
+def get_product_promo_prices(request, product_id, promo_id):
+    instance = models.ProductPromo.objects.get(product=product_id, promo=promo_id)
+    return HttpResponse(json.dumps({"current_price": instance.current_price, "promo_price": instance.promo_price},
+                                   cls=DjangoJSONEncoder))
+
+
+def get_promo_products(request, row_id):
+    rows = models.ProductPromo.objects.filter(promo=row_id).values("product__pk", "product__product_name")
+    return HttpResponse(json.dumps({"products": list(rows)}))

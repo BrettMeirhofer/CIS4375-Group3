@@ -1,0 +1,32 @@
+{% extends "jeans/jeanssite.html" %}
+
+{% block extrabody %}
+<h1 style="text-align:center;">Print Reports</h1>
+  <p>
+    <label style="display:inline-block;width:80px;text-align:center;">Start Date</label><input id="start" value="2022-01-01" type="date" style="display:inline-block;">
+  <label style="display:inline-block;width:80px;text-align:center;">End Date</label><input id="end" value="2023-01-01" type="date" style="display:inline-block;">
+    {% for report in reports %}
+    <a class="button-1 button-2" style="margin:20px;display:flex; padding:10px;" report_id="{{forloop.counter0}}">{{report}}</a>
+    {% endfor %}
+  </p>
+
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script>
+start_date='2022-01-01'
+end_date='2023-01-01'
+  $(document).ready(function() {
+  $('#start').change(function(ev) {
+        start_date = ev.target.value
+  });
+   $('#end').change(function(ev) {
+        end_date = ev.target.value
+  });
+  $('a').click(function(e) {
+        console.log("test")
+        window.location = "/print_report/" + $(this).attr("report_id") + "/" + start_date + "/" + end_date
+  });
+  });
+</script>
+{% endblock %}
+

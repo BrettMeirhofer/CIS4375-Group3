@@ -1,2 +1,5 @@
 1	Avaliable	Standard Active	1
 2	Unavaliable	Standard Inactive	0
+3	Out-Of-Stock	No inventory for sale	0
+4	Discontinued	No longer selling this product	0
+5	Not-Yet-Avaliable	This product will be sold in the future	0

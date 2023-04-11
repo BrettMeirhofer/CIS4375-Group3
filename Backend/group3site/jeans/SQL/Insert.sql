@@ -1,3 +1,14 @@
+BULK INSERT Country
+FROM "F:\School\CIS4375-Group3\Backend\group3site\jeans\Data\Country.tsv"
+WITH
+	(
+	CHECK_CONSTRAINTS,
+	FIELDTERMINATOR = '\t',
+	ROWTERMINATOR = '\n',
+	KEEPIDENTITY
+	)
+GO
+
 BULK INSERT CustomerStatus
 FROM "F:\School\CIS4375-Group3\Backend\group3site\jeans\Data\CustomerStatus.tsv"
 WITH
@@ -53,6 +64,17 @@ WITH
 	)
 GO
 
+BULK INSERT StateProvince
+FROM "F:\School\CIS4375-Group3\Backend\group3site\jeans\Data\StateProvince.tsv"
+WITH
+	(
+	CHECK_CONSTRAINTS,
+	FIELDTERMINATOR = '\t',
+	ROWTERMINATOR = '\n',
+	KEEPIDENTITY
+	)
+GO
+
 BULK INSERT Product
 FROM "F:\School\CIS4375-Group3\Backend\group3site\jeans\Data\Product.tsv"
 WITH
@@ -66,17 +88,6 @@ GO
 
 BULK INSERT Promo
 FROM "F:\School\CIS4375-Group3\Backend\group3site\jeans\Data\Promo.tsv"
-WITH
-	(
-	CHECK_CONSTRAINTS,
-	FIELDTERMINATOR = '\t',
-	ROWTERMINATOR = '\n',
-	KEEPIDENTITY
-	)
-GO
-
-BULK INSERT Customer
-FROM "F:\School\CIS4375-Group3\Backend\group3site\jeans\Data\Customer.tsv"
 WITH
 	(
 	CHECK_CONSTRAINTS,
@@ -108,6 +119,17 @@ WITH
 	)
 GO
 
+BULK INSERT Customer
+FROM "F:\School\CIS4375-Group3\Backend\group3site\jeans\Data\Customer.tsv"
+WITH
+	(
+	CHECK_CONSTRAINTS,
+	FIELDTERMINATOR = '\t',
+	ROWTERMINATOR = '\n',
+	KEEPIDENTITY
+	)
+GO
+
 BULK INSERT ProductPromo
 FROM "F:\School\CIS4375-Group3\Backend\group3site\jeans\Data\ProductPromo.tsv"
 WITH
@@ -121,6 +143,17 @@ GO
 
 BULK INSERT CustomerPromo
 FROM "F:\School\CIS4375-Group3\Backend\group3site\jeans\Data\CustomerPromo.tsv"
+WITH
+	(
+	CHECK_CONSTRAINTS,
+	FIELDTERMINATOR = '\t',
+	ROWTERMINATOR = '\n',
+	KEEPIDENTITY
+	)
+GO
+
+BULK INSERT CustomerProductPromo
+FROM "F:\School\CIS4375-Group3\Backend\group3site\jeans\Data\CustomerProductPromo.tsv"
 WITH
 	(
 	CHECK_CONSTRAINTS,

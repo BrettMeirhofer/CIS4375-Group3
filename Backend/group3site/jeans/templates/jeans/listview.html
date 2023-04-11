@@ -5,22 +5,39 @@
 
 {% block extrabody %}{{ block.super }}
         <h1>{{title}}</h1>
-        <a class = "button-1" href="{% url 'create_row' table=title %}">Create</a>
-        <table class="center">
+        <a class = "button-1" href="{% url 'create_row' table=table %}">Create</a>
+        <a id="delete-all" class = "deletebutton button-1" >Delete</a>
+        <br>
+        <p style="color:red; font-size:20px;" id="error"></p>
+        <table>
             <tr>
-                <th>ID</th>
+                <th style="width:20px;"><input type="checkbox" class="selectall"></th>
+                        {% if order_by == "id" and direction == "asc" %}
+                            <th class=""><a href="?page=1&order_by=id&direction=desc">ID</a></th>
+                        {% else %}
+                            <th class="{% if order_by == 'id' %}headerSortUp {% endif %}"><a href="?page=1&order_by=id&direction=asc">ID</a></th>
+                        {% endif %}
                 {% for header in headers %}
-                    <th>{{header}}</th>
+                    {% if header.name %}
+                        {% if header.name == order_by and direction == "asc" %}
+                            <th class="{% if header.name == order_by %}headerSortDown {% endif %}"><a href="?page=1&order_by={{header.name}}&direction=desc">{{header.title}}</a></th>
+                        {% else %}
+                            <th class="{% if header.name == order_by %}headerSortUp{% endif %}"><a href="?page=1&order_by={{header.name}}&direction=asc">{{header.title}}</a></th>
+                        {% endif %}
+                    {% else %}
+                        <th>{{header.title}}</th>
+                    {% endif %}
                 {% endfor %}
-                <th style="width: 100px"></th>
+                <th style="width:50px"></th>
             </tr>
             {% for row in page_obj %}
                 <tr>
-                    <td><a href="{% url 'edit_row' table=row|model_name id=row.id %}">{{row.id}}</a></td>
+                    <td style="width:20px;"><input type="checkbox" class="select-row" rowid={{row.id}}></td>
+                    <td>{{row.id}}</td>
                     {% for field in fields %}
                     <td>{{ row|get_attr:field }}</td>
                     {% endfor %}
-                    <td><a class = "button-1" href="{% url 'delete_row' table=row|model_name id=row.id %}">Delete</a></td>
+                    <td><a class="button-1" href="{% url 'edit_row' table=row|model_name id=row.id %}">Edit</a></td>
                 </tr>
             {% endfor %}
         </table>
@@ -28,8 +45,8 @@
 <div class="pagination">
     <span class="step-links">
         {% if page_obj.has_previous %}
-            <a class = "button-1" href="?page=1">&laquo; First</a>
-            <a class = "button-1" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+            <a class = "button-1" href="?page=1&order_by={{ order_by }}&direction={{ direction }}">&laquo; First</a>
+            <a class = "button-1" href="?page={{ page_obj.previous_page_number }}&order_by={{ order_by }}&direction={{ direction }}">Previous</a>
         {% endif %}
 
         <span class="current">
@@ -37,9 +54,60 @@
         </span>
 
         {% if page_obj.has_next %}
-            <a class = "button-1" href="?page={{ page_obj.next_page_number }}">Next</a>
-            <a class = "button-1" href="?page={{ page_obj.paginator.num_pages }}">Last &raquo;</a>
+            <a class = "button-1" href="?page={{ page_obj.next_page_number }}&order_by={{ order_by }}&direction={{ direction }}">Next</a>
+            <a class = "button-1" href="?page={{ page_obj.paginator.num_pages }}&order_by={{ order_by }}&direction={{ direction }}">Last &raquo;</a>
         {% endif %}
     </span>
 </div>
+
+<script>
+
+    $(document).ready(function() {
+      delete_rows = [];
+      $('.select-row').change(function(ev) {
+        id = parseInt($(ev.target).attr("rowid"))
+        if (ev.target.checked){
+            delete_rows.push(id)
+        } else {
+            delete_rows = delete_rows.filter(function(e) { return e !== id })
+        }
+        console.log(delete_rows)
+      });
+      $('.selectall').change(function(ev) {
+        state = ev.target.checked
+        $('.select-row').each(function(i,e ) {
+            id = parseInt($(e).attr("rowid"))
+            e.checked = state;
+            if (state){
+                delete_rows.push(id)
+            } else {
+                delete_rows = delete_rows.filter(function(e) { return e !== id })
+            }
+        });
+        console.log(delete_rows)
+      });
+      $('#delete-all').click(function(ev) {
+        if (delete_rows.length == 0)
+            return
+
+        if (confirm("Are you sure you want to delete this?") == true) {
+          $.post({
+            url: {% url 'delete_rows' %},
+            data: { csrfmiddlewaretoken: "{{ csrf_token }}", "rows": delete_rows, "table": "{{table}}" },
+            success: function (data) {
+                if (data == 200){
+                    location.reload()
+                }
+                else {
+                    $('#error').text(data)
+                }
+
+            },
+          });
+          }
+          });
+
+  });
+</script>
 {% endblock %}
+

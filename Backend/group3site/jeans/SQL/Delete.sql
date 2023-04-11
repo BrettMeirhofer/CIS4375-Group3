@@ -1,16 +1,22 @@
+DELETE FROM "CustomerProductPromo"
+
 DELETE FROM "CustomerPromo"
+
+DELETE FROM "ProductPromo"
 
 DELETE FROM "ProductProductTag"
 
 DELETE FROM "ProductImage"
 
-DELETE FROM "ProductPromo"
+DELETE FROM "Customer"
+
+DELETE FROM "StateProvince"
 
 DELETE FROM "Product"
 
 DELETE FROM "Promo"
 
-DELETE FROM "Customer"
+DELETE FROM "Country"
 
 DELETE FROM "CustomerStatus"
 
