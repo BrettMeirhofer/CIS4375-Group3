@@ -41,6 +41,9 @@
         .right {
             text-align: right;
         }
+        .money {
+            text-align:right;
+        }
 }
 
 </style>
@@ -71,3 +74,12 @@
     {% endfor %}
     {% endif %}
 </table>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('.money').each(function(i,e ) {
+        console.log(e)
+        $(this).text("$" + parseFloat($(this).text()).toFixed(2));
+      });
+});
+</script>

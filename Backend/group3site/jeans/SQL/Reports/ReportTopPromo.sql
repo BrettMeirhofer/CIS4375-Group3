@@ -2,9 +2,10 @@
 -- Promos by Number of Redeems
 -- The client can use this report as one metric to access cashier performance. Cashiers with high customer spending may have skills that could be transferred to lower performing Cashiers increasing the overall revenue of the business.
 -- Displays all the active cashiers and the total amount of customer spending with them acting as the cashier.
--- Report ID, Promo Name, Promo Code, Redeems, Total Income, Total Discount, Total Products Purchased, Number of Promos Redeemed
--- left, left, left, left, money, money, left, left
+-- Row,Report ID,Promo Name,Promo Code,Redeems,Total Income,Total Discount,Total Products Purchased,Number of Promos Redeemed
+-- ,left,left,left,left,money,money,left,left
 SELECT
+ ROW_NUMBER() OVER(ORDER BY (SELECT NULL)),
     promo.id AS report_id,
     promo.promo_name AS promo_name,
     promo.promo_code AS promo_code,
