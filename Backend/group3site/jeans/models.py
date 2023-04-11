@@ -246,7 +246,7 @@ class ProductProductTag(DescriptiveModel):
 class ProductImage(DescriptiveModel):
     description = 'An image with a caption that displays a product'
     product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name="Product")
-    primary_image = models.BooleanField(verbose_name="Primary", default=False)
+    primary_image = models.BooleanField(verbose_name="Primary", default=False, help_text="Image for product in Promo preview")
     image_url = models.URLField(verbose_name="Image URL")
     image_caption = models.CharField(max_length=200, blank=True, null=True, verbose_name="Caption")
     load_order = 3
@@ -299,7 +299,8 @@ class ProductPromo(DescriptiveModel):
     promo = models.ForeignKey(Promo, on_delete=models.CASCADE, verbose_name="Promo")
     current_price = MoneyField(max_digits=19, decimal_places=4, verbose_name="Current Price $", default=0.00)
     promo_price = MoneyField(max_digits=19, decimal_places=4, verbose_name="Promo Price $", default=0.00)
-    display_product = models.BooleanField(verbose_name="Display", default=True)
+    display_product = models.BooleanField(verbose_name="Display", default=True,
+                                          help_text="Display product icon in preview")
     load_order = 4
 
     def getfk(self):
