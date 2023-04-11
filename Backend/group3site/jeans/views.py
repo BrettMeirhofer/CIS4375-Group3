@@ -264,7 +264,6 @@ class ProductPromoInline():
             for obj in formset.deleted_objects:
                 obj.delete()
             for variant in variants:
-                print(self.object)
                 variant.promo = self.object
                 variant.save()
 
@@ -321,7 +320,6 @@ def delete_rows(request):
     app_models = app.models.values()
     current_table = None
     data = request.POST.dict()
-    print(request.POST)
     for model in app_models:
         if model._meta.db_table.lower() == data["table"].lower():
             current_table = model
@@ -329,7 +327,6 @@ def delete_rows(request):
     if not current_table:
         return HttpResponse("Failed")
 
-    print(current_table)
     rows = request.POST.getlist('rows[]')
     rows = [int(i) for i in rows]
     try:
@@ -376,7 +373,6 @@ def render_promo(request, promo):
     with connection.cursor() as cursor:
         cursor.execute(query)
         rows = cursor.fetchall()
-    print(rows)
     context = {
         "promo": promo,
         "products": rows,
@@ -443,7 +439,6 @@ class ReportData:
 
 
 def build_report_obj(path, start_date, end_date):
-    print(path)
     with open(path, "r") as report_object:
         report_text = report_object.readlines()
 

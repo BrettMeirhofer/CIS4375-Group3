@@ -246,7 +246,7 @@ class ProductProductTag(DescriptiveModel):
 class ProductImage(DescriptiveModel):
     description = 'An image with a caption that displays a product'
     product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name="Product")
-    primary_image = models.BooleanField(verbose_name="Primary", default=False)
+    primary_image = models.BooleanField(verbose_name="Primary", default=False, help_text="Image for product in Promo preview")
     image_url = models.URLField(verbose_name="Image URL")
     image_caption = models.CharField(max_length=200, blank=True, null=True, verbose_name="Caption")
     load_order = 3
@@ -264,25 +264,6 @@ class ProductImage(DescriptiveModel):
         managed = IsManaged
 
 
-class ProductPromo(DescriptiveModel):
-    description = 'Used to associate a Product with a Promo and stores promo price data'
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name="Product")
-    promo = models.ForeignKey(Promo, on_delete=models.CASCADE, verbose_name="Promo")
-    current_price = MoneyField(max_digits=19, decimal_places=4, verbose_name="Current Price $", default=0.00)
-    promo_price = MoneyField(max_digits=19, decimal_places=4, verbose_name="Promo Price $", default=0.00)
-    display_product = models.BooleanField(verbose_name="Display", default=True)
-    load_order = 4
-
-    def getfk(self):
-        return self.promo
-
-    class Meta:
-        db_table = "ProductPromo"
-        verbose_name = "Product Promo"
-        verbose_name_plural = "Product Promo"
-        managed = IsManaged
-
-
 class Customer(DescriptiveModel):
     description = 'Name and email for a customer who will recieve promo emails'
     first_name = models.CharField(max_length=200, verbose_name="First Name")
@@ -293,7 +274,7 @@ class Customer(DescriptiveModel):
     created_date = models.DateField(verbose_name="Created Date")
     customer_status = models.ForeignKey(CustomerStatus, on_delete=models.RESTRICT, verbose_name="Status")
     phone_number = PhoneField(validators=[phone_regex], max_length=12, blank=True,
-                              null=True, verbose_name="Phone Number")  # Validators should be a list
+                              null=True, verbose_name="Phone Number", help_text="USA numbers only")
     zip_code = models.CharField(max_length=10, verbose_name="Zip Code")
     city = models.CharField(max_length=35, default="Houston", verbose_name="City")
     address = models.CharField(max_length=100, default="3242 StreetName", verbose_name="Address")
@@ -312,12 +293,34 @@ class Customer(DescriptiveModel):
         managed = IsManaged
 
 
+class ProductPromo(DescriptiveModel):
+    description = 'Used to associate a Product with a Promo and stores promo price data'
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name="Product")
+    promo = models.ForeignKey(Promo, on_delete=models.CASCADE, verbose_name="Promo")
+    current_price = MoneyField(max_digits=19, decimal_places=4, verbose_name="Current Price $", default=0.00)
+    promo_price = MoneyField(max_digits=19, decimal_places=4, verbose_name="Promo Price $", default=0.00)
+    display_product = models.BooleanField(verbose_name="Display", default=True,
+                                          help_text="Display product icon in preview")
+    load_order = 4
+
+    def getfk(self):
+        return self.promo
+
+    class Meta:
+        db_table = "ProductPromo"
+        verbose_name = "Product Promo"
+        verbose_name_plural = "Product Promo"
+        managed = IsManaged
+
+
 class CustomerPromo(DescriptiveModel):
     description = 'Records when a customer redeems a promo. Key data point for promo success'
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, verbose_name="Customer")
     promo = models.ForeignKey(Promo, on_delete=models.CASCADE, verbose_name="Promo")
-    total_spent = MoneyField(max_digits=19, decimal_places=4, verbose_name="Total Spent $", default=0.00)
-    total_discount = MoneyField(max_digits=19, decimal_places=4, verbose_name="Total Discount $", default=0.00)
+    total_spent = MoneyField(max_digits=19, decimal_places=4, verbose_name="Total Spent $", default=0.00,
+                             help_text="Total with discount applied")
+    total_discount = MoneyField(max_digits=19, decimal_places=4, verbose_name="Total Discount $", default=0.00,
+                                help_text="Combined total of each row discount")
     created_date = models.DateField(verbose_name="Created Date")
     load_order = 5
 
@@ -337,10 +340,14 @@ class CustomerProductPromo(DescriptiveModel):
     description = 'Records the promotional products a customer redeems a promo for'
     customer_promo = models.ForeignKey(CustomerPromo, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    normal_price = MoneyField(max_digits=19, decimal_places=4, verbose_name="Normal Price $", default=0.00)
-    promo_price = MoneyField(max_digits=19, decimal_places=4, verbose_name="Promo Price $", default=0.00)
-    line_total = MoneyField(max_digits=19, decimal_places=4, verbose_name="Line Total $", default=0.00)
-    line_discount = MoneyField(max_digits=19, decimal_places=4, verbose_name="Line Discount $", default=0.00)
+    normal_price = MoneyField(max_digits=19, decimal_places=4, verbose_name="Normal Price $", default=0.00,
+                              help_text="Normal price of product at time of redeem")
+    promo_price = MoneyField(max_digits=19, decimal_places=4, verbose_name="Promo Price $", default=0.00,
+                             help_text="Promo price of product at time of redeem")
+    line_total = MoneyField(max_digits=19, decimal_places=4, verbose_name="Line Total $", default=0.00,
+                            help_text="Promo Price * Quantity")
+    line_discount = MoneyField(max_digits=19, decimal_places=4, verbose_name="Line Discount $", default=0.00,
+                               help_text="(Normal - Promo) * Quantity")
     one_validator = MinValueValidator(limit_value=1, message="Value cannot be less then one")
     quantity = models.IntegerField(verbose_name="Quantity", default=1, validators=[one_validator])
     load_order = 6
