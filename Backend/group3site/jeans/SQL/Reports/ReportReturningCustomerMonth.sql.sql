@@ -3,7 +3,7 @@
 -- Rule: Most Recent Months
 -- Description: This query counts the number of returning customers per month who have redeemed promotions more than once. It joins the CustomerPromo table with a subquery that counts the number of unique promo IDs for each customer and month, then groups the result by year and month. The query is ordered by year and month.
 -- Year, Month, Returning Customers
--- right, right, right
+-- left, left, left
 SELECT 
   YEAR(cp.created_date) as year, 
   MONTH(cp.created_date) as month, 

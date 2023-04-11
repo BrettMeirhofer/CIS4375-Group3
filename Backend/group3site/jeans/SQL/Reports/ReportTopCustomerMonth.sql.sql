@@ -3,7 +3,7 @@
 -- Rule: Most Recent Months
 -- Description: The client can use this report to track the months with the most unique customers redeeming promotions ordered by the most recent date. This information can be useful in planning and executing marketing campaigns.
 -- Year, Month, Unique Customers
--- right, right, right
+-- left, left, left
 SELECT 
   YEAR(cp.created_date) as year, 
   MONTH(cp.created_date) as month, 
