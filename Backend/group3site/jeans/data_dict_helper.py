@@ -7,6 +7,7 @@ from djmoney.models.fields import MoneyField
 import json
 import os
 import smtplib
+from . import models as jeans
 
 #employee_id int FOREIGN KEY REFERENCES Employee(id),
 # Extracts the field props for a single field
@@ -20,10 +21,17 @@ def extract_field_props(current_field, model, field_type_dict):
         help_text = model.pk_desc
     else:
         help_text = current_field.help_text
+    print(help_text)
 
     if isinstance(current_field, models.fields.DecimalField):
         max_length = current_field.max_digits
         domain = "{} Decimals".format(current_field.decimal_places)
+
+    if isinstance(current_field, models.fields.EmailField):
+        domain = "xxx@example.com"
+
+    if isinstance(current_field, jeans.PhoneField):
+        domain = "xxx-xxx-xxxx"
 
     if current_field.unique:
         if domain == "NA":
@@ -91,7 +99,6 @@ def extract_all_field_props(model, field_type_dict):
         output_row = extract_field_props(current_field, model, field_type_dict)
         output_list.append(output_row)
     return output_list
-
 
 
 def generate_data_dict_excel(file_path, title_row, field_type_dict):
