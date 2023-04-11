@@ -1,19 +1,14 @@
 -- Owner: Perminder Singh
--- Top Product Promo
+-- Top Product That Have Been Used In Promos
 -- Rule: Most Promotions Used
--- Description: This report shows the top products with the most promotions used, along with the promotion names.
+-- Description: This report shows the top products that have been redeemed by customers.
 -- Product Name, Promo Count, Promos Used
--- left, right, left
-SELECT 
-  p.product_name, 
-  COUNT(*) AS promo_count,
-  STRING_AGG(pr.promo_name, ', ') AS promos_used
-FROM 
-  Product p
-  JOIN ProductPromo pp ON pp.product_id = p.id
-  JOIN Promo pr ON pr.id = pp.promo_id
-WHERE pr.created_date BETWEEN '{}' AND '{}'
-GROUP BY 
-  p.product_name
-ORDER BY 
-  promo_count DESC;
+-- left, left, left
+SELECT p.id, p.product_name, SUM(cpp.quantity) as total_redeemed
+FROM Product p
+JOIN CustomerProductPromo cpp ON p.id = cpp.product_id
+JOIN CustomerPromo cp ON cp.id = cpp.customer_promo_id
+JOIN Promo promo ON promo.id = cp.promo_id
+WHERE cp.created_date BETWEEN '{}' AND '{}'
+GROUP BY p.id, p.product_name
+ORDER BY total_redeemed DESC;
