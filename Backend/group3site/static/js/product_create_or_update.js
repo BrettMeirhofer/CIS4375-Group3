@@ -7,7 +7,12 @@ $(document).ready(function() {
         ev.target.value = parseFloat(ev.target.value).toFixed(2);
       });
 
+      $('.money').on("change", function(ev) {
+        ev.target.value = parseFloat(ev.target.value).toFixed(2);
+      });
+
       $('.money').each(function(i,e ) {
+        console.log("Test")
         e.value = parseFloat(e.value).toFixed(2);
       });
 
