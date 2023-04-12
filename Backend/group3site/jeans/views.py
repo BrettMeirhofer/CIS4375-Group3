@@ -117,6 +117,7 @@ def view_products_list(request, table):
 
 
     query = request.GET.get('search')
+    print(query)
     queryset = None
     if query:
         Qr = None
@@ -134,6 +135,9 @@ def view_products_list(request, table):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     template = loader.get_template('jeans/listview.html')
+
+    if query is None:
+        query = ""
     context = {'page_obj': page_obj, 'title': current_table._meta.verbose_name_plural, "fields": list_fields,
                "headers": headers, "table": table,  'order_by': order_by, 'direction': direction, 'query': query}
     return HttpResponse(template.render(context, request))

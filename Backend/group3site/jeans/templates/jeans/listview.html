@@ -9,7 +9,7 @@
             <a class = "button-1" href="{% url 'create_row' table=table %}">Create</a>
             <a id="delete-all" class = "deletebutton button-1" >Delete</a>
                 <form style="display:inline-block" class="add_your_class" method="GET" action="" >
-                <input style="display:inline-block" type="search" name="search">
+                <input style="display:inline-block" type="search" name="search" value="{{query}}">
             <button class="button-1" type="submit"> Search </button>
             </form>
         </div>
