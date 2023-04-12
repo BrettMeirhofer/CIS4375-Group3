@@ -5,24 +5,30 @@
 
 {% block extrabody %}{{ block.super }}
         <h1>{{title}}</h1>
-        <a class = "button-1" href="{% url 'create_row' table=table %}">Create</a>
-        <a id="delete-all" class = "deletebutton button-1" >Delete</a>
+        <div>
+            <a class = "button-1" href="{% url 'create_row' table=table %}">Create</a>
+            <a id="delete-all" class = "deletebutton button-1" >Delete</a>
+                <form style="display:inline-block" class="add_your_class" method="GET" action="" >
+                <input style="display:inline-block" type="search" name="search">
+            <button class="button-1" type="submit"> Search </button>
+            </form>
+        </div>
         <br>
         <p style="color:red; font-size:20px;" id="error"></p>
         <table>
             <tr>
                 <th style="width:20px;"><input type="checkbox" class="selectall"></th>
                         {% if order_by == "id" and direction == "asc" %}
-                            <th class=""><a href="?page=1&order_by=id&direction=desc">ID</a></th>
+                            <th class=""><a href="?page=1&order_by=id&direction=desc&search={{query}}">ID</a></th>
                         {% else %}
-                            <th class="{% if order_by == 'id' %}headerSortUp {% endif %}"><a href="?page=1&order_by=id&direction=asc">ID</a></th>
+                            <th class="{% if order_by == 'id' %}headerSortUp {% endif %}"><a href="?page=1&order_by=id&direction=asc&search={{query}}">ID</a></th>
                         {% endif %}
                 {% for header in headers %}
                     {% if header.name %}
                         {% if header.name == order_by and direction == "asc" %}
-                            <th class="{% if header.name == order_by %}headerSortDown {% endif %}"><a href="?page=1&order_by={{header.name}}&direction=desc">{{header.title}}</a></th>
+                            <th class="{% if header.name == order_by %}headerSortDown {% endif %}"><a href="?page=1&order_by={{header.name}}&direction=desc&search={{query}}">{{header.title}}</a></th>
                         {% else %}
-                            <th class="{% if header.name == order_by %}headerSortUp{% endif %}"><a href="?page=1&order_by={{header.name}}&direction=asc">{{header.title}}</a></th>
+                            <th class="{% if header.name == order_by %}headerSortUp{% endif %}"><a href="?page=1&order_by={{header.name}}&direction=asc&search={{query}}">{{header.title}}</a></th>
                         {% endif %}
                     {% else %}
                         <th>{{header.title}}</th>
@@ -45,8 +51,8 @@
 <div class="pagination">
     <span class="step-links">
         {% if page_obj.has_previous %}
-            <a class = "button-1" href="?page=1&order_by={{ order_by }}&direction={{ direction }}">&laquo; First</a>
-            <a class = "button-1" href="?page={{ page_obj.previous_page_number }}&order_by={{ order_by }}&direction={{ direction }}">Previous</a>
+            <a class = "button-1" href="?page=1&order_by={{ order_by }}&direction={{ direction }}&search={{query}}">&laquo; First</a>
+            <a class = "button-1" href="?page={{ page_obj.previous_page_number }}&order_by={{ order_by }}&direction={{ direction }}&search={{query}}">Previous</a>
         {% endif %}
 
         <span class="current">
@@ -54,8 +60,8 @@
         </span>
 
         {% if page_obj.has_next %}
-            <a class = "button-1" href="?page={{ page_obj.next_page_number }}&order_by={{ order_by }}&direction={{ direction }}">Next</a>
-            <a class = "button-1" href="?page={{ page_obj.paginator.num_pages }}&order_by={{ order_by }}&direction={{ direction }}">Last &raquo;</a>
+            <a class = "button-1" href="?page={{ page_obj.next_page_number }}&order_by={{ order_by }}&direction={{ direction }}&search={{query}}">Next</a>
+            <a class = "button-1" href="?page={{ page_obj.paginator.num_pages }}&order_by={{ order_by }}&direction={{ direction }}&search={{query}}">Last &raquo;</a>
         {% endif %}
     </span>
 </div>
@@ -86,6 +92,12 @@
         });
         console.log(delete_rows)
       });
+
+      $('#search').click(function(ev) {
+
+      });
+
+
       $('#delete-all').click(function(ev) {
         if (delete_rows.length == 0)
             return

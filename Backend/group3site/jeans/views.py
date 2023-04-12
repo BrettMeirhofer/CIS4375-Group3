@@ -2,6 +2,7 @@ import django.db.models
 from . import data_dict_helper as ddh
 from django.http import HttpResponse
 import os
+from django.db.models import Q
 from django.db import connection
 from django.template import loader
 from . import data_dict_helper
@@ -113,12 +114,28 @@ def view_products_list(request, table):
     ordering = order_by.lower()
     if direction == 'desc':
         ordering = '-{}'.format(ordering)
-    paginator = Paginator(current_table.objects.all().order_by(ordering), 15)  # Show 25 contacts per page.
+
+
+    query = request.GET.get('search')
+    queryset = None
+    if query:
+        Qr = None
+        for field in current_table.search_fields:
+            q = Q(**{"%s__contains" % field: query})
+            if Qr:
+                Qr = Qr | q  # or & for filtering
+            else:
+                Qr = q
+        print(current_table.search_fields)
+        queryset = current_table.objects.filter(Qr).order_by(ordering)
+    else:
+        queryset = current_table.objects.all().order_by(ordering)
+    paginator = Paginator(queryset, 15)  # Show 25 contacts per page.
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     template = loader.get_template('jeans/listview.html')
     context = {'page_obj': page_obj, 'title': current_table._meta.verbose_name_plural, "fields": list_fields,
-               "headers": headers, "table": table,  'order_by': order_by, 'direction': direction,}
+               "headers": headers, "table": table,  'order_by': order_by, 'direction': direction, 'query': query}
     return HttpResponse(template.render(context, request))
 
 

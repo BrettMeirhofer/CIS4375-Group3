@@ -52,6 +52,7 @@ class StatusCode(DescriptiveModel):
     is_active = models.BooleanField(default=True, verbose_name="Active")
     list_fields = ["status_name", "status_desc"]
     category = "Other"
+    search_fields = ["id", "status_name"]
 
     def __str__(self):
         return self.status_name
@@ -82,6 +83,7 @@ class Country(DescriptiveModel):
     country_name = models.CharField(max_length=60, verbose_name="Name")
     load_order = 1
     list_fields = ["country_name"]
+    search_fields = ["id", "country_name"]
 
     def __str__(self):
         return self.country_name
@@ -99,6 +101,7 @@ class State(DescriptiveModel):
     country = models.ForeignKey(Country, on_delete=models.RESTRICT, default=233, verbose_name="Country")
     load_order = 2
     list_fields = ["state_name", "country"]
+    search_fields = ["id", "state_name"]
 
     def __str__(self):
         return self.state_name
@@ -149,6 +152,7 @@ class ProductTag(DescriptiveModel):
     tag_desc = models.TextField(max_length=200, blank=True, null=True, verbose_name="Description")
     list_fields = ["tag_name", "tag_desc"]
     load_order = 1
+    search_fields = ["id", "tag_name"]
 
     class Meta:
         db_table = "ProductTag"
@@ -167,6 +171,7 @@ class Brand(DescriptiveModel):
     brand_site = models.URLField(verbose_name="Website URL")
     load_order = 1
     list_fields = ["brand_name", "brand_site"]
+    search_fields = ["id", "brand_name"]
 
     class Meta:
         db_table = "Brand"
@@ -190,6 +195,7 @@ class Product(DescriptiveModel):
     load_order = 2
     list_fields = ["product_name", "created_date", "product_status", "get_current_price"]
     list_func_names = {"get_current_price": "Price"}
+    search_fields = ["id", "product_name"]
 
     def get_current_price(self):
         test = "${0:.2f}".format(float(self.product_price))
@@ -216,6 +222,7 @@ class Promo(DescriptiveModel):
     promo_desc = models.TextField(max_length=400, verbose_name="Description", blank=True, null=True)
     load_order = 2
     list_fields = ["promo_name", "promo_code", "created_date", "end_date", "promo_status"]
+    search_fields = ["id", "promo_name", "promo_code"]
 
     class Meta:
         db_table = "Promo"
@@ -282,6 +289,7 @@ class Customer(DescriptiveModel):
     country = models.ForeignKey(Country, on_delete=models.RESTRICT, default=233, verbose_name="Country")
     load_order = 3
     list_fields = ["first_name", "last_name", "email", 'phone_number', "created_date", "customer_status"]
+    search_fields = ["id", "first_name", "last_name", "email"]
 
     def __str__(self):
         return self.email
@@ -325,6 +333,7 @@ class CustomerPromo(DescriptiveModel):
     load_order = 5
 
     list_fields = ["customer", "promo", "created_date"]
+    search_fields = ["id", "customer__email", "promo__promo_name"]
 
     def __str__(self):
         return str(self.customer) + " (" + str(self.id) + ")"
